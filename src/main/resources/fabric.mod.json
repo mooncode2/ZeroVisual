@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "zero",
+  "version": "1.0",
+  "name": "Zero",
+  "description": "Zero client",
+  "authors": [
+    "WhiteW1ndows_",
+    "strange"
+  ],
+  "contact": {
+    "homepage": "",
+    "issues": ""
+  },
+  "license": "Все права защищены!",
+  "icon": "assets/zero/night.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ru.zero.Zero"
+    ]
+  },
+  "mixins": [
+    "zero.mixins.json"
+  ],
+  "accessWidener": "zero.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.17.2",
+    "minecraft": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/jEGF5fb",
+        "Telegram": "https://t.me/Zero_DLCC",
+        "Dev-Blog": "https://t.me/ZeroDLC_DevBlog"
+      }
+    }
+  }
+}
