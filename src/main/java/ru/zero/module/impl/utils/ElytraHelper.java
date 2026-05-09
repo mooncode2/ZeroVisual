@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
@@ -27,9 +28,6 @@ import ru.zero.module.api.setting.impl.BooleanSetting;
 )
 @Environment(EnvType.CLIENT)
 public class ElytraHelper extends Module {
-   private static final int CHEST_ARMOR_SLOT_ID = 6;
-   private static final int EQUIP_PHASE_DELAY_TICKS = 2;
-
    public static BindSettings actionBind = new BindSettings("Бинд", -1);
    public static BooleanSetting autoTakeoff = new BooleanSetting("Автоматически взлетать", false);
    public static BooleanSetting swapOnGround = new BooleanSetting("Снимать на земле", false);
@@ -37,7 +35,7 @@ public class ElytraHelper extends Module {
    private boolean lastBindDown;
    private boolean wasFallFlying;
 
-   private EquipState equipState = EquipState.idle();
+   private EquipUseState equipState = EquipUseState.idle();
    private FireworkState fireworkState = FireworkState.idle();
 
    public ElytraHelper() {
@@ -47,7 +45,7 @@ public class ElytraHelper extends Module {
    @EventInit
    public void onTick(ClientTickEvent event) {
       if (mc.player == null || mc.interactionManager == null || mc.getWindow() == null) {
-         equipState = EquipState.idle();
+         equipState = EquipUseState.idle();
          fireworkState = FireworkState.idle();
          wasFallFlying = false;
          return;
@@ -101,55 +99,68 @@ public class ElytraHelper extends Module {
    private void tryEquipBestElytra(boolean withTakeoff) {
       int slot = findBestElytraInventoryIndex();
       if (slot == -1) return;
-      startEquipFromInventory(slot, withTakeoff);
+      startEquipUse(slot, withTakeoff);
    }
 
    private void tryEquipBestChestplate(boolean withTakeoff) {
       int slot = findBestChestplateInventoryIndex();
       if (slot == -1) return;
-      startEquipFromInventory(slot, withTakeoff);
+      startEquipUse(slot, withTakeoff);
    }
 
-   private void startEquipFromInventory(int invIndex, boolean withTakeoff) {
-      int sourceHandlerSlot = toHandlerSlotId(invIndex);
-      if (sourceHandlerSlot == -1) return;
-      equipState = EquipState.start(sourceHandlerSlot, withTakeoff);
+   private void startEquipUse(int invIndex, boolean withTakeoff) {
+      if (invIndex >= 0 && invIndex <= 8) {
+         equipState = EquipUseState.forHotbar(invIndex, withTakeoff);
+      } else {
+         equipState = EquipUseState.forInventory(invIndex, withTakeoff);
+      }
    }
 
    private void tickEquipState() {
       if (mc.player == null || mc.interactionManager == null) {
-         equipState = EquipState.idle();
-         return;
-      }
-      if (equipState.phaseDelayTicks > 0) {
-         equipState.phaseDelayTicks--;
-         return;
-      }
-      ScreenHandler handler = mc.player.currentScreenHandler;
-      if (handler == null) {
-         equipState = EquipState.idle();
+         equipState = EquipUseState.idle();
          return;
       }
 
       switch (equipState.phase) {
-         case PICKUP_SOURCE -> {
-            mc.interactionManager.clickSlot(handler.syncId, equipState.sourceHandlerSlot, 0, SlotActionType.PICKUP, mc.player);
-            equipState.phase = EquipPhase.PICKUP_CHEST;
-            equipState.phaseDelayTicks = EQUIP_PHASE_DELAY_TICKS;
+         case SWAP_IN -> {
+            int fromSlotId = toHandlerSlotId(equipState.invIndex);
+            if (fromSlotId == -1) {
+               equipState = EquipUseState.idle();
+               return;
+            }
+            clickSwap(fromSlotId, equipState.targetHotbar);
+            equipState.phase = EquipPhase.SELECT;
          }
-         case PICKUP_CHEST -> {
-            mc.interactionManager.clickSlot(handler.syncId, CHEST_ARMOR_SLOT_ID, 0, SlotActionType.PICKUP, mc.player);
-            equipState.phase = EquipPhase.RETURN_SOURCE;
-            equipState.phaseDelayTicks = EQUIP_PHASE_DELAY_TICKS;
+         case SELECT -> {
+            mc.player.getInventory().setSelectedSlot(equipState.targetHotbar);
+            equipState.phase = EquipPhase.USE;
          }
-         case RETURN_SOURCE -> {
-            mc.interactionManager.clickSlot(handler.syncId, equipState.sourceHandlerSlot, 0, SlotActionType.PICKUP, mc.player);
-            if (equipState.useFireworkAfter) {
+         case USE -> {
+            mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+            equipState.phase = EquipPhase.RESTORE_SELECT;
+         }
+         case RESTORE_SELECT -> {
+            mc.player.getInventory().setSelectedSlot(equipState.restoreSelectedHotbar);
+            equipState.phase = equipState.fromInventory ? EquipPhase.SWAP_BACK : EquipPhase.FINISH;
+         }
+         case SWAP_BACK -> {
+            int fromSlotId = toHandlerSlotId(equipState.invIndex);
+            if (fromSlotId == -1) {
+               equipState = EquipUseState.idle();
+               return;
+            }
+            clickSwap(fromSlotId, equipState.targetHotbar);
+            equipState.phase = EquipPhase.FINISH;
+         }
+         case FINISH -> {
+            boolean shouldFirework = equipState.useFireworkAfter;
+            equipState = EquipUseState.idle();
+            if (shouldFirework) {
                startFireworkUse();
             }
-            equipState.phase = EquipPhase.IDLE;
          }
-         case IDLE -> equipState = EquipState.idle();
+         case IDLE -> equipState = EquipUseState.idle();
       }
    }
 
@@ -284,14 +295,14 @@ public class ElytraHelper extends Module {
       return score;
    }
 
-   private int findInHotbar(net.minecraft.item.Item item) {
+   private int findInHotbar(Item item) {
       for (int i = 0; i < 9; i++) {
          if (mc.player.getInventory().getStack(i).isOf(item)) return i;
       }
       return -1;
    }
 
-   private int findInInventory(net.minecraft.item.Item item) {
+   private int findInInventory(Item item) {
       for (int i = 9; i <= 35; i++) {
          if (mc.player.getInventory().getStack(i).isOf(item)) return i;
       }
@@ -306,30 +317,43 @@ public class ElytraHelper extends Module {
 
    private enum EquipPhase {
       IDLE,
-      PICKUP_SOURCE,
-      PICKUP_CHEST,
-      RETURN_SOURCE
+      SWAP_IN,
+      SELECT,
+      USE,
+      RESTORE_SELECT,
+      SWAP_BACK,
+      FINISH
    }
 
-   private static final class EquipState {
+   private static final class EquipUseState {
       private EquipPhase phase;
-      private final int sourceHandlerSlot;
+      private final boolean fromInventory;
+      private final int invIndex;
+      private final int targetHotbar;
+      private final int restoreSelectedHotbar;
       private final boolean useFireworkAfter;
-      private int phaseDelayTicks;
 
-      private EquipState(EquipPhase phase, int sourceHandlerSlot, boolean useFireworkAfter, int phaseDelayTicks) {
+      private EquipUseState(EquipPhase phase, boolean fromInventory, int invIndex, int targetHotbar, int restoreSelectedHotbar, boolean useFireworkAfter) {
          this.phase = phase;
-         this.sourceHandlerSlot = sourceHandlerSlot;
+         this.fromInventory = fromInventory;
+         this.invIndex = invIndex;
+         this.targetHotbar = targetHotbar;
+         this.restoreSelectedHotbar = restoreSelectedHotbar;
          this.useFireworkAfter = useFireworkAfter;
-         this.phaseDelayTicks = phaseDelayTicks;
       }
 
-      static EquipState idle() {
-         return new EquipState(EquipPhase.IDLE, -1, false, 0);
+      static EquipUseState idle() {
+         return new EquipUseState(EquipPhase.IDLE, false, -1, -1, -1, false);
       }
 
-      static EquipState start(int sourceHandlerSlot, boolean useFireworkAfter) {
-         return new EquipState(EquipPhase.PICKUP_SOURCE, sourceHandlerSlot, useFireworkAfter, 0);
+      static EquipUseState forHotbar(int hotbarSlot, boolean useFireworkAfter) {
+         int restore = Module.mc.player != null ? Module.mc.player.getInventory().getSelectedSlot() : 0;
+         return new EquipUseState(EquipPhase.SELECT, false, -1, hotbarSlot, restore, useFireworkAfter);
+      }
+
+      static EquipUseState forInventory(int invIndex, boolean useFireworkAfter) {
+         int selected = Module.mc.player != null ? Module.mc.player.getInventory().getSelectedSlot() : 0;
+         return new EquipUseState(EquipPhase.SWAP_IN, true, invIndex, selected, selected, useFireworkAfter);
       }
    }
 

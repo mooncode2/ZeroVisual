@@ -5,15 +5,14 @@
   "name": "Zero",
   "description": "Zero client",
   "authors": [
-    "WhiteW1ndows_",
-    "strange"
+    "mooncode2"
   ],
   "contact": {
     "homepage": "",
     "issues": ""
   },
-  "license": "Все права защищены!",
-  "icon": "assets/zero/night.png",
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
+  "icon": "assets/zero/zero.png",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -31,9 +30,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/jEGF5fb",
-        "Telegram": "https://t.me/Zero_DLCC",
-        "Dev-Blog": "https://t.me/ZeroDLC_DevBlog"
+        "Telegram": "https://t.me/ZeroVisual"
       }
     }
   }

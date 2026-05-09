@@ -16,6 +16,10 @@ import ru.zero.util.render.text.FontRegistry;
 @Environment(EnvType.CLIENT)
 public class GuiRenderUpPanel extends GuiScreen {
    public static void renderUpPanel(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
+      if (mainAlpha <= 0.001F) {
+         return;
+      }
+
       boolean vanillaStyle = ClickGUI.isVanillaStyle();
       int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));
       int backGroundTwoColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundTwoColor(1, 1), (int)(178.5F * mainAlpha));
@@ -23,7 +27,6 @@ public class GuiRenderUpPanel extends GuiScreen {
       int mainColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(255.0F * mainAlpha));
       int textColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextColor(1, 1), (int)(255.0F * mainAlpha));
       int textTwoColor40 = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextTwoColor(1, 1), (int)(80.0F * mainAlpha));
-      int blur = Renderer2D.ColorUtil.replAlpha(-1, (int)(255.0F * mainAlpha));
       Color mainColorGlow = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(35.0F * mainAlpha)));
       renderer2D.flush();
       StencilHelper.initStencil();
@@ -48,7 +51,7 @@ public class GuiRenderUpPanel extends GuiScreen {
          Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), (int)(210.0F * mainAlpha))
       );
       renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 28.17F, GuiScreen.y + 12.595F + 7.0F, 14.0F, "Zero", textColor);
-      renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 66.99F, GuiScreen.y + 12.595F + 7.0F, 14.0F, "1.21.8", textTwoColor40);
+      renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 66.99F, GuiScreen.y + 12.595F + 7.0F, 14.0F, "1.21.11", textTwoColor40);
       renderer2D.rectOutline(GuiScreen.x + 111.885F, GuiScreen.y + 6.185F, 124.04F, 21.325F, 5.5F, outlineColor, 0.1F);
       renderer2D.rect(GuiScreen.x + 111.885F, GuiScreen.y + 6.185F, 124.04F, 21.325F, 5.5F, backGroundThreeColor);
       renderer2D.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, GuiScreen.x + 119.87F, GuiScreen.y + 12.335F - 1.0F + 9.75F, 17.5F, vanillaStyle ? "?" : "C", mainColor);

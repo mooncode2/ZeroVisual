@@ -48,7 +48,7 @@ public class Arrows extends Module {
 
    @EventInit
    public void onRender(EventScreen e) {
-      if (mc.player != null || mc.world != null) {
+      if (mc.player != null && mc.world != null) {
          for (Entity entity : mc.world.getPlayers()) {
             if (entity != mc.player) {
                boolean alreadyExists = false;
@@ -93,10 +93,12 @@ public class Arrows extends Module {
       public void update() {
          boolean entityExists = Module.mc.world.getPlayers().contains(this.entity);
          boolean isInWorld = this.entity.isAlive();
+         boolean isVisible = Module.mc.player != null && Module.mc.player.canSee(this.entity);
          this.animation
                .setDirection(
                      entityExists && isInWorld && this.entity != Module.mc.player
                            && this.entity != Module.mc.targetedEntity
+                           && isVisible
                            ? Direction.FORWARDS
                            : Direction.BACKWARDS);
       }

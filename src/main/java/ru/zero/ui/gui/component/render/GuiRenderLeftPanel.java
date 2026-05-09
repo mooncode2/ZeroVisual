@@ -17,6 +17,10 @@ import ru.zero.util.render.text.FontRegistry;
 @Environment(EnvType.CLIENT)
 public class GuiRenderLeftPanel extends GuiScreen {
    public static void renderLeftPanel(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
+      if (mainAlpha <= 0.001F) {
+         return;
+      }
+
       int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));
       int backGroundTwoColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundTwoColor(1, 1), (int)(178.5F * mainAlpha));
       int backGroundThreeColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(10.2F * mainAlpha));
@@ -24,7 +28,6 @@ public class GuiRenderLeftPanel extends GuiScreen {
       int mainColor40 = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(102.0F * mainAlpha));
       int textColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextColor(1, 1), (int)(255.0F * mainAlpha));
       int textTwoColor40 = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextTwoColor(1, 1), (int)(102.0F * mainAlpha));
-      int blur = Renderer2D.ColorUtil.replAlpha(-1, (int)(255.0F * mainAlpha));
       Color mainColorGlow = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(35.0F * mainAlpha)));
       Color mainColorGlow35 = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(56.0F * mainAlpha)));
       Color koronaColors = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Color.ORANGE.getRGB(), (int)(50.0F * mainAlpha)));

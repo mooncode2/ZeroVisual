@@ -158,6 +158,8 @@ public class Hud extends Module {
          float notificationHeight = 40.0F;
          float spacing = 6.0F;
          float screenCenterY = mc.getWindow().getHeight() / 2.0F + 140.0F;
+         float screenCenterX = mc.getWindow().getWidth() / 2.0F;
+         boolean vanillaStyle = ClickGUI.isVanillaStyle();
          float currentY = screenCenterY;
 
          int maxNotifications = Optimizer.getMaxNotifications();
@@ -165,15 +167,14 @@ public class Hud extends Module {
          for (int i = this.notifications.size() - 1; i >= 0 && rendered < maxNotifications; i--) {
             Hud.Notification notification = this.notifications.get(i);
             boolean shouldShow = !notification.isExpired();
-            notification.animation.run(shouldShow ? 1.0 : 0.0, 0.16F, Easings.QUAD_OUT, false);
+            notification.animation.run(shouldShow ? 1.0 : 0.0, Optimizer.getHudAnimationSpeed(0.16F), Easings.QUAD_OUT, false);
             float animValue = notification.animation.get();
             if (!(animValue <= 0.01F)) {
                float iconWidth = 8.0F;
                float textWidth = matrix.measureText(FontRegistry.INTER_MEDIUM, notification.text, 26.0F).width;
                float notificationWidth = margin * 3.0F + iconWidth + textWidth + 8.0F + 30.0F;
-               float screenCenterX = mc.getWindow().getWidth() / 2.0F;
                float targetX = screenCenterX - notificationWidth / 2.0F;
-               notification.yAnimation.run(currentY, 0.1F, Easings.QUAD_OUT, false);
+               notification.yAnimation.run(currentY, Optimizer.getHudAnimationSpeed(0.1F), Easings.QUAD_OUT, false);
                float scale = 0.9F + 0.1F * animValue;
                matrix.pushTranslation(targetX + notificationWidth / 2.0F, currentY + notificationHeight / 2.0F);
                matrix.pushScale(scale, scale, 0.0F);
@@ -190,7 +191,6 @@ public class Hud extends Module {
                int iconColor = notification.iconColor == -1
                   ? ColorUtil.replAlpha(ColorUtil.fade(), animValue)
                   : ColorUtil.replAlpha(notification.iconColor, animValue);
-               boolean vanillaStyle = ClickGUI.isVanillaStyle();
                if (notification.icon.contains("on")) {
                   matrix.text(
                      vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
@@ -265,7 +265,10 @@ public class Hud extends Module {
          r2.rectOutline(x - 1.0F, y - 1.0F, w + 2.0F, h + 2.0F, vanillaRadius, outline, 1.0F);
          r2.rect(x, y, w, h, vanillaRadius, background);
       } else {
-         r2.shadow(x, y, w, h, radius, 8.6F, 0.5F, ColorUtil.getColor(0, alpha * 0.15F));
+         if (Optimizer.shouldRenderHudShadow()) {
+            r2.shadow(x, y, w, h, radius, 8.6F, 0.5F, ColorUtil.getColor(0, alpha * 0.15F));
+         }
+
          if (!blur.get()) {
             float blurRadius = Optimizer.optimizeHudBlur(23.0F);
             if (alpha < 0.12F) {

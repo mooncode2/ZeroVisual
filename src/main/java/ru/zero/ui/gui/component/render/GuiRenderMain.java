@@ -27,13 +27,19 @@ import ru.zero.util.render.utils.KeyUtil;
 @Environment(EnvType.CLIENT)
 public class GuiRenderMain extends GuiScreen {
    public static void renderMain(Renderer2D renderer2D, MatrixStack pose, int mouseX, int mouseY, float mainAlpha) {
-      if (GuiScreen.activeSearch) {
-         MovementManager.getInstance().lockMovement("Search");
-      } else {
-         MovementManager.getInstance().unlockMovement("Search");
+      if (mainAlpha <= 0.001F) {
+         return;
       }
 
-      if (GuiScreen.activeSearch) {
+      boolean searchActive = GuiScreen.activeSearch;
+      MovementManager movementManager = MovementManager.getInstance();
+      if (searchActive) {
+         movementManager.lockMovement("Search");
+      } else {
+         movementManager.unlockMovement("Search");
+      }
+
+      if (searchActive) {
          boolean backspaceDown = KeyUtil.isKeyDown(259);
          long currentTime = System.currentTimeMillis();
          if (backspaceDown) {
@@ -90,7 +96,7 @@ public class GuiRenderMain extends GuiScreen {
       renderer2D.pushRoundedClipRect(clipX, clipY, clipWidth, clipHeight, 0.0F, 0.0F, 0.0F, 0.0F);
 
       List<Module> filteredModules = GuiScreen.modules;
-      if (GuiScreen.activeSearch && !GuiScreen.searchText.isEmpty()) {
+      if (searchActive && !GuiScreen.searchText.isEmpty()) {
          String searchLower = GuiScreen.searchText.toLowerCase().trim();
          ArrayList<Module> result = new ArrayList<>();
          for (Module module : GuiScreen.modules) {
@@ -103,6 +109,7 @@ public class GuiRenderMain extends GuiScreen {
       }
 
       Map<Module, List<Setting>> settingsCache = new HashMap<>(Math.max(16, filteredModules.size()));
+      Map<Module, Float> settingsHeightCache = new HashMap<>(Math.max(16, filteredModules.size()));
       for (Module module : filteredModules) {
          settingsCache.put(module, module.getSettingsForGUI());
       }
@@ -132,6 +139,7 @@ public class GuiRenderMain extends GuiScreen {
             fullSettingsHeight = Math.max(fullSettingsHeight, 20.0F);
             settingsHeight = 12.0F + (fullSettingsHeight - 12.0F) * settingsAnim;
          }
+         settingsHeightCache.put(module, settingsHeight);
 
          if (calcIndex % 2 == 0) {
             float currentDownY = calcDownY + calcDownYSetting2 - 30.0F;
@@ -173,19 +181,10 @@ public class GuiRenderMain extends GuiScreen {
          if (index % 2 == 0) {
             float animPCx = module.animation.get();
             float currentDownY = downY + downYSetting2 - 30.0F;
-            float settingsHeightx = 12.0F;
-            float fullSettingsHeightx = 12.0F;
             float settingsAnimx = GuiScreen.getModuleSettingsAnimation(module).get();
             float settingsAlphaAnimx = GuiScreen.getModuleSettingsAlphaAnimation(module).get();
+            float settingsHeightx = settingsHeightCache.getOrDefault(module, 12.0F);
             List<Setting> moduleSettings = settingsCache.get(module);
-            if (GuiScreen.openSettingsModules.contains(module) || settingsAnimx > 0.0F) {
-               for (Setting setting : moduleSettings) {
-                  fullSettingsHeightx += GuiRenderSetting.getSettingHeight(renderer2D, setting) + 0.5F;
-               }
-
-               fullSettingsHeightx = Math.max(fullSettingsHeightx, 20.0F);
-               settingsHeightx = 12.0F + (fullSettingsHeightx - 12.0F) * settingsAnimx;
-            }
 
             if (!(settingsAnimx > 0.0F) && !(settingsAlphaAnimx > 0.0F)) {
                renderer2D.rectOutline(GuiScreen.x + 238.35F, GuiScreen.y + 43.365F + currentDownY, 121.47F, 21.325F, 6.5F, outlineColor, 0.1F);
@@ -298,19 +297,10 @@ public class GuiRenderMain extends GuiScreen {
          } else {
             float animPCxx = module.animation.get();
             float currentDownYx = downY + downYSetting1;
-            float settingsHeightxx = 12.0F;
-            float fullSettingsHeightxx = 12.0F;
             float settingsAnimxx = GuiScreen.getModuleSettingsAnimation(module).get();
             float settingsAlphaAnimxx = GuiScreen.getModuleSettingsAlphaAnimation(module).get();
+            float settingsHeightxx = settingsHeightCache.getOrDefault(module, 12.0F);
             List<Setting> moduleSettings = settingsCache.get(module);
-            if (GuiScreen.openSettingsModules.contains(module) || settingsAnimxx > 0.0F) {
-               for (Setting setting : moduleSettings) {
-                  fullSettingsHeightxx += GuiRenderSetting.getSettingHeight(renderer2D, setting) + 0.5F;
-               }
-
-               fullSettingsHeightxx = Math.max(fullSettingsHeightxx, 20.0F);
-               settingsHeightxx = 12.0F + (fullSettingsHeightxx - 12.0F) * settingsAnimxx;
-            }
 
             if (!(settingsAnimxx > 0.0F) && !(settingsAlphaAnimxx > 0.0F)) {
                renderer2D.rectOutline(GuiScreen.x + 111.885F, GuiScreen.y + 43.365F + currentDownYx, 121.47F, 21.325F, 6.5F, outlineColor, 0.1F);

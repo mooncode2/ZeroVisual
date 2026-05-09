@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.zero.Zero;
+import ru.zero.module.impl.utils.Optimizer;
 import ru.zero.module.impl.visuals.CustomWorld;
 import ru.zero.module.impl.visuals.NoRender;
 
@@ -69,6 +70,35 @@ public abstract class FogRendererMixin {
    private void night$applyFog(
       Camera camera, int viewDistance, RenderTickCounter tickCounter, float skyDarkness, ClientWorld world, CallbackInfoReturnable<Vector4f> cir
    ) {
+      if (Optimizer.shouldDisableFog()) {
+         cir.cancel();
+         float f = tickCounter.getTickProgress(false);
+         Vector4f vector4f = this.getFogColor(camera, f, world, viewDistance, skyDarkness);
+         float far = Math.max(1024.0F, viewDistance * 64.0F);
+         MappedView mappedView = RenderSystem.getDevice().createCommandEncoder().mapBuffer(this.fogBuffer.getBlocking(), false, true);
+
+         try {
+            this.applyFog(mappedView.data(), 0, vector4f, far, far, far, far, far, far);
+         } catch (Throwable var24) {
+            if (mappedView != null) {
+               try {
+                  mappedView.close();
+               } catch (Throwable var23) {
+                  var24.addSuppressed(var23);
+               }
+            }
+
+            throw var24;
+         }
+
+         if (mappedView != null) {
+            mappedView.close();
+         }
+
+         cir.setReturnValue(vector4f);
+         return;
+      }
+
       if (Zero.get != null && Zero.get.manager != null) {
          NoRender noRender = Zero.get.manager.get(NoRender.class);
          if (noRender != null && noRender.enable && NoRender.fog.get()) {

@@ -61,26 +61,32 @@ public class CustomWorld extends Module {
    private void updateTargetTime() {
       String currentMode = timeOfDay.get();
       switch (currentMode) {
+         case "День":
          case "Р”РµРЅСЊ":
             customTime = 1000L;
             break;
+         case "Закат":
          case "Р—Р°РєР°С‚":
             customTime = 12000L;
             break;
+         case "Рассвет":
          case "Р Р°СЃСЃРІРµС‚":
             customTime = 23000L;
             break;
+         case "Полночь":
          case "РџРѕР»РЅРѕС‡СЊ":
             customTime = 13000L;
             break;
+         case "Ночь":
          case "РќРѕС‡СЊ":
             customTime = 18000L;
             break;
+         case "Полдень":
          case "РџРѕР»РґРµРЅСЊ":
             customTime = 6000L;
             break;
          default:
-            customTime = 0L;
+            customTime = 18000L;
       }
    }
 
