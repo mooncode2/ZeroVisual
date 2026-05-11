@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import ru.zero.Zero;
 import ru.zero.module.api.Module;
 import ru.zero.module.impl.visuals.Hud;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.util.color.ColorUtil;
 import ru.zero.util.keyboard.Keyboard;
@@ -20,6 +19,7 @@ import ru.zero.util.render.animation.util.Animation;
 import ru.zero.util.render.animation.util.Easings;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.gui.GuiScreen;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindHUD {
@@ -105,7 +105,7 @@ public class KeyBindHUD {
          DraggableManager.DragSession session = DraggableManager.getInstance().beginDrag("keybinds", preferredX, preferredY, animatedWidth, animatedHeight);
          float x = session.positionX();
          float y = session.positionY() - 40.0F + 40.0F * anim2.get();
-         boolean vanillaStyle = ClickGUI.isVanillaStyle();
+         boolean vanillaStyle = GuiScreen.isVanillaStyle();
          HudEditor.registerRect(x, y, animatedWidth, animatedHeight);
          Hud.drawClientRect(r2, x, y, animatedWidth, animatedHeight, 13.0F, 1.0F * anim2.get(), 1.0F);
          r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 12.0F, y + 22.5F, 26.0F, vanillaStyle ? "K" : "x", ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), anim2.get()));

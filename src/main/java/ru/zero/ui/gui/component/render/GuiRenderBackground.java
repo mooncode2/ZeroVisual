@@ -4,7 +4,6 @@ import java.awt.Color;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.module.impl.utils.Optimizer;
 import ru.zero.util.render.core.Renderer2D;
@@ -12,7 +11,7 @@ import ru.zero.util.render.core.Renderer2D;
 @Environment(EnvType.CLIENT)
 public class GuiRenderBackground extends GuiScreen {
    public static void renderBackground(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
-      boolean vanillaStyle = ClickGUI.isVanillaStyle();
+      boolean vanillaStyle = GuiScreen.isVanillaStyle();
       int outlineColor = vanillaStyle
          ? Renderer2D.ColorUtil.replAlpha(new Color(90, 90, 90).getRGB(), (int)(210.0F * mainAlpha))
          : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));

@@ -53,16 +53,24 @@ public class GuiMouseClicked extends GuiScreen {
 
          if (GuiScreen.showClientSettingsPopup && pButton == 0) {
             float popupWidth = 100.0F;
-            float popupHeight = 60.0F;
+            float popupHeight = 86.0F;
             float popupX = GuiScreen.x + 450.0F + 21.325F - popupWidth;
             float popupY = GuiScreen.y - 15.0F + 21.325F + 5.0F;
             if (GuiRenderMain.isHovered(mouseX, mouseY, popupX, popupY, popupWidth, popupHeight)) {
                float settingY = popupY + 10.0F;
                float settingX = popupX + 10.0F;
                float settingWidth = popupWidth - 20.0F;
-               if (GuiMouseClickedSetting.handleSettingClick(renderer2D, GuiScreen.clientBlurSetting, settingX, settingY, settingWidth, mouseX, mouseY, pButton)
-                  )
-                {
+               if (GuiMouseClickedSetting.handleSettingClick(renderer2D, GuiScreen.clientBlurSetting, settingX, settingY, settingWidth, mouseX, mouseY, pButton)) {
+                  return true;
+               }
+
+               float secondSettingY = settingY + 13.0F;
+               if (GuiMouseClickedSetting.handleSettingClick(renderer2D, GuiScreen.clientVanillaSetting, settingX, secondSettingY, settingWidth, mouseX, mouseY, pButton)) {
+                  return true;
+               }
+
+               float thirdSettingY = secondSettingY + 13.0F;
+               if (GuiMouseClickedSetting.handleSettingClick(renderer2D, GuiScreen.clientVulcanSetting, settingX, thirdSettingY, settingWidth, mouseX, mouseY, pButton)) {
                   return true;
                }
             } else {

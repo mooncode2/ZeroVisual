@@ -31,6 +31,12 @@ public class GuiMouseClickedSetting extends GuiScreen {
             if (boolSetting == GuiScreen.clientBlurSetting && Zero.get != null && Zero.get.guiManager != null) {
                Zero.get.guiManager.setGuiBlurEnabled(boolSetting.get());
             }
+            if (boolSetting == GuiScreen.clientVanillaSetting && Zero.get != null && Zero.get.guiManager != null) {
+               Zero.get.guiManager.setGuiVanillaStyleEnabled(boolSetting.get());
+            }
+            if (boolSetting == GuiScreen.clientVulcanSetting && Zero.get != null && Zero.get.guiManager != null) {
+               Zero.get.guiManager.setGuiVulcanModeEnabled(boolSetting.get());
+            }
             if (Zero.get.configManager != null) {
                Zero.get.configManager.autoSave();
             }

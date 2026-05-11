@@ -27,6 +27,7 @@ public class GuiRender extends GuiScreen {
             GuiScreen.settingPC.update();
             GuiScreen.alphaPC2.update();
             GuiScreen.alphaPC3.update();
+            GuiScreen.refreshCategoriesAndModules();
             if (GuiScreen.modules != null) {
                for (Module module : GuiScreen.modules) {
                   GuiScreen.getModuleSettingsAnimation(module).update();

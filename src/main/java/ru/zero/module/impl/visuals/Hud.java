@@ -15,7 +15,6 @@ import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.BooleanSetting;
 import ru.zero.module.api.setting.impl.MultiBooleanSetting;
 import ru.zero.module.impl.utils.Optimizer;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.module.impl.visuals.HUD.HotBarHUD;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
 import ru.zero.module.impl.visuals.HUD.InformationHUD;
@@ -28,6 +27,7 @@ import ru.zero.util.render.animation.util.Animation;
 import ru.zero.util.render.animation.util.Easings;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.gui.GuiScreen;
 
 @IModule(
    name = "Hud",
@@ -159,7 +159,7 @@ public class Hud extends Module {
          float spacing = 6.0F;
          float screenCenterY = mc.getWindow().getHeight() / 2.0F + 140.0F;
          float screenCenterX = mc.getWindow().getWidth() / 2.0F;
-         boolean vanillaStyle = ClickGUI.isVanillaStyle();
+         boolean vanillaStyle = GuiScreen.isVanillaStyle();
          float currentY = screenCenterY;
 
          int maxNotifications = Optimizer.getMaxNotifications();
@@ -258,7 +258,7 @@ public class Hud extends Module {
    }
 
    public static void drawClientRect(Renderer2D r2, float x, float y, float w, float h, float radius, float alpha, float thickness) {
-      if (ClickGUI.isVanillaStyle()) {
+      if (GuiScreen.isVanillaStyle()) {
          float vanillaRadius = 1.25F;
          int outline = ColorUtil.replAlpha(new java.awt.Color(96, 96, 96).getRGB(), alpha);
          int background = ColorUtil.replAlpha(new java.awt.Color(45, 45, 45).getRGB(), alpha * 0.9F);

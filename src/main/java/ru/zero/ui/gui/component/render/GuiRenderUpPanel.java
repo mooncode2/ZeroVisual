@@ -7,7 +7,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.ui.gui.component.setting.GuiRenderSetting;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.util.color.ColorUtil;
 import ru.zero.util.render.backends.gl.StencilHelper;
 import ru.zero.util.render.core.Renderer2D;
@@ -20,7 +19,7 @@ public class GuiRenderUpPanel extends GuiScreen {
          return;
       }
 
-      boolean vanillaStyle = ClickGUI.isVanillaStyle();
+      boolean vanillaStyle = GuiScreen.isVanillaStyle();
       int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));
       int backGroundTwoColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundTwoColor(1, 1), (int)(178.5F * mainAlpha));
       int backGroundThreeColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(10.2F * mainAlpha));
@@ -89,7 +88,7 @@ public class GuiRenderUpPanel extends GuiScreen {
 
    private static void renderClientSettingsPopup(Renderer2D renderer2D, float mainAlpha) {
       float popupWidth = 100.0F;
-      float popupHeight = 60.0F;
+      float popupHeight = 86.0F;
       float popupX = GuiScreen.x + 450.0F + 21.325F - popupWidth;
       float popupY = GuiScreen.y - 15.0F + 21.325F + 5.0F;
       int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));
@@ -105,6 +104,38 @@ public class GuiRenderUpPanel extends GuiScreen {
          GuiScreen.clientBlurSetting,
          settingX,
          settingY,
+         settingWidth,
+         GuiScreen.currentMouseX,
+         GuiScreen.currentMouseY,
+         outlineColor,
+         mainColor,
+         Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(15.3F * mainAlpha)),
+         mainColor40,
+         textColor,
+         mainAlpha
+      );
+      float secondSettingY = settingY + GuiRenderSetting.getSettingHeight(renderer2D, GuiScreen.clientBlurSetting) + 3.0F;
+      GuiRenderSetting.renderSetting(
+         renderer2D,
+         GuiScreen.clientVanillaSetting,
+         settingX,
+         secondSettingY,
+         settingWidth,
+         GuiScreen.currentMouseX,
+         GuiScreen.currentMouseY,
+         outlineColor,
+         mainColor,
+         Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(15.3F * mainAlpha)),
+         mainColor40,
+         textColor,
+         mainAlpha
+      );
+      float thirdSettingY = secondSettingY + GuiRenderSetting.getSettingHeight(renderer2D, GuiScreen.clientVanillaSetting) + 3.0F;
+      GuiRenderSetting.renderSetting(
+         renderer2D,
+         GuiScreen.clientVulcanSetting,
+         settingX,
+         thirdSettingY,
          settingWidth,
          GuiScreen.currentMouseX,
          GuiScreen.currentMouseY,

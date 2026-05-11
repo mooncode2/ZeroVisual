@@ -6,12 +6,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import ru.zero.module.impl.visuals.Hud;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
 import ru.zero.util.render.animation.util.Easings;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.ScaledResolution;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.gui.GuiScreen;
 
 @Environment(EnvType.CLIENT)
 public class InformationHUD {
@@ -54,7 +54,7 @@ public class InformationHUD {
 
       Hud.drawClientRect(r2, x, y, 40.64F, 40.64F, 13.0F, 1.0F, 1.0F);
       r2.shadow(x + 15.0F, y + 22.0F, 0.1F, 0.1F, 8.0F, 10.0F, 0.1F, mainColorGlow.getRGB());
-      boolean vanillaStyle = ClickGUI.isVanillaStyle();
+      boolean vanillaStyle = GuiScreen.isVanillaStyle();
       r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 11.0F, y + 30.0F, 36.0F, vanillaStyle ? "i" : "0", Renderer2D.ColorUtil.getMainColor(1, 1));
       int playerX = (int)mc.player.getX();
       int playerY = (int)mc.player.getY();

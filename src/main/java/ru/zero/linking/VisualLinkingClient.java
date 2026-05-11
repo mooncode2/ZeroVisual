@@ -29,6 +29,7 @@ public final class VisualLinkingClient {
 
    private volatile PrimeState state = PrimeState.UNKNOWN;
    private volatile String displayRank = "ZeroUser";
+   private volatile boolean targetServerSession = false;
    private volatile long lastRequestAt = 0L;
    private volatile boolean requestInFlight = false;
    private String lastCheckedNick = "";
@@ -47,6 +48,7 @@ public final class VisualLinkingClient {
             this.resetSession();
             return;
          }
+         this.targetServerSession = true;
 
          String host = resolveConnectedHost(mc);
          if (host == null || host.isBlank()) {
@@ -73,12 +75,17 @@ public final class VisualLinkingClient {
       return this.displayRank;
    }
 
+   public boolean isPrimeOnTargetServer() {
+      return this.targetServerSession && this.state == PrimeState.PRIME;
+   }
+
    private void resetSession() {
       this.lastCheckedNick = "";
       this.lastCheckedHost = "";
       this.requestInFlight = false;
       this.state = PrimeState.UNKNOWN;
       this.displayRank = "ZeroUser";
+      this.targetServerSession = false;
    }
 
    private void requestPrimeStatusAsync(String nick) {

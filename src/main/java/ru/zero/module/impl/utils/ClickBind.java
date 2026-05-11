@@ -56,6 +56,15 @@ public class ClickBind extends Module {
          return;
       }
 
+      if (mc.currentScreen != null) {
+         suppressTicks = 0;
+         state = ActionState.idle();
+         lastFireworkDown = false;
+         lastPearlDown = false;
+         lastWindDown = false;
+         return;
+      }
+
       // Если мы в GUI или сейчас назначаем бинд — не даём модулю сработать.
       if (mc.currentScreen instanceof GuiClient || GuiScreen.activeBindSetting != null) {
          suppressTicks = Math.max(suppressTicks, 5);

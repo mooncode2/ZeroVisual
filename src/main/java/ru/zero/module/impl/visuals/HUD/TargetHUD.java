@@ -23,7 +23,6 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.PlayerListEntry;
 import ru.zero.module.impl.visuals.Hud;
 import ru.zero.util.player.CrosshairTargetUtil;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
 import ru.zero.util.render.animation.util.Animation;
@@ -32,6 +31,7 @@ import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.ScaledResolution;
 import ru.zero.util.render.math.animation.AnimationMath;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.gui.GuiScreen;
 
 /**
  * HUD цели: при открытом чате показывает игрока; иначе — сущность под прицелом Vanilla (без боевых модулей).
@@ -142,7 +142,7 @@ public class TargetHUD {
 
       r2.popAlpha();
       if (targetPlayer.getArmor() > 0) {
-         boolean vanillaStyle = ClickGUI.isVanillaStyle();
+         boolean vanillaStyle = GuiScreen.isVanillaStyle();
          float armorAnim = (1.0F - alpha) * 20.0F;
          float armorX = x + width - 100.0F + armorAnim;
          float armorY = y - 35.0F - armorAnim;
@@ -178,7 +178,7 @@ public class TargetHUD {
    private static void renderLiving(Renderer2D r2, LivingEntity entity, float x, float y, float width, float height,
          float alpha) {
       r2.pushAlpha(alpha);
-      boolean vanillaStyle = ClickGUI.isVanillaStyle();
+      boolean vanillaStyle = GuiScreen.isVanillaStyle();
       r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 18.0F, y + 45.5F, 60.0F, vanillaStyle ? "?" : "6",
             Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 100));
       String name = entity instanceof CreeperEntity ? "Грустный крипер" : entity.getName().getString();

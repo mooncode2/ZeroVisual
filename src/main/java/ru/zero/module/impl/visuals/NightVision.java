@@ -13,7 +13,7 @@ import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.ModeSetting;
 
 @IModule(
-   name = "Zero Vision",
+   name = "Night Vision",
    description = " ",
    category = Category.Visuals,
    bind = -1

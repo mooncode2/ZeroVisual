@@ -11,6 +11,7 @@ public enum Category {
    Visuals("Visuals", "e"),
    Player("Player", "g"),
    Utils("Utils", "j"),
+   Prime("Prime", "k"),
    Misc("Misc", "h");
 
    private final String name;

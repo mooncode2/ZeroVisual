@@ -75,6 +75,8 @@ public class Zero implements ClientModInitializer {
       this.guiManager = new GuiManager();
       this.guiManager.init();
       GuiScreen.clientBlurSetting.set(this.guiManager.isGuiBlurEnabled());
+      GuiScreen.clientVanillaSetting.set(this.guiManager.isGuiVanillaStyleEnabled());
+      GuiScreen.clientVulcanSetting.set(this.guiManager.isGuiVulcanModeEnabled());
       GuiScreen.selectedTheme = this.guiManager.getCurrentTheme();
       GuiScreen.preSelectedTheme = this.guiManager.getCurrentTheme();
       GuiScreen.selectedCategories = this.guiManager.getCurrentCategory();

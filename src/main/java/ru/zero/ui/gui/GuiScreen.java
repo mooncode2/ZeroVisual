@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import ru.zero.Zero;
 import ru.zero.module.api.Category;
 import ru.zero.module.api.Module;
 import ru.zero.module.api.Theme;
@@ -58,6 +60,8 @@ public class GuiScreen {
    public static long firstBackspacePressTime = 0L;
    public static boolean showClientSettingsPopup = false;
    public static BooleanSetting clientBlurSetting = new BooleanSetting("Блюр (Размытие)", false);
+   public static BooleanSetting clientVanillaSetting = new BooleanSetting("Ванильный", false);
+   public static BooleanSetting clientVulcanSetting = new BooleanSetting("Vulcan", false);
    public static boolean friendsTabOpen = false;
    public static boolean friendInputActive = false;
    public static String friendInputText = "";
@@ -80,6 +84,38 @@ public class GuiScreen {
    public static Map<Module, Animation2> moduleSettingsAlphaAnimations = new HashMap<>();
    public static Map<Module, Animation2> moduleBindAnimations = new HashMap<>();
    public static Map<SliderSetting, Animation2> sliderAnimations = new HashMap<>();
+
+   public static Category[] resolveCategories() {
+      boolean showPrime = Zero.get != null
+         && Zero.get.visualLinkingClient != null
+         && Zero.get.visualLinkingClient.isPrimeOnTargetServer();
+      return showPrime ? new Category[] { Category.Visuals, Category.Utils, Category.Prime } : new Category[] { Category.Visuals, Category.Utils };
+   }
+
+   public static void refreshCategoriesAndModules() {
+      Category[] resolved = resolveCategories();
+      if (categories == null || !Arrays.equals(categories, resolved)) {
+         categories = resolved;
+      }
+
+      boolean primeAvailable = false;
+      for (Category category : categories) {
+         if (category == Category.Prime) {
+            primeAvailable = true;
+            break;
+         }
+      }
+
+      if (!primeAvailable && selectedCategories == Category.Prime) {
+         selectedCategories = Category.Visuals;
+      } else if (selectedCategories == null) {
+         selectedCategories = Category.Visuals;
+      }
+
+      if (Zero.get != null && Zero.get.manager != null) {
+         modules = Zero.get.manager.getType(selectedCategories);
+      }
+   }
 
    public static ScrollUtil getScrollUtil() {
       if (scrollUtil == null) {
@@ -113,5 +149,13 @@ public class GuiScreen {
          newAnim.setValue(targetProgress);
          return newAnim;
       });
+   }
+
+   public static boolean isVanillaStyle() {
+      return clientVanillaSetting != null && clientVanillaSetting.get();
+   }
+
+   public static boolean isVulkanMode() {
+      return clientVulcanSetting != null && clientVulcanSetting.get();
    }
 }

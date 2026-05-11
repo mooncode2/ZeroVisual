@@ -154,14 +154,25 @@ public class GuiClient extends Screen {
 
       GuiScreen.selectedTheme = Zero.get.guiManager.getCurrentTheme();
       GuiScreen.preSelectedTheme = Zero.get.guiManager.getCurrentTheme();
-      GuiScreen.categories = new Category[] { Category.Visuals, Category.Utils };
+      GuiScreen.categories = GuiScreen.resolveCategories();
       Category savedCategory = Zero.get.guiManager.getCurrentCategory();
-      GuiScreen.selectedCategories = savedCategory == Category.Utils ? Category.Utils : Category.Visuals;
+      if (savedCategory == Category.Prime) {
+         boolean primeAvailable = false;
+         for (Category category : GuiScreen.categories) {
+            if (category == Category.Prime) {
+               primeAvailable = true;
+               break;
+            }
+         }
+         GuiScreen.selectedCategories = primeAvailable ? Category.Prime : Category.Visuals;
+      } else {
+         GuiScreen.selectedCategories = savedCategory == Category.Utils ? Category.Utils : Category.Visuals;
+      }
       Zero.get.guiManager.setGuiCategory(GuiScreen.selectedCategories);
       if (Zero.get.manager == null) {
          Zero.get.manager = new Manager();
       }
 
-      GuiScreen.modules = Zero.get.manager.getType(GuiScreen.selectedCategories);
+      GuiScreen.refreshCategoriesAndModules();
    }
 }

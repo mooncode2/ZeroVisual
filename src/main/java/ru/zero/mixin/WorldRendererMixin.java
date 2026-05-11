@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.zero.event.EventManager;
 import ru.zero.event.render.EventRender3D;
 import ru.zero.event.render.WorldRenderEvent;
+import ru.zero.ui.gui.GuiScreen;
 import ru.zero.util.render.backends.gl.GlState;
 import ru.zero.util.render.capture.EntityFramebufferCaptureManager;
 
@@ -54,6 +55,11 @@ public class WorldRendererMixin {
          Vector4f fogColor,
          boolean shouldRenderSky,
          CallbackInfo ci) {
+      if (GuiScreen.isVulkanMode()) {
+         EntityFramebufferCaptureManager.getInstance().endFrame();
+         return;
+      }
+
       MatrixStack stack = new MatrixStack();
       Matrix4f basePositionMatrix = new Matrix4f(positionMatrix);
       stack.multiplyPositionMatrix(new Matrix4f(basePositionMatrix));

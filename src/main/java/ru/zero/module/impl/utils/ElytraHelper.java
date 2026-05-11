@@ -51,6 +51,14 @@ public class ElytraHelper extends Module {
          return;
       }
 
+      if (mc.currentScreen != null) {
+         equipState = EquipUseState.idle();
+         fireworkState = FireworkState.idle();
+         wasFallFlying = false;
+         lastBindDown = false;
+         return;
+      }
+
       if (equipState.phase != EquipPhase.IDLE) {
          tickEquipState();
          return;

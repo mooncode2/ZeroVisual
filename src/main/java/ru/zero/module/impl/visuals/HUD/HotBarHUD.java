@@ -19,10 +19,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.math.random.Random;
 import ru.zero.module.impl.visuals.Hud;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.gui.GuiScreen;
 
 @Environment(EnvType.CLIENT)
 public class HotBarHUD {
@@ -59,7 +59,7 @@ public class HotBarHUD {
 
    public static void hotbar(Renderer2D r2, DrawContext drawContext) {
       if (mc.player != null && mc.world != null) {
-         boolean vanillaStyle = ClickGUI.isVanillaStyle();
+         boolean vanillaStyle = GuiScreen.isVanillaStyle();
          float hotbarWidth = vanillaStyle ? 206.0F : 463.5F;
          float hotbarHeight = vanillaStyle ? 24.0F : 51.5F;
          float screenWidth = mc.getWindow().getWidth();

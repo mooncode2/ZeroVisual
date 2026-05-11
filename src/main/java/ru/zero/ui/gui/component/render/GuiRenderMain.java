@@ -11,7 +11,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import ru.zero.module.api.Module;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.HueSetting;
-import ru.zero.module.impl.visuals.ClickGUI;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.ui.gui.component.setting.GuiRenderSetting;
 import ru.zero.util.color.ColorUtil;
@@ -74,7 +73,7 @@ public class GuiRenderMain extends GuiScreen {
       int textColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextColor(1, 1), (int)(255.0F * mainAlpha));
       int backGroundOneColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), (int)(178.5F * mainAlpha));
       Color mainColorGlow35 = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int)(56.0F * mainAlpha)));
-      boolean vanillaStyle = ClickGUI.isVanillaStyle();
+      boolean vanillaStyle = GuiScreen.isVanillaStyle();
       if (vanillaStyle) {
          outlineColor = Renderer2D.ColorUtil.replAlpha(new Color(86, 86, 86).getRGB(), (int)(190.0F * mainAlpha));
          backGroundThreeColor = Renderer2D.ColorUtil.replAlpha(new Color(57, 57, 57).getRGB(), (int)(220.0F * mainAlpha));

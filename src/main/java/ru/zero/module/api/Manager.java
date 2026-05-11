@@ -7,11 +7,14 @@ import ru.zero.Zero;
 import ru.zero.module.impl.visuals.Arrows;
 import ru.zero.module.impl.visuals.AspectRation;
 import ru.zero.module.impl.visuals.CustomWorld;
-import ru.zero.module.impl.visuals.ClickGUI;
+import ru.zero.module.impl.prime.KillEffect;
+import ru.zero.module.impl.prime.Pets;
+import ru.zero.module.impl.prime.PrimeParticles;
 import ru.zero.module.impl.visuals.ESP;
 import ru.zero.module.impl.visuals.Hat;
 import ru.zero.module.impl.visuals.Hud;
 import ru.zero.module.impl.visuals.ItemESP;
+import ru.zero.module.impl.visuals.ItemPhysics;
 import ru.zero.module.impl.visuals.JumpCircle;
 import ru.zero.module.impl.visuals.NameTags;
 import ru.zero.module.impl.visuals.NightVision;
@@ -45,6 +48,7 @@ public class Manager {
       this.module.add(new Hud());
       this.module.add(new Arrows());
       this.module.add(new ItemESP());
+      this.module.add(new ItemPhysics());
       this.module.add(new Svetych());
       this.module.add(new Particles());
       this.module.add(new NoRender());
@@ -53,7 +57,6 @@ public class Manager {
       this.module.add(new TargetESP());
       this.module.add(new SkinManager());
       this.module.add(new CustomWorld());
-      this.module.add(new ClickGUI());
       this.module.add(new NightVision());
       this.module.add(new AspectRation());
       this.module.add(new RTXSounds());
@@ -63,6 +66,9 @@ public class Manager {
       this.module.add(new ClickBind());
       this.module.add(new ElytraHelper());
       this.module.add(new Optimizer());
+      this.module.add(new Pets());
+      this.module.add(new KillEffect());
+      this.module.add(new PrimeParticles());
    }
 
    public ArrayList<Module> getModules() {

@@ -23,7 +23,7 @@ public class LightmapTextureManagerMixin {
    private float night$getGammaValue(Double instance) {
       if (Zero.get != null && Zero.get.manager != null) {
          NightVision module = Zero.get.manager.get(NightVision.class);
-         if (module != null && module.enable && module.mode.is("Р“Р°РјРјР°")) {
+         if (module != null && module.enable && module.mode.is("Гамма")) {
             return 200.0F;
          }
       }

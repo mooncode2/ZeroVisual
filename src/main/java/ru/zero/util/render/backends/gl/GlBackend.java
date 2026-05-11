@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.opengl.GLDebugMessageCallback;
 import org.lwjgl.opengl.KHRDebug;
+import ru.zero.util.other.PlatformUtil;
 import ru.zero.util.render.core.RenderFrameMetrics;
 import ru.zero.util.render.postfx.DepthRenderTarget;
 import ru.zero.util.render.postfx.DownsampleBlur;
@@ -133,8 +134,9 @@ public final class GlBackend {
 
    public GlBackend() {
       GLCapabilities caps = GL.getCapabilities();
-      this.ssboSupported = caps.OpenGL43 || caps.GL_ARB_shader_storage_buffer_object;
-      this.debugOutputSupported = caps.OpenGL43 || caps.GL_KHR_debug;
+      boolean isMac = PlatformUtil.isMac();
+      this.ssboSupported = !isMac && (caps.OpenGL43 || caps.GL_ARB_shader_storage_buffer_object);
+      this.debugOutputSupported = !isMac && (caps.OpenGL43 || caps.GL_KHR_debug);
       boolean instancedArraysSupported = caps.OpenGL33 || caps.GL_ARB_instanced_arrays;
       boolean drawInstancedSupported = caps.OpenGL31 || caps.GL_ARB_draw_instanced;
       if (this.ssboSupported || instancedArraysSupported && drawInstancedSupported) {
@@ -202,6 +204,11 @@ public final class GlBackend {
          this.ssbo = this.ssboSupported ? GL15.glGenBuffers() : 0;
          this.instanceVbo = localInstanceVbo;
          this.instanceBuffer = ByteBuffer.allocateDirect(589824).order(ByteOrder.nativeOrder());
+         if (isMac) {
+            // Metal->OpenGL drivers are usually slower on full-res captures; reduce default blur capture cost.
+            this.blurCaptureScaleX = 0.4F;
+            this.blurCaptureScaleY = 0.4F;
+         }
          if (this.debugOutputSupported) {
             this.installDebugCallback(caps);
          }
