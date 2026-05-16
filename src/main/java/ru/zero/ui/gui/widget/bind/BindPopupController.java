@@ -22,6 +22,7 @@ import ru.zero.module.api.setting.impl.ModeSetting;
 import ru.zero.module.api.setting.impl.SliderSetting;
 import ru.zero.module.bind.BindingManager;
 import ru.zero.module.bind.BindingMode;
+import ru.zero.client.ZeroKeyBindings;
 import ru.zero.module.impl.client.MenuSettingsModule;
 import ru.zero.ui.gui.widget.bind.editor.BindPopupComboEditor;
 import ru.zero.ui.gui.widget.bind.editor.BindPopupSelectableEditor;
@@ -450,12 +451,8 @@ public final class BindPopupController {
    }
 
    private static int resolveMenuActivationKey() {
-      MenuSettingsModule module = MenuSettingsModule.getInstanceIfAvailable();
-      if (module == null) {
-         return 344;
-      } else {
-         return module.bind > 0 ? module.bind : 344;
-      }
+      int key = ZeroKeyBindings.getBoundKeyCode();
+      return key > 0 ? key : ZeroKeyBindings.DEFAULT_MENU_KEY;
    }
 
    public synchronized void render(Renderer2D renderer, FontObject defaultFont, int viewportWidth, int viewportHeight, float blurFactor) {

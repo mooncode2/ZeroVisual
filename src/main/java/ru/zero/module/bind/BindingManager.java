@@ -3,6 +3,8 @@ package ru.zero.module.bind;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import ru.zero.Zero;
+import ru.zero.client.ZeroKeyBindings;
+import ru.zero.module.impl.client.MenuSettingsModule;
 import ru.zero.event.EventInit;
 import ru.zero.event.EventManager;
 import ru.zero.event.input.KeyInputEvent;
@@ -59,6 +61,9 @@ public class BindingManager {
    public void updateModuleBinding(Module module, int keyCode, BindingMode mode) {
       if (module != null) {
          module.bind = keyCode;
+         if (module instanceof MenuSettingsModule) {
+            ZeroKeyBindings.syncFromMenuModule();
+         }
       }
    }
 

@@ -32,6 +32,7 @@ import ru.zero.module.impl.utils.ClickBind;
 import ru.zero.module.impl.utils.ElytraHelper;
 import ru.zero.module.impl.utils.InvMove;
 import ru.zero.module.impl.utils.Optimizer;
+import ru.zero.module.impl.utils.Zoom;
 
 /**
  * Список модулей клиента: только Visuals, Misc и Utils. Каталоги combat/movement/player не используются.
@@ -66,6 +67,7 @@ public class Manager {
       this.module.add(new ClickBind());
       this.module.add(new ElytraHelper());
       this.module.add(new Optimizer());
+      this.module.add(new Zoom());
       this.module.add(new Pets());
       this.module.add(new KillEffect());
       this.module.add(new PrimeParticles());

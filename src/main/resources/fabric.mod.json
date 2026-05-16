@@ -25,7 +25,8 @@
   "accessWidener": "zero.accesswidener",
   "depends": {
     "fabricloader": ">=0.17.2",
-    "minecraft": "*"
+    "minecraft": "~1.21.11",
+    "fabric-api": "*"
   },
   "custom": {
     "modmenu": {

@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.zero.event.EventManager;
 import ru.zero.event.player.EventRotation;
@@ -43,27 +42,17 @@ public abstract class CameraMixin {
       }
    }
 
-   @Redirect(
-      method = {"update"},
-      at = @At(
-         value = "INVOKE",
-         target = "Lnet/minecraft/client/render/Camera;setRotation(FF)V"
-      )
-   )
-   private void redirectSetRotation(Camera instance, float yaw, float pitch) {
-      if (this.night$rotationEvent == null
-         || this.night$rotationEvent.getYaw() == this.night$originalYaw && this.night$rotationEvent.getPitch() == this.night$originalPitch) {
-         this.setRotation(yaw, pitch);
-      } else {
-         this.setRotation(this.night$rotationEvent.getYaw(), this.night$rotationEvent.getPitch());
-      }
-   }
-
    @Inject(
       method = {"update"},
       at = {@At("RETURN")}
    )
    private void onUpdateReturn(CallbackInfo ci) {
+      if (this.night$rotationEvent != null
+            && (this.night$rotationEvent.getYaw() != this.night$originalYaw
+                  || this.night$rotationEvent.getPitch() != this.night$originalPitch)) {
+         this.setRotation(this.night$rotationEvent.getYaw(), this.night$rotationEvent.getPitch());
+      }
+
       this.night$rotationEvent = null;
    }
 }

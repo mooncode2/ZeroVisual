@@ -1,12 +1,6 @@
 package ru.zero.util.color;
 
 import java.awt.Color;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import lombok.Generated;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,10 +12,6 @@ import ru.zero.util.render.math.animation.anim2.Interpolator;
 
 @Environment(EnvType.CLIENT)
 public final class ColorUtil {
-   private static final long CACHE_EXPIRATION_TIME = 60000L;
-   private static final ConcurrentHashMap<ColorUtil.ColorKey, ColorUtil.CacheEntry> colorCache = new ConcurrentHashMap<>();
-   private static final ScheduledExecutorService cacheCleaner = Executors.newScheduledThreadPool(1);
-   private static final DelayQueue<ColorUtil.CacheEntry> cleanupQueue = new DelayQueue<>();
    public static final int RED = getColor(255, 0, 0);
    public static final int GREEN = getColor(0, 255, 0);
    public static final int BLUE = getColor(0, 0, 255);
@@ -213,15 +203,15 @@ public final class ColorUtil {
    }
 
    public static int replAlpha(int color, int alpha) {
-      return getColor(red(color), green(color), blue(color), alpha);
+      return reAlphaInt(color, alpha);
    }
 
    public static int replAlpha(int color, float alpha) {
-      return getColor(red(color), green(color), blue(color), alpha);
+      return reAlphaInt(color, Math.round(alpha * 255.0F));
    }
 
    public static int multAlpha(int color, float percent01) {
-      return getColor(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
+      return reAlphaInt(color, Math.round(alpha(color) * percent01));
    }
 
    public static int toGray(int color, float percent01) {
@@ -321,158 +311,21 @@ public final class ColorUtil {
    }
 
    public static int getColor(int red, int green, int blue, int alpha) {
-      ColorUtil.ColorKey key = new ColorUtil.ColorKey(red, green, blue, alpha);
-      ColorUtil.CacheEntry cacheEntry = colorCache.computeIfAbsent(key, k -> {
-         ColorUtil.CacheEntry newEntry = new ColorUtil.CacheEntry(k, computeColor(red, green, blue, alpha), 60000L);
-         cleanupQueue.offer(newEntry);
-         return newEntry;
-      });
-      return cacheEntry.getColor();
-   }
-
-   public static int getColor(int red, int green, int blue) {
-      return getColor(red, green, blue, 255);
-   }
-
-   private static int computeColor(int red, int green, int blue, int alpha) {
       return MathHelper.clamp(alpha, 0, 255) << 24
          | MathHelper.clamp(red, 0, 255) << 16
          | MathHelper.clamp(green, 0, 255) << 8
          | MathHelper.clamp(blue, 0, 255);
    }
 
-   private static String generateKey(int red, int green, int blue, int alpha) {
-      return red + "," + green + "," + blue + "," + alpha;
+   public static int getColor(int red, int green, int blue) {
+      return getColor(red, green, blue, 255);
    }
 
    public static void shutdownCacheCleaner() {
-      cacheCleaner.shutdown();
    }
 
    @Generated
    private ColorUtil() {
       throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-   }
-
-   static {
-      cacheCleaner.scheduleWithFixedDelay(() -> {
-         for (ColorUtil.CacheEntry entry = cleanupQueue.poll(); entry != null; entry = cleanupQueue.poll()) {
-            if (entry.isExpired()) {
-               colorCache.remove(entry.getKey());
-            }
-         }
-      }, 0L, 1L, TimeUnit.SECONDS);
-   }
-
-   @Environment(EnvType.CLIENT)
-   private static class CacheEntry implements Delayed {
-      private final ColorUtil.ColorKey key;
-      private final int color;
-      private final long expirationTime;
-
-      CacheEntry(ColorUtil.ColorKey key, int color, long ttl) {
-         this.key = key;
-         this.color = color;
-         this.expirationTime = System.currentTimeMillis() + ttl;
-      }
-
-      @Override
-      public long getDelay(TimeUnit unit) {
-         long delay = this.expirationTime - System.currentTimeMillis();
-         return unit.convert(delay, TimeUnit.MILLISECONDS);
-      }
-
-      public int compareTo(Delayed other) {
-         return other instanceof ColorUtil.CacheEntry ? Long.compare(this.expirationTime, ((ColorUtil.CacheEntry)other).expirationTime) : 0;
-      }
-
-      public boolean isExpired() {
-         return System.currentTimeMillis() > this.expirationTime;
-      }
-
-      @Generated
-      public ColorUtil.ColorKey getKey() {
-         return this.key;
-      }
-
-      @Generated
-      public int getColor() {
-         return this.color;
-      }
-
-      @Generated
-      public long getExpirationTime() {
-         return this.expirationTime;
-      }
-   }
-
-   @Environment(EnvType.CLIENT)
-   private static class ColorKey {
-      final int red;
-      final int green;
-      final int blue;
-      final int alpha;
-
-      @Generated
-      public int getRed() {
-         return this.red;
-      }
-
-      @Generated
-      public int getGreen() {
-         return this.green;
-      }
-
-      @Generated
-      public int getBlue() {
-         return this.blue;
-      }
-
-      @Generated
-      public int getAlpha() {
-         return this.alpha;
-      }
-
-      @Generated
-      public ColorKey(int red, int green, int blue, int alpha) {
-         this.red = red;
-         this.green = green;
-         this.blue = blue;
-         this.alpha = alpha;
-      }
-
-      @Generated
-      @Override
-      public boolean equals(Object o) {
-         if (o == this) {
-            return true;
-         } else if (!(o instanceof ColorUtil.ColorKey other)) {
-            return false;
-         } else if (!other.canEqual(this)) {
-            return false;
-         } else if (this.getRed() != other.getRed()) {
-            return false;
-         } else if (this.getGreen() != other.getGreen()) {
-            return false;
-         } else {
-            return this.getBlue() != other.getBlue() ? false : this.getAlpha() == other.getAlpha();
-         }
-      }
-
-      @Generated
-      protected boolean canEqual(Object other) {
-         return other instanceof ColorUtil.ColorKey;
-      }
-
-      @Generated
-      @Override
-      public int hashCode() {
-         int PRIME = 59;
-         int result = 1;
-         result = result * 59 + this.getRed();
-         result = result * 59 + this.getGreen();
-         result = result * 59 + this.getBlue();
-         return result * 59 + this.getAlpha();
-      }
    }
 }

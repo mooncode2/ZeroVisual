@@ -12,9 +12,9 @@ public class GuiMouseScrolled extends GuiScreen {
       float[] mouseCoords = ScaleHelper.calc((float)pMouseX, (float)pMouseY);
       float mouseX = mouseCoords[0];
       float mouseY = mouseCoords[1];
-      float x1 = GuiScreen.x + 104.735F;
+      float x1 = GuiScreen.x;
       float y1 = GuiScreen.y;
-      float rectWidth = Math.max(0.0F, GuiScreen.width - 104.735F);
+      float rectWidth = GuiScreen.width;
       float rectHeight = GuiScreen.height;
       if (!GuiScreen.exit && GuiRenderMain.isHovered(mouseX, mouseY, x1, y1, rectWidth, rectHeight)) {
          // На части мышек/тачпадов вертикальный скролл может приходить в pScrollX.

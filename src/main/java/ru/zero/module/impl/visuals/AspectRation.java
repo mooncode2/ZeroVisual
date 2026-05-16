@@ -9,7 +9,6 @@ import ru.zero.module.api.Module;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.ModeSetting;
 import ru.zero.module.api.setting.impl.SliderSetting;
-import ru.zero.util.keyboard.ScaledResolution;
 
 @IModule(
    name = "Aspect Ration",
@@ -28,26 +27,36 @@ public class AspectRation extends Module {
       this.addSettings(new Setting[]{aspect, customAspect});
    }
 
-   public static float getAspectRation() {
-      ScaledResolution sr = new ScaledResolution(mc);
-      if (!Zero.get.manager.getModule(AspectRation.class).enable) {
-         return 0.0F;
-      } else {
-         float aspect1 = (float)sr.getWidth() / sr.getHeight();
-         String var3 = aspect.get();
-
-         float newAspect = switch (var3) {
-            case "16:9" -> 1.7777778F;
-            case "4:3" -> 1.3333334F;
-            case "1:1" -> 1.0F;
-            case "16:10" -> 1.6F;
-            case "21:9" -> 2.3333333F;
-            case "32:9" -> 3.5555556F;
-            case "5:4" -> 1.25F;
-            case "2:1" -> 2.0F;
-            default -> customAspect.get();
-         };
-         return newAspect - aspect1;
+   /**
+    * Аспект для {@code perspective()}: при выключенном модуле — реальный аспект framebuffer;
+    * при включённом — выбранное пользователем соотношение (без смешения с GUI scale).
+    */
+   public static float getProjectionAspect() {
+      if (mc == null || mc.getWindow() == null) {
+         return 16.0F / 9.0F;
       }
+      int fbW = mc.getWindow().getFramebufferWidth();
+      int fbH = mc.getWindow().getFramebufferHeight();
+      float framebufferAspect = (float) fbW / Math.max(1, fbH);
+      if (Zero.get == null || Zero.get.manager == null) {
+         return framebufferAspect;
+      }
+      AspectRation module = Zero.get.manager.get(AspectRation.class);
+      if (module == null || !module.enable) {
+         return framebufferAspect;
+      }
+      String mode = aspect.get();
+      float forced = switch (mode) {
+         case "16:9" -> 1.7777778F;
+         case "4:3" -> 1.3333334F;
+         case "1:1" -> 1.0F;
+         case "16:10" -> 1.6F;
+         case "21:9" -> 2.3333333F;
+         case "32:9" -> 3.5555556F;
+         case "5:4" -> 1.25F;
+         case "2:1" -> 2.0F;
+         default -> customAspect.get();
+      };
+      return forced > 1.0e-4F ? forced : framebufferAspect;
    }
 }

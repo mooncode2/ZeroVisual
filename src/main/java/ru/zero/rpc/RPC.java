@@ -10,6 +10,19 @@ public class RPC implements IMinecraft {
    public static boolean started;
    private static Thread thread;
 
+   public void stopRpc() {
+      if (thread != null) {
+         thread.interrupt();
+         thread = null;
+      }
+
+      if (started && DiscordRPC.Loader.isAvailable()) {
+         DiscordRPC.Loader.getInstance().Discord_Shutdown();
+      }
+
+      started = false;
+   }
+
    public void startRpc() {
       if (DiscordRPC.Loader.isAvailable()) {
          DiscordRPC rpc = DiscordRPC.Loader.getInstance();

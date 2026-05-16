@@ -5,8 +5,12 @@ import lombok.Generated;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import ru.zero.cfg.ConfigManager;
+import ru.zero.client.MenuKeyHandler;
+import ru.zero.client.ZeroKeyBindings;
 import ru.zero.commands.CommandBootstrap;
 import ru.zero.config.GuiManager;
 import ru.zero.config.friend.FriendManager;
@@ -23,10 +27,14 @@ import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.ui.gui.GuiClient;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.util.render.animation.AnimationSystem;
+import ru.zero.util.color.ColorUtil;
 import ru.zero.util.render.backends.gl.GlBackend;
 import ru.zero.util.render.backends.gl.GlState;
+import ru.zero.util.render.capture.EntityFramebufferCaptureManager;
 import ru.zero.util.render.core.Renderer2D;
+import ru.zero.util.render.texture.TextureLoader;
 import ru.zero.util.render.text.FontObject;
+import ru.zero.util.render.utils.SoundUtil;
 import ru.zero.util.render.text.FontRegistry;
 
 @Environment(EnvType.CLIENT)
@@ -63,6 +71,11 @@ public class Zero implements ClientModInitializer {
 
    public void onInitializeClient() {
       System.out.println("[Zero] onInitializeClient() START");
+      if (FabricLoader.getInstance().isModLoaded("night")) {
+         throw new IllegalStateException(
+               "Mod \"night\" is loaded together with \"zero\". Remove night*.jar from mods/ — only one client build is allowed.");
+      }
+
       get = this;
       migrateLegacyRoot();
       if (!this.root.exists()) {
@@ -84,6 +97,8 @@ public class Zero implements ClientModInitializer {
       rtx.init();
       this.rpc.startRpc();
       CommandBootstrap.initialize();
+      ZeroKeyBindings.register();
+      MenuKeyHandler.register();
       BindingManager.getInstance().initialize();
       if (this.configManager != null) {
          this.configManager.load();
@@ -99,6 +114,8 @@ public class Zero implements ClientModInitializer {
          }
       }
 
+      ZeroKeyBindings.syncFromMenuModule();
+
       Hud hudModule = this.manager != null ? this.manager.get(Hud.class) : null;
       if (hudModule != null && !hudModule.enable) {
          hudModule.setState(true);
@@ -112,8 +129,27 @@ public class Zero implements ClientModInitializer {
       RenderHandler.register();
       EventManager.register(this);
       EventManager.register(this.visualLinkingClient);
+      ClientLifecycleEvents.CLIENT_STOPPING.register(client -> shutdownClientResources());
       modInitialized = true;
       System.out.println("[Zero] onInitializeClient() COMPLETE - modInitialized=" + modInitialized);
+   }
+
+   private static void shutdownClientResources() {
+      if (get != null && get.rpc != null) {
+         get.rpc.stopRpc();
+      }
+
+      ConfigManager.shutdown();
+      ColorUtil.shutdownCacheCleaner();
+      SoundUtil.releaseAll();
+      EntityFramebufferCaptureManager.getInstance().setEnabled(false);
+      TextureLoader.clearCache();
+      if (backend != null) {
+         backend.destroy();
+         backend = null;
+      }
+      initialized = false;
+      renderer = null;
    }
 
    private void migrateLegacyRoot() {

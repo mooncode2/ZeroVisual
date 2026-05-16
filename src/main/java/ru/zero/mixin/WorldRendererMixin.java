@@ -39,7 +39,10 @@ public class WorldRendererMixin {
          Vector4f fogColor,
          boolean shouldRenderSky,
          CallbackInfo ci) {
-      EntityFramebufferCaptureManager.getInstance().beginFrame((WorldRenderer) (Object) this, tickCounter, camera);
+      EntityFramebufferCaptureManager captureManager = EntityFramebufferCaptureManager.getInstance();
+      if (captureManager.isEnabled() || GuiScreen.isVulkanMode()) {
+         captureManager.beginFrame((WorldRenderer) (Object) this, tickCounter, camera);
+      }
    }
 
    @Inject(method = { "render" }, at = { @At("RETURN") })
@@ -55,8 +58,9 @@ public class WorldRendererMixin {
          Vector4f fogColor,
          boolean shouldRenderSky,
          CallbackInfo ci) {
+      EntityFramebufferCaptureManager captureManager = EntityFramebufferCaptureManager.getInstance();
       if (GuiScreen.isVulkanMode()) {
-         EntityFramebufferCaptureManager.getInstance().endFrame();
+         captureManager.endFrame();
          return;
       }
 
@@ -64,7 +68,9 @@ public class WorldRendererMixin {
       Matrix4f basePositionMatrix = new Matrix4f(positionMatrix);
       stack.multiplyPositionMatrix(new Matrix4f(basePositionMatrix));
       EventManager.call(new EventRender3D(stack, tickCounter.getTickProgress(true)));
-      EntityFramebufferCaptureManager.getInstance().endFrame();
+      if (captureManager.isEnabled()) {
+         captureManager.endFrame();
+      }
       MinecraftClient client = MinecraftClient.getInstance();
       if (client != null) {
          GameRenderer gameRenderer = client.gameRenderer;

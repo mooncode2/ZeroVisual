@@ -3,6 +3,8 @@ package ru.zero.ui.gui.component.main;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import ru.zero.Zero;
+import ru.zero.client.ZeroKeyBindings;
+import ru.zero.module.impl.client.MenuSettingsModule;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.util.render.math.animation.anim.util.Easings;
 
@@ -51,6 +53,11 @@ public class GuiKeyPressed extends GuiScreen {
             GuiScreen.activeModuleBind.bind = -1;
             GuiScreen.activeModuleBind.binding = false;
             GuiScreen.getModuleBindAnimation(GuiScreen.activeModuleBind).run(0.0, 0.2F, Easings.SINE_OUT);
+            if (GuiScreen.activeModuleBind instanceof MenuSettingsModule) {
+               ZeroKeyBindings.setBoundKeyCode(ZeroKeyBindings.DEFAULT_MENU_KEY);
+               GuiScreen.activeModuleBind.bind = ZeroKeyBindings.DEFAULT_MENU_KEY;
+            }
+
             GuiScreen.activeModuleBind = null;
             if (Zero.get.configManager != null) {
                Zero.get.configManager.autoSave();
@@ -59,6 +66,10 @@ public class GuiKeyPressed extends GuiScreen {
             GuiScreen.activeModuleBind.bind = keyCode;
             GuiScreen.activeModuleBind.binding = false;
             GuiScreen.getModuleBindAnimation(GuiScreen.activeModuleBind).run(1.0, 0.2F, Easings.SINE_OUT);
+            if (GuiScreen.activeModuleBind instanceof MenuSettingsModule) {
+               ZeroKeyBindings.syncFromMenuModule();
+            }
+
             GuiScreen.activeModuleBind = null;
             if (Zero.get.configManager != null) {
                Zero.get.configManager.autoSave();

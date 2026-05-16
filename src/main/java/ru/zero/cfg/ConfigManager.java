@@ -7,7 +7,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.apache.commons.io.FilenameUtils;
@@ -18,7 +24,14 @@ public final class ConfigManager extends Manager<Config> {
    public static final String AUTO_SAVE_CONFIG_NAME = "latest";
    public static final File configDirectory = getConfigDirectory();
    public static final String[] AUTO_SAVE_ALIASES = new String[] { "latest", "last", "lastest" };
+   private static final long AUTO_SAVE_DEBOUNCE_MS = 500L;
    private static final ArrayList<Config> loadedConfigs = new ArrayList<>();
+   private static final ScheduledExecutorService AUTO_SAVE_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> {
+      Thread thread = new Thread(r, "zero-config-autosave");
+      thread.setDaemon(true);
+      return thread;
+   });
+   private volatile ScheduledFuture<?> pendingAutoSave;
 
    private static File getConfigDirectory() {
       File root;
@@ -109,6 +122,10 @@ public final class ConfigManager extends Manager<Config> {
    }
 
    public boolean saveConfig(String configName) {
+      return this.saveConfig(configName, true);
+   }
+
+   private boolean saveConfig(String configName, boolean refreshIndex) {
       if (configName == null) {
          return false;
       } else {
@@ -125,7 +142,9 @@ public final class ConfigManager extends Manager<Config> {
             boolean var5;
             try (FileWriter writer = new FileWriter(config.getFile())) {
                writer.write(contentPrettyPrint);
-               this.load();
+               if (refreshIndex) {
+                  this.load();
+               }
                var5 = true;
             }
 
@@ -178,11 +197,56 @@ public final class ConfigManager extends Manager<Config> {
    }
 
    public void autoSave() {
-      if (Zero.get.configManager != null) {
-         // Пишем основной autosave и legacy-алиасы для совместимости.
-         this.saveConfig(AUTO_SAVE_CONFIG_NAME);
-         this.saveConfig("last");
-         this.saveConfig("lastest");
+      if (Zero.get == null || Zero.get.configManager != this) {
+         return;
+      }
+
+      ScheduledFuture<?> previous = this.pendingAutoSave;
+      if (previous != null) {
+         previous.cancel(false);
+      }
+
+      this.pendingAutoSave = AUTO_SAVE_EXECUTOR.schedule(this::performAutoSave, AUTO_SAVE_DEBOUNCE_MS, TimeUnit.MILLISECONDS);
+   }
+
+   private void performAutoSave() {
+      if (!this.saveConfig(AUTO_SAVE_CONFIG_NAME, false)) {
+         return;
+      }
+
+      Config primary = this.findConfig(AUTO_SAVE_CONFIG_NAME);
+      if (primary == null) {
+         return;
+      }
+
+      File source = primary.getFile();
+      for (String alias : AUTO_SAVE_ALIASES) {
+         if (alias.equalsIgnoreCase(AUTO_SAVE_CONFIG_NAME)) {
+            continue;
+         }
+
+         try {
+            File target = new File(configDirectory, alias + ".json");
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (this.findConfig(alias) == null) {
+               Config aliasConfig = new Config(alias);
+               this.getContents().add(aliasConfig);
+               loadedConfigs.add(aliasConfig);
+            }
+         } catch (IOException ignored) {
+         }
+      }
+   }
+
+   public static void shutdown() {
+      AUTO_SAVE_EXECUTOR.shutdown();
+      try {
+         if (!AUTO_SAVE_EXECUTOR.awaitTermination(2L, TimeUnit.SECONDS)) {
+            AUTO_SAVE_EXECUTOR.shutdownNow();
+         }
+      } catch (InterruptedException e) {
+         AUTO_SAVE_EXECUTOR.shutdownNow();
+         Thread.currentThread().interrupt();
       }
    }
 }

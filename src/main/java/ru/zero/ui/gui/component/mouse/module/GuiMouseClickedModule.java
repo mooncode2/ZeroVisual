@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import ru.zero.client.ZeroKeyBindings;
 import ru.zero.module.api.Module;
+import ru.zero.module.impl.client.MenuSettingsModule;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.HueSetting;
 import ru.zero.ui.gui.GuiScreen;
@@ -155,6 +157,10 @@ public class GuiMouseClickedModule extends GuiScreen {
                         int mouseKey = -100 - pButton;
                         module.bind = mouseKey;
                         module.binding = false;
+                        if (module instanceof MenuSettingsModule) {
+                           ZeroKeyBindings.syncFromMenuModule();
+                        }
+
                         GuiScreen.activeModuleBind = null;
                         GuiScreen.getModuleBindAnimation(module).run(1.0, 0.2F, Easings.SINE_OUT);
                         return true;
@@ -221,6 +227,10 @@ public class GuiMouseClickedModule extends GuiScreen {
                         int mouseKey = -100 - pButton;
                         module.bind = mouseKey;
                         module.binding = false;
+                        if (module instanceof MenuSettingsModule) {
+                           ZeroKeyBindings.syncFromMenuModule();
+                        }
+
                         GuiScreen.activeModuleBind = null;
                         GuiScreen.getModuleBindAnimation(module).run(1.0, 0.2F, Easings.SINE_OUT);
                         return true;

@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "ru.zero.mixin",
+  "plugin": "ru.zero.mixin.plugin.ZeroMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "RenderLayerMultiPhaseMixin",
@@ -20,7 +21,6 @@
     "InactivityFpsLimiterMixin",
     "EntityRenderDispatcherAccessor",
     "EntityRendererMixin",
-    "PlayerListEntryMixin",
     "WorldRendererEntityCaptureMixin",
     "WorldRendererMixin",
     "CreeperTextureMixin",

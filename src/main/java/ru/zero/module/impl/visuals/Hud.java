@@ -125,13 +125,22 @@ public class Hud extends Module {
    }
 
    public void showNotification(String icon, String text, long duration) {
+      this.trimNotifications();
       Hud.Notification notification = new Hud.Notification(icon, text, duration);
       this.notifications.add(notification);
    }
 
    public void showNotification(String icon, String text, long duration, int iconColor) {
+      this.trimNotifications();
       Hud.Notification notification = new Hud.Notification(icon, text, duration, iconColor);
       this.notifications.add(notification);
+   }
+
+   private void trimNotifications() {
+      int maxStored = Math.max(Optimizer.getMaxNotifications(), 12);
+      if (this.notifications.size() >= maxStored) {
+         this.notifications.subList(0, this.notifications.size() - maxStored + 1).clear();
+      }
    }
 
    public void showNotification(String icon, String text) {

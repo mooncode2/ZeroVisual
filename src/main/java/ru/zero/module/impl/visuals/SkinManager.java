@@ -29,6 +29,7 @@ import ru.zero.module.api.setting.impl.MultiBooleanSetting;
 @IModule(name = "Skin Manager", description = "Manages custom player skins", category = Category.Visuals, bind = -1)
 @Environment(EnvType.CLIENT)
 public class SkinManager extends Module {
+   private static final Identifier CUSTOM_SKIN_TEXTURE_ID = Identifier.of("zero", "custom_skin");
    private static String customSkinPath = null;
    private static Identifier customSkinIdentifier = null;
    private static boolean isEnabled = false;
@@ -69,7 +70,7 @@ public class SkinManager extends Module {
    public void onDisable() {
       super.onDisable();
       isEnabled = false;
-      customSkinIdentifier = null;
+      releaseCustomSkinTexture();
    }
 
    private static File getSkinDirectory() {
@@ -88,6 +89,14 @@ public class SkinManager extends Module {
       customSkinIdentifier = null;
    }
 
+   private static void releaseCustomSkinTexture() {
+      MinecraftClient client = MinecraftClient.getInstance();
+      if (client != null && customSkinIdentifier != null) {
+         client.getTextureManager().destroyTexture(customSkinIdentifier);
+      }
+      customSkinIdentifier = null;
+   }
+
    private static Identifier loadCustomSkin() {
       if (customSkinPath != null && !customSkinPath.isEmpty()) {
          File skinFile = new File(customSkinPath);
@@ -95,12 +104,15 @@ public class SkinManager extends Module {
             return null;
          } else {
             try {
-               NativeImage image = NativeImage.read(new FileInputStream(skinFile));
-               Identifier identifier = Identifier.of("zero", "custom_skin_" + System.currentTimeMillis());
-               NativeImageBackedTexture texture = new NativeImageBackedTexture(() -> identifier.toString(), image);
-               MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, texture);
-               customSkinIdentifier = identifier;
-               return identifier;
+               releaseCustomSkinTexture();
+               NativeImage image;
+               try (FileInputStream input = new FileInputStream(skinFile)) {
+                  image = NativeImage.read(input);
+               }
+               NativeImageBackedTexture texture = new NativeImageBackedTexture(() -> "zero_custom_skin", image);
+               MinecraftClient.getInstance().getTextureManager().registerTexture(CUSTOM_SKIN_TEXTURE_ID, texture);
+               customSkinIdentifier = CUSTOM_SKIN_TEXTURE_ID;
+               return customSkinIdentifier;
             } catch (IOException var4) {
                var4.printStackTrace();
                return null;

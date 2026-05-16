@@ -32,7 +32,6 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.client.util.BufferAllocator;
-import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.world.Heightmap.Type;
 import net.minecraft.client.util.math.MatrixStack.Entry;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
@@ -82,6 +81,9 @@ public class Particles extends Module {
                .withBlend(BlendFunction.LIGHTNING)
                .build());
    private static final Map<Particles.ParticleType, RenderLayer> RENDER_LAYER_CACHE = new ConcurrentHashMap<>();
+   private static final int MAX_PARTICLES_PER_LIST = 350;
+   private static final int MAX_THROW_PARTICLES_PER_TICK = 32;
+   private int throwParticleBudget;
    private final List<Particles.Particle> targetParticles = new ArrayList<>();
    private final List<Particles.Particle> worldParticles = new ArrayList<>();
    private final List<Particles.Particle> flameParticles = new ArrayList<>();
@@ -98,6 +100,10 @@ public class Particles extends Module {
    }
 
    private void spawnParticle(List<Particles.Particle> particles, Vec3d position, Vec3d velocity) {
+      if (particles.size() >= MAX_PARTICLES_PER_LIST) {
+         particles.remove(0);
+      }
+
       float particleSize = 0.05F + size.get() * 0.2F;
       int color = ColorUtil.fade(particles.size() * 100);
       String var7 = particleMode.get();
@@ -143,12 +149,19 @@ public class Particles extends Module {
 
    @EventInit
    public void onEvent(EventMotion event) {
+      this.throwParticleBudget = MAX_THROW_PARTICLES_PER_TICK;
       if (events.get("Бросок")) {
-         if (mc.world == null) {
+         if (mc.world == null || mc.player == null) {
             return;
          }
 
-         for (Entity entity : mc.world.getEntities()) {
+         double radiusSq = 64.0;
+         Box searchBox = mc.player.getBoundingBox().expand(radiusSq);
+         for (Entity entity : mc.world.getOtherEntities(mc.player, searchBox)) {
+            if (this.throwParticleBudget <= 0) {
+               break;
+            }
+
             if ((entity instanceof EnderPearlEntity || entity instanceof ArrowEntity || entity instanceof TridentEntity)
                   && (!(entity instanceof TridentEntity trident) || !trident.isOnGround())) {
                boolean isMoving = entity.lastX != entity.getX()
@@ -157,7 +170,7 @@ public class Particles extends Module {
                if (isMoving) {
                   Vec3d pos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
 
-                  for (int i = 0; i < 4; i++) {
+                  for (int i = 0; i < 3 && this.throwParticleBudget > 0; i++) {
                      this.spawnParticle(
                            this.flameParticles,
                            new Vec3d(
@@ -168,6 +181,7 @@ public class Particles extends Module {
                                  MathHelper.nextDouble(Random.create(), -1.0, 1.0),
                                  MathHelper.nextDouble(Random.create(), -0.3, 0.3),
                                  MathHelper.nextDouble(Random.create(), -1.0, 1.0)));
+                     this.throwParticleBudget--;
                   }
                }
             }

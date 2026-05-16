@@ -22,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import ru.zero.Zero;
+import ru.zero.module.impl.utils.Zoom;
 import ru.zero.module.impl.visuals.AspectRation;
 import ru.zero.module.impl.visuals.CustomWorld;
 import ru.zero.module.impl.visuals.HUD.InformationHUD;
@@ -49,9 +51,19 @@ public abstract class GameRendererMixin {
    public void getBasicProjectionMatrix(float fovDegrees, CallbackInfoReturnable<Matrix4f> cir) {
       Matrix4f matrix4f = new Matrix4f();
       cir.cancel();
-      float aspect = (float)MinecraftClient.getInstance().getWindow().getFramebufferWidth() / MinecraftClient.getInstance().getWindow().getFramebufferHeight()
-         + AspectRation.getAspectRation();
+      float aspect = AspectRation.getProjectionAspect();
       cir.setReturnValue(matrix4f.perspective(fovDegrees * (float) (Math.PI / 180.0), aspect, 0.05F, this.getFarPlaneDistance()));
+   }
+
+   @ModifyReturnValue(method = { "getFov" }, at = { @At("RETURN") })
+   private float zero$applyZoom(float original, Camera camera, float tickDelta, boolean changingFov) {
+      if (Zero.get != null && Zero.get.manager != null) {
+         Zoom zoom = Zero.get.manager.get(Zoom.class);
+         if (zoom != null) {
+            return zoom.modifyFov(original, tickDelta);
+         }
+      }
+      return original;
    }
 
    @Inject(
