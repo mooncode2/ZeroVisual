@@ -59,6 +59,7 @@ public class GuiScreen {
    public static boolean backspaceHeld = false;
    public static long firstBackspacePressTime = 0L;
    public static boolean showClientSettingsPopup = false;
+   public static boolean serverMapOpen = false;
    public static BooleanSetting clientBlurSetting = new BooleanSetting("Блюр (Размытие)", false);
    public static BooleanSetting clientVanillaSetting = new BooleanSetting("Ванильный", false);
    public static BooleanSetting clientVulcanSetting = new BooleanSetting("Vulcan", false);

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import ru.zero.module.api.Module;
 import ru.zero.ui.gui.GuiScreen;
+import ru.zero.ui.gui.map.GuiServerMapPanel;
 import ru.zero.ui.gui.theme.ThemeScreen;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.ScaleHelper;
@@ -51,9 +52,14 @@ public class GuiRender extends GuiScreen {
                   renderer2D.rect(0.0F, 0.0F, scaledWidth, scaledHeight, Renderer2D.ColorUtil.rgba(0, 0, 0, (int)(140.0F * mainAlpha)));
                   GuiRenderBackground.renderBackground(renderer2D, pose, mainAlpha);
                   GuiRenderUpPanel.renderUpPanel(renderer2D, pose, mainAlpha);
-                  GuiRenderLeftPanel.renderLeftPanel(renderer2D, pose, mainAlpha);
-                  GuiRenderLines.renderLines(renderer2D, pose, mainAlpha);
-                  GuiRenderMain.renderMain(renderer2D, pose, mouseX, mouseY, mainAlpha * categoryAnimation.getOutput());
+                  if (GuiScreen.serverMapOpen) {
+                     GuiRenderLines.renderLines(renderer2D, pose, mainAlpha, true);
+                     GuiServerMapPanel.renderPanel(renderer2D, pose, mainAlpha);
+                  } else {
+                     GuiRenderLeftPanel.renderLeftPanel(renderer2D, pose, mainAlpha);
+                     GuiRenderLines.renderLines(renderer2D, pose, mainAlpha, false);
+                     GuiRenderMain.renderMain(renderer2D, pose, mouseX, mouseY, mainAlpha * categoryAnimation.getOutput());
+                  }
                   ThemeScreen.renderTheme(renderer2D, p_281549_, mouseX, mouseY);
                } finally {
                   renderer2D.popTransform();

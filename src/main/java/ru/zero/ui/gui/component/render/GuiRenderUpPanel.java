@@ -6,6 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
 import ru.zero.ui.gui.GuiScreen;
+import ru.zero.ui.gui.map.GuiServerMapPanel;
 import ru.zero.ui.gui.component.setting.GuiRenderSetting;
 import ru.zero.util.color.ColorUtil;
 import ru.zero.util.render.backends.gl.StencilHelper;
@@ -75,6 +76,7 @@ public class GuiRenderUpPanel extends GuiScreen {
          }
       }
 
+      GuiServerMapPanel.renderMapButton(renderer2D, mainAlpha);
       renderer2D.rectOutline(GuiScreen.x + 312.23F, GuiScreen.y + 6.185F, 21.325F, 21.325F, 5.5F, outlineColor, 0.1F);
       renderer2D.rect(GuiScreen.x + 312.23F, GuiScreen.y + 6.185F, 21.325F, 21.325F, 5.5F, backGroundThreeColor);
       renderer2D.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, GuiScreen.x + 318.55F, GuiScreen.y + 12.85F - 1.5F + 9.8F, 18.0F, vanillaStyle ? "S" : "W", mainColor);

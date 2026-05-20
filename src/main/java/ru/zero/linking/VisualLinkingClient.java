@@ -30,6 +30,7 @@ public final class VisualLinkingClient {
    private volatile PrimeState state = PrimeState.UNKNOWN;
    private volatile String displayRank = "ZeroUser";
    private volatile boolean targetServerSession = false;
+   private volatile boolean serverApiAuthorized = false;
    private volatile long lastRequestAt = 0L;
    private volatile boolean requestInFlight = false;
    private String lastCheckedNick = "";
@@ -79,6 +80,10 @@ public final class VisualLinkingClient {
       return this.targetServerSession && this.state == PrimeState.PRIME;
    }
 
+   public boolean isServerApiAuthorized() {
+      return this.targetServerSession && this.serverApiAuthorized;
+   }
+
    private void resetSession() {
       this.lastCheckedNick = "";
       this.lastCheckedHost = "";
@@ -86,6 +91,7 @@ public final class VisualLinkingClient {
       this.state = PrimeState.UNKNOWN;
       this.displayRank = "ZeroUser";
       this.targetServerSession = false;
+      this.serverApiAuthorized = false;
    }
 
    private void requestPrimeStatusAsync(String nick) {
@@ -117,6 +123,7 @@ public final class VisualLinkingClient {
          } finally {
             this.state = prime ? PrimeState.PRIME : PrimeState.UNPRIME;
             this.displayRank = prime ? "Prime" : "Unprime";
+            this.serverApiAuthorized = prime;
             this.requestInFlight = false;
          }
       }, "VisualLinkingClient");

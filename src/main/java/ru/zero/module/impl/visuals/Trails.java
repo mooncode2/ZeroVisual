@@ -33,7 +33,6 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.BufferAllocator;
-import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack.Entry;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import org.joml.Matrix3f;
@@ -64,7 +63,6 @@ public class Trails extends Module {
    public static SliderSetting size = new SliderSetting("Size", 1.0F, 0.1F, 3.0F, 0.1F, false);
    public static BooleanSetting firstPerson = new BooleanSetting("FirstPerson", false);
    private final List<Trails.Particle3D> particles = new ArrayList<>();
-   private final Identifier bloom = Identifier.of("zero", "textures/world/firefly.png");
    public AnimationUtils stateAnim = new AnimationUtils(0.0F, 0.0F, 0.1F);
    private static final int QUAD_BUFFER_SIZE_BYTES = 1024;
    private static final String PIPELINE_NAMESPACE = "zero";
@@ -77,6 +75,14 @@ public class Trails extends Module {
                .withDepthWrite(false)
                .withBlend(BlendFunction.LIGHTNING)
                .build());
+   private static final RenderLayer BLOOM_LAYER = RenderLayer.of(
+         "zero/trails/bloom",
+         RenderSetup.builder(TEXTURED_QUADS_PIPELINE)
+               .expectedBufferSize(QUAD_BUFFER_SIZE_BYTES)
+               .translucent()
+               .texture("Sampler0", Identifier.of("zero", "textures/world/firefly.png"))
+               .build());
+   private static final int MAX_TRAIL_PARTICLES = 200;
    private long lastParticleSpawnTime = 0L;
    private static final long PARTICLE_SPAWN_INTERVAL_MS = 20L;
    private static final float FIXED_TIMESTEP = 0.004166667F;
@@ -125,14 +131,16 @@ public class Trails extends Module {
             double yawRad = Math.toRadians(mc.player.renderYaw);
             double xOffset = -Math.sin(yawRad) * distance;
             double zOffset = Math.cos(yawRad) * distance;
-            this.particles
-                  .add(
-                        new Trails.Particle3D(
-                              new Vector3d(currentX + xOffset, currentY + player.getHeight() * 0.4F,
-                                    currentZ + zOffset),
-                              new Vector3d(player.getVelocity().x, 0.0, player.getVelocity().z)
-                                    .mul(1.5 + Math.random()),
-                              this.particles.size()));
+            if (this.particles.size() < MAX_TRAIL_PARTICLES) {
+               this.particles
+                     .add(
+                           new Trails.Particle3D(
+                                 new Vector3d(currentX + xOffset, currentY + player.getHeight() * 0.4F,
+                                       currentZ + zOffset),
+                                 new Vector3d(player.getVelocity().x, 0.0, player.getVelocity().z)
+                                       .mul(1.5 + Math.random()),
+                                 this.particles.size()));
+            }
             this.lastParticleSpawnTime = currentTime;
          }
 
@@ -169,9 +177,9 @@ public class Trails extends Module {
          }
 
          BufferAllocator allocator = new BufferAllocator(262144);
-         Immediate immediate = VertexConsumerProvider.immediate(allocator);
-         if (mc.options.getPerspective() != Perspective.FIRST_PERSON || firstPerson.get()) {
-            try {
+         try {
+            if (mc.options.getPerspective() != Perspective.FIRST_PERSON || firstPerson.get()) {
+               Immediate immediate = VertexConsumerProvider.immediate(allocator);
                float pos = size.get();
 
                for (Trails.Particle3D particle : this.particles) {
@@ -205,26 +213,19 @@ public class Trails extends Module {
                   matrix.multiply(mc.getEntityRenderDispatcher().camera.getRotation());
                   matrix.translate(0.0F, pos / 2.0F, 0.0F);
                   float bloomSize = (float) clamp(0.5, 4.0, particle.position.distance(prevPosition) * 6.0);
-                  RenderLayer renderLayer = RenderLayer.of(
-                        this.bloom.toString(),
-                        RenderSetup.builder(TEXTURED_QUADS_PIPELINE)
-                              .expectedBufferSize(1024)
-                              .translucent()
-                              .texture("Sampler0", this.bloom)
-                              .build());
                   Entry entry = matrix.peek();
                   Matrix4f matrix4f = entry.getPositionMatrix();
                   Matrix3f normalMatrix = entry.getNormalMatrix();
-                  VertexConsumer buffer = immediate.getBuffer(renderLayer);
+                  VertexConsumer buffer = immediate.getBuffer(BLOOM_LAYER);
                   this.drawTexturedQuad(buffer, matrix4f, normalMatrix, -pos + pos / 2.0F, -pos, pos, pos, color1,
                         color2, color3, color4);
                   matrix.pop();
                }
 
                immediate.draw();
-            } finally {
-               allocator.close();
             }
+         } finally {
+            allocator.close();
          }
       }
    }

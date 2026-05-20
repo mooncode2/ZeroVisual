@@ -67,7 +67,12 @@ public class WorldRendererMixin {
       MatrixStack stack = new MatrixStack();
       Matrix4f basePositionMatrix = new Matrix4f(positionMatrix);
       stack.multiplyPositionMatrix(new Matrix4f(basePositionMatrix));
-      EventManager.call(new EventRender3D(stack, tickCounter.getTickProgress(true)));
+      GlState.Snapshot eventRenderSnapshot = GlState.push();
+      try {
+         EventManager.call(new EventRender3D(stack, tickCounter.getTickProgress(true)));
+      } finally {
+         GlState.pop(eventRenderSnapshot);
+      }
       if (captureManager.isEnabled()) {
          captureManager.endFrame();
       }

@@ -51,6 +51,14 @@ public class JumpCircle extends Module {
                .withDepthWrite(false)
                .withBlend(BlendFunction.LIGHTNING)
                .build());
+   private static final Identifier JUMP_TEXTURE = Identifier.of("zero", "textures/world/jump.png");
+   private static final RenderLayer JUMP_LAYER = RenderLayer.of(
+         "zero/jump_circle",
+         RenderSetup.builder(TEXTURED_QUADS_PIPELINE)
+               .expectedBufferSize(QUAD_BUFFER_SIZE_BYTES)
+               .translucent()
+               .texture("Sampler0", JUMP_TEXTURE)
+               .build());
 
    @EventInit
    public void onJump(EventJump e) {
@@ -67,7 +75,6 @@ public class JumpCircle extends Module {
             MatrixStack pose = e.getMatrixStack();
 
             try {
-               Identifier texture = Identifier.of("zero", "textures/world/jump.png");
                int color = Renderer2D.ColorUtil.getMainColor(1, 1);
                int alpha = 255;
 
@@ -86,11 +93,10 @@ public class JumpCircle extends Module {
                   pose.push();
                   pose.translate(posX, posY, posZ);
                   pose.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
-                  RenderLayer renderLayer = RenderLayer.of(texture.toString(), RenderSetup.builder(TEXTURED_QUADS_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", texture).build());
                   Entry entry = pose.peek();
                   Matrix4f matrix4f = entry.getPositionMatrix();
                   Matrix3f normalMatrix = entry.getNormalMatrix();
-                  VertexConsumer buffer = immediate.getBuffer(renderLayer);
+                  VertexConsumer buffer = immediate.getBuffer(JUMP_LAYER);
                   this.drawTexturedQuad(buffer, matrix4f, normalMatrix, -size / 2.0F, -size / 2.0F, size, size, color,
                         alpha);
                   pose.pop();

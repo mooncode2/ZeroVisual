@@ -7,6 +7,7 @@ import ru.zero.ui.gui.component.mouse.category.GuiMouseClickedCategory;
 import ru.zero.ui.gui.component.mouse.colorpicker.GuiMouseClickedColorPicker;
 import ru.zero.ui.gui.component.mouse.module.GuiMouseClickedModule;
 import ru.zero.ui.gui.component.mouse.setting.GuiMouseClickedSetting;
+import ru.zero.ui.gui.map.GuiServerMapPanel;
 import ru.zero.ui.gui.component.render.GuiRenderMain;
 import ru.zero.ui.gui.theme.ThemeScreen;
 import ru.zero.util.render.core.Renderer2D;
@@ -29,6 +30,15 @@ public class GuiMouseClicked extends GuiScreen {
          float searchHeight = 21.325F;
          if (pButton == 0 && GuiRenderMain.isHovered(mouseX, mouseY, searchX, searchY, searchWidth, searchHeight)) {
             GuiScreen.activeSearch = true;
+            return true;
+         }
+
+         if (GuiServerMapPanel.handleMapButtonClick(mouseX, mouseY, pButton)) {
+            return true;
+         }
+
+         if (GuiScreen.serverMapOpen) {
+            GuiServerMapPanel.handlePanelClick(mouseX, mouseY, pButton);
             return true;
          }
 

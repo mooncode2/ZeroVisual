@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import ru.zero.util.render.backends.gl.GlBackend;
@@ -21,6 +22,10 @@ public final class TextureLoader {
 
    public static void initialize(GlBackend glBackend) {
       backend = glBackend;
+   }
+
+   public static GlBackend getBackend() {
+      return backend;
    }
 
    public static int load(String resourcePath) {
@@ -101,5 +106,40 @@ public final class TextureLoader {
 
    public static void clearCache() {
       textureCache.clear();
+   }
+
+   public static int loadFromPngBytes(byte[] pngData) {
+      if (backend == null || pngData == null || pngData.length == 0) {
+         return 0;
+      }
+
+      MemoryStack stack = MemoryStack.stackPush();
+
+      try {
+         IntBuffer w = stack.mallocInt(1);
+         IntBuffer h = stack.mallocInt(1);
+         IntBuffer comp = stack.mallocInt(1);
+         ByteBuffer buffer = ByteBuffer.allocateDirect(pngData.length);
+         buffer.put(pngData);
+         buffer.flip();
+         ByteBuffer image = STBImage.stbi_load_from_memory(buffer, w, h, comp, 4);
+         if (image == null) {
+            return 0;
+         }
+
+         int textureId = backend.createMsdfTexture(w.get(0), h.get(0), image);
+         STBImage.stbi_image_free(image);
+         return textureId;
+      } catch (Throwable ignored) {
+         return 0;
+      } finally {
+         stack.close();
+      }
+   }
+
+   public static void releaseTexture(int textureId) {
+      if (textureId > 0) {
+         GL11.glDeleteTextures(textureId);
+      }
    }
 }

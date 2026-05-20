@@ -27,6 +27,7 @@ import ru.zero.ui.gui.component.main.GuiMouseScrolled;
 import ru.zero.ui.gui.component.main.GuiShouldCloseOnEsc;
 import ru.zero.ui.gui.component.mouse.GuiMouseClicked;
 import ru.zero.ui.gui.component.render.GuiRender;
+import ru.zero.ui.gui.map.GuiServerMapPanel;
 import ru.zero.ui.gui.theme.ThemeScreen;
 import ru.zero.util.player.MovementManager;
 import ru.zero.util.render.core.Renderer2D;
@@ -113,6 +114,7 @@ public class GuiClient extends Screen {
    }
 
    public void close() {
+      GuiServerMapPanel.setOpen(false);
       MovementManager.getInstance().unlockMovement("Search");
       GuiScreen.activeSearch = false;
       GuiScreen.searchText = "";
@@ -122,6 +124,7 @@ public class GuiClient extends Screen {
 
    public void tick() {
       super.tick();
+      GuiServerMapPanel.tick();
       if (GuiScreen.exit && GuiScreen.alphaPC.isFinished()) {
          this.close();
          GuiScreen.exit = false;
