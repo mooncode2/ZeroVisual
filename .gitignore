@@ -17,3 +17,8 @@ crash-reports/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Dev
+./Funtime
+README.md
+VERSIONS.md

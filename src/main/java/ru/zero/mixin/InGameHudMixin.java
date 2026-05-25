@@ -2,20 +2,16 @@ package ru.zero.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.texture.GlTexture;
+import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.hud.bar.Bar;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.texture.GlTexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -196,35 +192,8 @@ public class InGameHudMixin {
             int width = client.getWindow().getFramebufferWidth();
             int height = client.getWindow().getFramebufferHeight();
             if (width > 0 && height > 0) {
-               Framebuffer mainFramebuffer = client.getFramebuffer();
-               int tempFbo = 0;
-               int savedDrawFbo = GL11.glGetInteger(36006);
-               int savedReadFbo = GL11.glGetInteger(36010);
-               int savedFbo = GL11.glGetInteger(36006);
-               if (mainFramebuffer != null) {
-                  if (mainFramebuffer.getColorAttachment() instanceof GlTexture glColor) {
-                     int mainFramebufferTextureId = glColor.getGlId();
-                     tempFbo = GL30.glGenFramebuffers();
-                     GL30.glBindFramebuffer(36160, tempFbo);
-                     GL30.glFramebufferTexture2D(36160, 36064, 3553, mainFramebufferTextureId, 0);
-                     GL11.glDrawBuffer(36064);
-                     int status = GL30.glCheckFramebufferStatus(36160);
-                     if (status != 36053) {
-                        GL30.glDeleteFramebuffers(tempFbo);
-                        tempFbo = 0;
-                        GL30.glBindFramebuffer(36160, savedFbo);
-                     }
-                  } else {
-                     GL30.glBindFramebuffer(36160, 0);
-                  }
-               } else {
-                  GL30.glBindFramebuffer(36160, 0);
-               }
-
-               GL11.glColorMask(true, true, true, true);
-               GL11.glDisable(2929);
-               GL11.glEnable(3042);
                GlState.Snapshot snapshot = GlState.push();
+               int hudFramebuffer = bindHudDrawFramebuffer(client);
 
                try {
                   AnimationSystem.getInstance().tick();
@@ -247,36 +216,9 @@ public class InGameHudMixin {
                      }
                   }
                } finally {
-                  if (snapshot != null) {
-                     GL20.glUseProgram(snapshot.program);
-                     GL30.glBindVertexArray(snapshot.vao);
-                     GL15.glBindBuffer(34962, snapshot.arrayBuffer);
-                     GL15.glBindBuffer(34963, snapshot.elementArrayBuffer);
-                     GL13.glActiveTexture(snapshot.activeTexture);
-                     GL11.glBindTexture(3553, snapshot.texture2D);
-                     GL11.glPixelStorei(3317, snapshot.unpackAlignment);
-                     setEnabled(3089, snapshot.scissorEnabled);
-                     setEnabled(2929, snapshot.depthTestEnabled);
-                     setEnabled(2884, snapshot.cullFaceEnabled);
-                     setEnabled(3042, snapshot.blendEnabled);
-                     setEnabled(36281, snapshot.framebufferSrgbEnabled);
-                     GL14.glBlendFuncSeparate(snapshot.blendSrcRGB, snapshot.blendDstRGB, snapshot.blendSrcAlpha, snapshot.blendDstAlpha);
-                     GL11.glColorMask(snapshot.colorMaskR, snapshot.colorMaskG, snapshot.colorMaskB, snapshot.colorMaskA);
-                     GL11.glDepthMask(snapshot.depthMask);
-                     GL11.glViewport(snapshot.viewport[0], snapshot.viewport[1], snapshot.viewport[2], snapshot.viewport[3]);
-                     GL11.glScissor(snapshot.scissorBox[0], snapshot.scissorBox[1], snapshot.scissorBox[2], snapshot.scissorBox[3]);
-                  }
-
-                  if (tempFbo != 0) {
-                     GL30.glBindFramebuffer(36160, tempFbo);
-                     GL30.glFramebufferTexture2D(36160, 36064, 3553, 0, 0);
-                  }
-
-                  GL30.glBindFramebuffer(36009, savedDrawFbo);
-                  GL30.glBindFramebuffer(36008, savedReadFbo);
-                  GL30.glBindFramebuffer(36160, savedFbo);
-                  if (tempFbo != 0) {
-                     GL30.glDeleteFramebuffers(tempFbo);
+                  GlState.pop(snapshot);
+                  if (hudFramebuffer != 0) {
+                     GL30.glDeleteFramebuffers(hudFramebuffer);
                   }
                }
 
@@ -286,11 +228,30 @@ public class InGameHudMixin {
       }
    }
 
-   private static void setEnabled(int cap, boolean enabled) {
-      if (enabled) {
-         GL11.glEnable(cap);
-      } else {
-         GL11.glDisable(cap);
+   /**
+    * Routes {@link Renderer2D} draws to the main window color attachment (required on 1.21+).
+    */
+   private static int bindHudDrawFramebuffer(MinecraftClient client) {
+      Framebuffer framebuffer = client.getFramebuffer();
+      if (framebuffer == null) {
+         return 0;
       }
+
+      if (!(framebuffer.getColorAttachment() instanceof GlTexture glColor)) {
+         return 0;
+      }
+
+      int fbo = GL30.glGenFramebuffers();
+      GL30.glBindFramebuffer(36160, fbo);
+      GL30.glFramebufferTexture2D(36160, 36064, 3553, glColor.getGlId(), 0);
+      if (GL30.glCheckFramebufferStatus(36160) != 36053) {
+         GL30.glBindFramebuffer(36160, 0);
+         GL30.glDeleteFramebuffers(fbo);
+         return 0;
+      }
+
+      GL11.glDrawBuffer(36064);
+      GL11.glColorMask(true, true, true, true);
+      return fbo;
    }
 }

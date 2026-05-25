@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.RenderTickCounter;
@@ -17,9 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.zero.event.EventManager;
-import ru.zero.event.render.EventRender3D;
 import ru.zero.event.render.WorldRenderEvent;
-import ru.zero.ui.gui.GuiScreen;
 import ru.zero.util.render.backends.gl.GlState;
 import ru.zero.util.render.capture.EntityFramebufferCaptureManager;
 
@@ -40,7 +37,7 @@ public class WorldRendererMixin {
          boolean shouldRenderSky,
          CallbackInfo ci) {
       EntityFramebufferCaptureManager captureManager = EntityFramebufferCaptureManager.getInstance();
-      if (captureManager.isEnabled() || GuiScreen.isVulkanMode()) {
+      if (captureManager.isEnabled()) {
          captureManager.beginFrame((WorldRenderer) (Object) this, tickCounter, camera);
       }
    }
@@ -59,50 +56,40 @@ public class WorldRendererMixin {
          boolean shouldRenderSky,
          CallbackInfo ci) {
       EntityFramebufferCaptureManager captureManager = EntityFramebufferCaptureManager.getInstance();
-      if (GuiScreen.isVulkanMode()) {
-         captureManager.endFrame();
-         return;
-      }
-
-      MatrixStack stack = new MatrixStack();
-      Matrix4f basePositionMatrix = new Matrix4f(positionMatrix);
-      stack.multiplyPositionMatrix(new Matrix4f(basePositionMatrix));
-      GlState.Snapshot eventRenderSnapshot = GlState.push();
-      try {
-         EventManager.call(new EventRender3D(stack, tickCounter.getTickProgress(true)));
-      } finally {
-         GlState.pop(eventRenderSnapshot);
-      }
       if (captureManager.isEnabled()) {
          captureManager.endFrame();
       }
+
       MinecraftClient client = MinecraftClient.getInstance();
-      if (client != null) {
-         GameRenderer gameRenderer = client.gameRenderer;
-         if (gameRenderer != null && camera != null) {
-            GlState.Snapshot snapshot = GlState.push();
-            ru.zero.util.render.world.WorldRenderer worldRenderer = null;
+      if (client == null || client.world == null || client.player == null) {
+         return;
+      }
 
-            try {
-               worldRenderer = ru.zero.util.render.world.WorldRenderer.begin(client, tickCounter, camera,
-                     positionMatrix, projectionMatrix);
-               float frameDepth = worldRenderer.tickDelta();
+      GameRenderer gameRenderer = client.gameRenderer;
+      if (gameRenderer == null || camera == null) {
+         return;
+      }
 
+      GlState.Snapshot snapshot = GlState.push();
+      ru.zero.util.render.world.WorldRenderer worldRenderer = null;
+
+      try {
+         worldRenderer = ru.zero.util.render.world.WorldRenderer.begin(client, tickCounter, camera, positionMatrix,
+               projectionMatrix);
+
+         try {
+            EventManager.call(new WorldRenderEvent(client, gameRenderer, worldRenderer, worldRenderer.tickDelta()));
+         } finally {
+            if (worldRenderer != null) {
                try {
-                  EventManager.call(new WorldRenderEvent(client, gameRenderer, worldRenderer, frameDepth));
+                  worldRenderer.flush();
                } finally {
-                  if (worldRenderer != null) {
-                     try {
-                        worldRenderer.flush();
-                     } finally {
-                        worldRenderer.close();
-                     }
-                  }
+                  worldRenderer.close();
                }
-            } finally {
-               GlState.pop(snapshot);
             }
          }
+      } finally {
+         GlState.pop(snapshot);
       }
    }
 }

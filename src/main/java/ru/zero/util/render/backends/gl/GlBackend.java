@@ -2,10 +2,6 @@ package ru.zero.util.render.backends.gl;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.texture.GlTexture;
@@ -27,46 +23,24 @@ import org.lwjgl.opengl.GLDebugMessageCallback;
 import org.lwjgl.opengl.KHRDebug;
 import ru.zero.util.other.PlatformUtil;
 import ru.zero.util.render.core.RenderFrameMetrics;
+import ru.zero.util.render.backends.RenderBackend;
+import ru.zero.util.render.backends.ShapeInstanceBatch;
 import ru.zero.util.render.postfx.DepthRenderTarget;
 import ru.zero.util.render.postfx.DownsampleBlur;
 
 @Environment(EnvType.CLIENT)
-public final class GlBackend {
-   private static final int MAX_INSTANCES = 4096;
-   private static final int MAX_TEXTURE_SLOTS = 16;
+public final class GlBackend implements RenderBackend {
    private static final int INSTANCE_STRIDE = 144;
-   private static final int TYPE_RECT_FILL = 0;
-   private static final int TYPE_RECT_OUTLINE = 1;
-   private static final int TYPE_CIRCLE = 2;
-   private static final int TYPE_TEXTURED = 3;
-   private static final int FLAG_TEXTURE_MSDF = 16;
-   private static final int FLAG_TEXTURE_SCREEN_SPACE = 32;
-   private static final int FLAG_TEXTURE_PRESERVE_PREMULTIPLIED = 64;
-   private static final int FLAG_SHADOW = 67108864;
-   private static final float[] IDENTITY_TRANSFORM = new float[] { 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F,
-         1.0F };
    private final boolean ssboSupported;
    private final boolean debugOutputSupported;
    private final ShaderProgram shapeProgram;
    private final int vaoDraw;
    private final int ssbo;
    private final int instanceVbo;
-   private final ByteBuffer instanceBuffer;
-   private int instanceCount = 0;
+   private final ShapeInstanceBatch batch = new ShapeInstanceBatch();
    private GlState.Snapshot snapshot;
    private int viewportWidth;
    private int viewportHeight;
-   private boolean clipEnabled = false;
-   private int clipX = 0;
-   private int clipY = 0;
-   private int clipW = Integer.MAX_VALUE;
-   private int clipH = Integer.MAX_VALUE;
-   private float clipRoundTL = 0.0F;
-   private float clipRoundTR = 0.0F;
-   private float clipRoundBR = 0.0F;
-   private float clipRoundBL = 0.0F;
-   private final Map<Integer, Integer> textureToSlot = new HashMap<>();
-   private final List<Integer> slotToTexture = new ArrayList<>(16);
    private int uViewportLoc = -1;
    private boolean samplersInitialized = false;
    private int captureTex = 0;
@@ -103,34 +77,6 @@ public final class GlBackend {
    private int preparedRegionBlurW = 0;
    private int preparedRegionBlurH = 0;
    private boolean destroyed = false;
-
-   private static int packColorRgba(int color) {
-      int r = color >> 16 & 0xFF;
-      int g = color >> 8 & 0xFF;
-      int b = color & 0xFF;
-      int a = color >>> 24 & 0xFF;
-      return a << 24 | b << 16 | g << 8 | r;
-   }
-
-   private void ensureInstanceCapacity() {
-      this.ensureInstanceCapacity(1);
-   }
-
-   private void ensureInstanceCapacity(int additionalInstances) {
-      if (additionalInstances > 0) {
-         if (additionalInstances > 4096) {
-            throw new IllegalArgumentException("additionalInstances must be between 1 and 4096");
-         } else {
-            if (this.instanceCount + additionalInstances > 4096) {
-               this.flush();
-               this.instanceCount = 0;
-               this.instanceBuffer.clear();
-               this.textureToSlot.clear();
-               this.slotToTexture.clear();
-            }
-         }
-      }
-   }
 
    public GlBackend() {
       GLCapabilities caps = GL.getCapabilities();
@@ -203,7 +149,7 @@ public final class GlBackend {
          GL30.glBindVertexArray(0);
          this.ssbo = this.ssboSupported ? GL15.glGenBuffers() : 0;
          this.instanceVbo = localInstanceVbo;
-         this.instanceBuffer = ByteBuffer.allocateDirect(589824).order(ByteOrder.nativeOrder());
+         this.batch.setFlushAction(this::flush);
          if (isMac) {
             // Metal->OpenGL drivers are usually slower on full-res captures; reduce default blur capture cost.
             this.blurCaptureScaleX = 0.4F;
@@ -278,10 +224,7 @@ public final class GlBackend {
       this.viewportWidth = width;
       this.viewportHeight = height;
       GL11.glViewport(0, 0, width, height);
-      this.instanceCount = 0;
-      this.instanceBuffer.clear();
-      this.textureToSlot.clear();
-      this.slotToTexture.clear();
+      this.batch.beginFrame(width, height);
       this.shapeProgram.use();
       if (this.uViewportLoc == -1) {
          this.uViewportLoc = this.shapeProgram.getUniformLocation("uViewport");
@@ -317,32 +260,11 @@ public final class GlBackend {
       GL30.glBindVertexArray(0);
       GL20.glUseProgram(0);
       if (this.snapshot != null) {
-         GL20.glUseProgram(this.snapshot.program);
-         GL30.glBindVertexArray(this.snapshot.vao);
-         GL15.glBindBuffer(34962, this.snapshot.arrayBuffer);
-         GL15.glBindBuffer(34963, this.snapshot.elementArrayBuffer);
-         GL13.glActiveTexture(this.snapshot.activeTexture);
-         GL11.glBindTexture(3553, this.snapshot.texture2D);
-         GL11.glPixelStorei(3317, this.snapshot.unpackAlignment);
-         setEnabled(3089, this.snapshot.scissorEnabled);
-         setEnabled(2929, this.snapshot.depthTestEnabled);
-         setEnabled(2884, this.snapshot.cullFaceEnabled);
-         setEnabled(3042, this.snapshot.blendEnabled);
-         setEnabled(36281, this.snapshot.framebufferSrgbEnabled);
-         GL14.glBlendFuncSeparate(this.snapshot.blendSrcRGB, this.snapshot.blendDstRGB, this.snapshot.blendSrcAlpha,
-               this.snapshot.blendDstAlpha);
-         GL11.glColorMask(this.snapshot.colorMaskR, this.snapshot.colorMaskG, this.snapshot.colorMaskB,
-               this.snapshot.colorMaskA);
-         GL11.glDepthMask(this.snapshot.depthMask);
-         GL11.glViewport(this.snapshot.viewport[0], this.snapshot.viewport[1], this.snapshot.viewport[2],
-               this.snapshot.viewport[3]);
-         GL11.glScissor(this.snapshot.scissorBox[0], this.snapshot.scissorBox[1], this.snapshot.scissorBox[2],
-               this.snapshot.scissorBox[3]);
+         GlState.pop(this.snapshot);
+         this.snapshot = null;
       }
 
-      this.snapshot = null;
-      this.instanceCount = 0;
-      this.instanceBuffer.clear();
+      this.batch.afterFlush();
    }
 
    private static void setEnabled(int cap, boolean enabled) {
@@ -354,39 +276,38 @@ public final class GlBackend {
    }
 
    public void flush() {
-      if (this.instanceCount > 0) {
-         this.instanceBuffer.limit(this.instanceCount * 144);
-         this.instanceBuffer.position(0);
+      if (this.batch.getInstanceCount() > 0) {
+         ByteBuffer instanceBuffer = this.batch.prepareFlushBuffer();
          if (this.ssboSupported) {
             GL15.glBindBuffer(37074, this.ssbo);
-            GL15.glBufferData(37074, this.instanceBuffer, 35040);
+            GL15.glBufferData(37074, instanceBuffer, 35040);
             GL43.glBindBufferBase(37074, 0, this.ssbo);
          } else {
             GL15.glBindBuffer(34962, this.instanceVbo);
-            GL15.glBufferData(34962, this.instanceBuffer, 35040);
+            GL15.glBufferData(34962, instanceBuffer, 35040);
             GL15.glBindBuffer(34962, 0);
          }
 
          int prevActive = GL11.glGetInteger(34016);
-         int usedSlots = this.slotToTexture.size();
+         int usedSlots = this.batch.getSlotToTexture().size();
          int[] prevBindings = new int[usedSlots];
 
          for (int slot = 0; slot < usedSlots; slot++) {
             GL13.glActiveTexture(33984 + slot);
             prevBindings[slot] = GL11.glGetInteger(32873);
-            int tex = this.slotToTexture.get(slot);
+            int tex = this.batch.getSlotToTexture().get(slot);
             GL11.glBindTexture(3553, tex);
          }
 
-         int trianglesDrawn = Math.max(0, this.instanceCount) * 2;
+         int trianglesDrawn = Math.max(0, this.batch.getInstanceCount()) * 2;
          if (trianglesDrawn > 0) {
             RenderFrameMetrics.getInstance().recordDrawCall(trianglesDrawn);
          }
 
          if (this.ssboSupported) {
-            GL11.glDrawArrays(4, 0, this.instanceCount * 6);
+            GL11.glDrawArrays(4, 0, this.batch.getInstanceCount() * 6);
          } else {
-            GL31.glDrawArraysInstanced(4, 0, 6, this.instanceCount);
+            GL31.glDrawArraysInstanced(4, 0, 6, this.batch.getInstanceCount());
          }
 
          for (int slot = 0; slot < usedSlots; slot++) {
@@ -395,33 +316,22 @@ public final class GlBackend {
          }
 
          GL13.glActiveTexture(prevActive);
-         this.instanceCount = 0;
-         this.instanceBuffer.clear();
-         this.textureToSlot.clear();
-         this.slotToTexture.clear();
+         this.batch.afterFlush();
       }
    }
 
+   public void setExternalViewport(int width, int height) {
+      this.viewportWidth = width;
+      this.viewportHeight = height;
+   }
+
    public void setScissorEnabled(boolean enabled) {
-      this.clipEnabled = enabled;
-      if (!enabled) {
-         this.clipRoundTL = 0.0F;
-         this.clipRoundTR = 0.0F;
-         this.clipRoundBR = 0.0F;
-         this.clipRoundBL = 0.0F;
-      }
+      this.batch.setScissorEnabled(enabled);
    }
 
    public void setScissorRect(int x, int y, int w, int h, float roundTopLeft, float roundTopRight,
          float roundBottomRight, float roundBottomLeft) {
-      this.clipX = x;
-      this.clipY = y;
-      this.clipW = w;
-      this.clipH = h;
-      this.clipRoundTL = roundTopLeft;
-      this.clipRoundTR = roundTopRight;
-      this.clipRoundBR = roundBottomRight;
-      this.clipRoundBL = roundBottomLeft;
+      this.batch.setScissorRect(x, y, w, h, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft);
    }
 
    public void setTransform(float[] m3) {
@@ -438,200 +348,11 @@ public final class GlBackend {
       }
    }
 
-   private void writeInstanceEx(
-         int type,
-         float x,
-         float y,
-         float w,
-         float h,
-         int colorTL,
-         int colorTR,
-         int colorBR,
-         int colorBL,
-         float roundTL,
-         float roundTR,
-         float roundBR,
-         float roundBL,
-         float thickness,
-         float[] transform,
-         float u0,
-         float v0,
-         float u1,
-         float v1,
-         int texSlot,
-         float startDeg,
-         float arcPct,
-         int extraFlags) {
-      if (this.instanceCount >= 4096) {
-         throw new IllegalStateException("Instance capacity exceeded without prior ensureInstanceCapacity call");
-      } else {
-         int offset = this.instanceCount * 144;
-         this.instanceBuffer.position(offset);
-         putVertices(this.instanceBuffer, transform, x, y, w, h);
-         int cx = this.clipEnabled ? this.clipX : 0;
-         int cy = this.clipEnabled ? this.clipY : 0;
-         int cw = this.clipEnabled ? this.clipW : this.viewportWidth;
-         int ch = this.clipEnabled ? this.clipH : this.viewportHeight;
-         float cRoundTL = this.clipEnabled ? this.clipRoundTL : 0.0F;
-         float cRoundTR = this.clipEnabled ? this.clipRoundTR : 0.0F;
-         float cRoundBR = this.clipEnabled ? this.clipRoundBR : 0.0F;
-         float cRoundBL = this.clipEnabled ? this.clipRoundBL : 0.0F;
-         this.instanceBuffer.putInt(cx);
-         this.instanceBuffer.putInt(cy);
-         this.instanceBuffer.putInt(cw);
-         this.instanceBuffer.putInt(ch);
-         this.instanceBuffer.putFloat(cRoundTL);
-         this.instanceBuffer.putFloat(cRoundTR);
-         this.instanceBuffer.putFloat(cRoundBR);
-         this.instanceBuffer.putFloat(cRoundBL);
-         this.instanceBuffer.putFloat(x);
-         this.instanceBuffer.putFloat(y);
-         this.instanceBuffer.putFloat(w);
-         this.instanceBuffer.putFloat(h);
-         this.instanceBuffer.putInt(packColorRgba(colorTL));
-         this.instanceBuffer.putInt(packColorRgba(colorTR));
-         this.instanceBuffer.putInt(packColorRgba(colorBR));
-         this.instanceBuffer.putInt(packColorRgba(colorBL));
-         float sanitizedTL = sanitizeRadius(roundTL);
-         float sanitizedTR = sanitizeRadius(roundTR);
-         float sanitizedBR = sanitizeRadius(roundBR);
-         float sanitizedBL = sanitizeRadius(roundBL);
-         this.instanceBuffer.putFloat(sanitizedTL);
-         this.instanceBuffer.putFloat(sanitizedTR);
-         this.instanceBuffer.putFloat(sanitizedBR);
-         this.instanceBuffer.putFloat(sanitizedBL);
-         this.instanceBuffer.putFloat(u0);
-         this.instanceBuffer.putFloat(v0);
-         this.instanceBuffer.putFloat(u1);
-         this.instanceBuffer.putFloat(v1);
-         int flags = type;
-         if (type == 1) {
-            int th = Math.max(0, Math.min(255, Math.round(thickness)));
-            flags = type | th << 2;
-         }
-
-         if (type == 2) {
-            float var44 = startDeg % 360.0F;
-            if (var44 < 0.0F) {
-               var44 += 360.0F;
-            }
-
-            int encodedStart = Math.max(0, Math.min(255, Math.round(var44 / 360.0F * 255.0F)));
-            float clampedPct = Math.max(0.0F, Math.min(1.0F, arcPct));
-            int encodedPct = Math.max(0, Math.min(255, Math.round(clampedPct * 255.0F)));
-            flags |= encodedStart << 10;
-            flags |= encodedPct << 18;
-         }
-
-         if (type == 3 && thickness > 0.0F) {
-            flags |= 4;
-         }
-
-         flags |= extraFlags;
-         this.instanceBuffer.putInt(flags);
-         this.instanceBuffer.putInt(texSlot);
-         this.instanceBuffer.putInt(0);
-         this.instanceBuffer.putInt(0);
-         this.instanceCount++;
-      }
-   }
-
-   private static void putVertices(ByteBuffer buffer, float[] matrix, float x, float y, float w, float h) {
-      float[] mat = matrix != null && matrix.length >= 6 ? matrix : IDENTITY_TRANSFORM;
-      float x1 = x + w;
-      float y1 = y + h;
-      putVertex(buffer, mat, x, y);
-      putVertex(buffer, mat, x1, y);
-      putVertex(buffer, mat, x1, y1);
-      putVertex(buffer, mat, x, y1);
-   }
-
-   private static void putVertex(ByteBuffer buffer, float[] matrix, float px, float py) {
-      float worldX = matrix[0] * px + matrix[1] * py + matrix[2];
-      float worldY = matrix[3] * px + matrix[4] * py + matrix[5];
-      buffer.putFloat(worldX);
-      buffer.putFloat(worldY);
-   }
-
-   private static float sanitizeRadius(float radius) {
-      if (!Float.isFinite(radius)) {
-         return 0.0F;
-      } else {
-         return radius <= 0.0F ? 0.0F : radius;
-      }
-   }
-
-   private void writeInstance(
-         int type,
-         float x,
-         float y,
-         float w,
-         float h,
-         int color,
-         float rounding,
-         float thickness,
-         float[] transform,
-         float u0,
-         float v0,
-         float u1,
-         float v1,
-         int texSlot,
-         float startDeg,
-         float arcPct) {
-      this.writeInstanceEx(
-            type,
-            x,
-            y,
-            w,
-            h,
-            color,
-            color,
-            color,
-            color,
-            rounding,
-            rounding,
-            rounding,
-            rounding,
-            thickness,
-            transform,
-            u0,
-            v0,
-            u1,
-            v1,
-            texSlot,
-            startDeg,
-            arcPct,
-            0);
-   }
-
    public void enqueueRect(
          float x, float y, float w, float h, float roundTopLeft, float roundTopRight, float roundBottomRight,
          float roundBottomLeft, int color, float[] transform) {
-      this.ensureInstanceCapacity();
-      this.writeInstanceEx(
-            0,
-            x,
-            y,
-            w,
-            h,
-            color,
-            color,
-            color,
-            color,
-            roundTopLeft,
-            roundTopRight,
-            roundBottomRight,
-            roundBottomLeft,
-            0.0F,
-            transform,
-            0.0F,
-            0.0F,
-            1.0F,
-            1.0F,
-            -1,
-            0.0F,
-            1.0F,
-            0);
+      this.batch.enqueueRect(x, y, w, h, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft, color,
+            transform);
    }
 
    public void enqueueRectOutline(
@@ -646,31 +367,8 @@ public final class GlBackend {
          int color,
          float thickness,
          float[] transform) {
-      this.ensureInstanceCapacity();
-      this.writeInstanceEx(
-            1,
-            x,
-            y,
-            w,
-            h,
-            color,
-            color,
-            color,
-            color,
-            roundTopLeft,
-            roundTopRight,
-            roundBottomRight,
-            roundBottomLeft,
-            thickness,
-            transform,
-            0.0F,
-            0.0F,
-            1.0F,
-            1.0F,
-            -1,
-            0.0F,
-            1.0F,
-            0);
+      this.batch.enqueueRectOutline(x, y, w, h, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft, color,
+            thickness, transform);
    }
 
    public void enqueueGradient(
@@ -687,39 +385,13 @@ public final class GlBackend {
          int c11,
          int c01,
          float[] transform) {
-      this.ensureInstanceCapacity();
-      this.writeInstanceEx(
-            0,
-            x,
-            y,
-            w,
-            h,
-            c00,
-            c10,
-            c11,
-            c01,
-            roundTopLeft,
-            roundTopRight,
-            roundBottomRight,
-            roundBottomLeft,
-            0.0F,
-            transform,
-            0.0F,
-            0.0F,
-            1.0F,
-            1.0F,
-            -1,
-            0.0F,
-            1.0F,
-            0);
+      this.batch.enqueueGradient(x, y, w, h, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft, c00, c10,
+            c11, c01, transform);
    }
 
    public void enqueueCircle(float cx, float cy, float radius, float startDeg, float pct, int color,
          float[] transform) {
-      float size = radius * 2.0F;
-      this.ensureInstanceCapacity();
-      this.writeInstance(2, cx - radius, cy - radius, size, size, color, 0.0F, 0.0F, transform, 0.0F, 0.0F, 1.0F, 1.0F,
-            -1, startDeg, pct);
+      this.batch.enqueueCircle(cx, cy, radius, startDeg, pct, color, transform);
    }
 
    public void drawDropShadowRect(
@@ -735,62 +407,24 @@ public final class GlBackend {
          float spread,
          int rgbaPremul,
          float[] transform) {
-      if (!(w <= 0.0F) && !(h <= 0.0F)) {
-         float safeBlur = blurStrength > 0.0F ? blurStrength : 0.0F;
-         float safeSpread = spread > 0.0F ? spread : 0.0F;
-         float padding = safeSpread + safeBlur * 3.0F;
-         float expandedX = x - padding;
-         float expandedY = y - padding;
-         float expandedW = w + padding * 2.0F;
-         float expandedH = h + padding * 2.0F;
-         if (!(expandedW <= 0.0F) && !(expandedH <= 0.0F)) {
-            this.ensureInstanceCapacity();
-            this.writeInstanceEx(
-                  0,
-                  expandedX,
-                  expandedY,
-                  expandedW,
-                  expandedH,
-                  rgbaPremul,
-                  rgbaPremul,
-                  rgbaPremul,
-                  rgbaPremul,
-                  roundTopLeft,
-                  roundTopRight,
-                  roundBottomRight,
-                  roundBottomLeft,
-                  0.0F,
-                  transform,
-                  w,
-                  h,
-                  Math.max(safeBlur, 0.001F),
-                  safeSpread,
-                  0,
-                  0.0F,
-                  1.0F,
-                  67108864);
-         }
-      }
+      this.batch.drawDropShadowRect(x, y, w, h, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft,
+            blurStrength, spread, rgbaPremul, transform);
    }
 
    public void drawTexturedQuad(int texture, float x, float y, float w, float h, float u0, float v0, float u1, float v1,
          int rgbaPremul, float[] transform) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      this.writeInstance(3, x, y, w, h, rgbaPremul, 0.0F, 0.0F, transform, u0, v0, u1, v1, slot, 0.0F, 1.0F);
+      this.batch.drawTexturedQuad(texture, x, y, w, h, u0, v0, u1, v1, rgbaPremul, transform);
    }
 
    public void drawTexturedQuadRounded(
          int texture, float x, float y, float w, float h, float u0, float v0, float u1, float v1, float rounding,
          int rgbaPremul, float[] transform) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      this.writeInstance(3, x, y, w, h, rgbaPremul, rounding, 0.0F, transform, u0, v0, u1, v1, slot, 0.0F, 1.0F);
+      this.batch.drawTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform);
    }
 
    public void drawRgbaTexturedQuad(int texture, float x, float y, float w, float h, float u0, float v0, float u1,
          float v1, int rgbaPremul, float[] transform) {
-      this.drawRgbaTexturedQuad(texture, x, y, w, h, u0, v0, u1, v1, rgbaPremul, transform, false);
+      this.batch.drawRgbaTexturedQuad(texture, x, y, w, h, u0, v0, u1, v1, rgbaPremul, transform);
    }
 
    public void drawRgbaTexturedQuad(
@@ -806,18 +440,14 @@ public final class GlBackend {
          int rgbaPremul,
          float[] transform,
          boolean preservePremultipliedColor) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      int extraFlags = preservePremultipliedColor ? 64 : 0;
-      this.writeInstanceEx(
-            3, x, y, w, h, rgbaPremul, rgbaPremul, rgbaPremul, rgbaPremul, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, transform, u0,
-            v0, u1, v1, slot, 0.0F, 1.0F, extraFlags);
+      this.batch.drawRgbaTexturedQuad(texture, x, y, w, h, u0, v0, u1, v1, rgbaPremul, transform,
+            preservePremultipliedColor);
    }
 
    public void drawRgbaTexturedQuadRounded(
          int texture, float x, float y, float w, float h, float u0, float v0, float u1, float v1, float rounding,
          int rgbaPremul, float[] transform) {
-      this.drawRgbaTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform, false);
+      this.batch.drawRgbaTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform);
    }
 
    public void drawRgbaTexturedQuadRounded(
@@ -834,41 +464,14 @@ public final class GlBackend {
          int rgbaPremul,
          float[] transform,
          boolean preservePremultipliedColor) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      int extraFlags = preservePremultipliedColor ? 64 : 0;
-      this.writeInstanceEx(
-            3,
-            x,
-            y,
-            w,
-            h,
-            rgbaPremul,
-            rgbaPremul,
-            rgbaPremul,
-            rgbaPremul,
-            rounding,
-            rounding,
-            rounding,
-            rounding,
-            1.0F,
-            transform,
-            u0,
-            v0,
-            u1,
-            v1,
-            slot,
-            0.0F,
-            1.0F,
-            extraFlags);
+      this.batch.drawRgbaTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform,
+            preservePremultipliedColor);
    }
 
    public void drawRgbaOpaqueTexturedQuadRounded(
          int texture, float x, float y, float w, float h, float u0, float v0, float u1, float v1, float rounding,
          int rgbaPremul, float[] transform) {
-      this.ensureInstanceCapacity();
-      this.drawRgbaOpaqueTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform,
-            false);
+      this.batch.drawRgbaOpaqueTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform);
    }
 
    public void drawRgbaOpaqueTexturedQuadRounded(
@@ -885,102 +488,21 @@ public final class GlBackend {
          int rgbaPremul,
          float[] transform,
          boolean screenSpaceUv) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      int extraFlags = 8;
-      if (screenSpaceUv) {
-         extraFlags |= 32;
-      }
-
-      this.writeInstanceEx(
-            3,
-            x,
-            y,
-            w,
-            h,
-            rgbaPremul,
-            rgbaPremul,
-            rgbaPremul,
-            rgbaPremul,
-            rounding,
-            rounding,
-            rounding,
-            rounding,
-            1.0F,
-            transform,
-            u0,
-            v0,
-            u1,
-            v1,
-            slot,
-            0.0F,
-            1.0F,
-            extraFlags);
+      this.batch.drawRgbaOpaqueTexturedQuadRounded(texture, x, y, w, h, u0, v0, u1, v1, rounding, rgbaPremul, transform,
+            screenSpaceUv);
    }
 
    public void drawRgbaOpaqueTexturedQuad(
          int texture, float x, float y, float w, float h, float u0, float v0, float u1, float v1, int rgbaPremul,
          float[] transform) {
-      this.ensureInstanceCapacity();
-      int slot = this.textureSlotFor(texture);
-      int extraFlags = 8;
-      this.writeInstanceEx(
-            3, x, y, w, h, rgbaPremul, rgbaPremul, rgbaPremul, rgbaPremul, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, transform, u0,
-            v0, u1, v1, slot, 0.0F, 1.0F, extraFlags);
+      this.batch.drawRgbaOpaqueTexturedQuad(texture, x, y, w, h, u0, v0, u1, v1, rgbaPremul, transform);
    }
 
    public void enqueueMsdfGlyph(
          int texture, float pxRange, float x, float y, float width, float height, float u0, float v0, float u1,
          float v1, int rgbaColor, float[] transform) {
-      if (texture > 0) {
-         this.ensureInstanceCapacity();
-         int slot = this.textureSlotFor(texture);
-         float clampedRange = pxRange > 0.0F ? pxRange : 0.001F;
-         this.writeInstanceEx(
-               3,
-               x,
-               y,
-               width,
-               height,
-               rgbaColor,
-               rgbaColor,
-               rgbaColor,
-               rgbaColor,
-               clampedRange,
-               clampedRange,
-               clampedRange,
-               clampedRange,
-               0.0F,
-               transform,
-               u0,
-               v0,
-               u1,
-               v1,
-               slot,
-               0.0F,
-               1.0F,
-               16);
-      }
+      this.batch.enqueueMsdfGlyph(texture, pxRange, x, y, width, height, u0, v0, u1, v1, rgbaColor, transform);
    }
-
-   private int textureSlotFor(int texture) {
-      Integer slot = this.textureToSlot.get(texture);
-      if (slot != null) {
-         return slot;
-      } else {
-         if (this.slotToTexture.size() >= 16) {
-            this.flush();
-            this.textureToSlot.clear();
-            this.slotToTexture.clear();
-         }
-
-         int newSlot = this.slotToTexture.size();
-         this.slotToTexture.add(texture);
-         this.textureToSlot.put(texture, newSlot);
-         return newSlot;
-      }
-   }
-
    public void drawInstances(ByteBuffer data, int instanceCount) {
    }
 
@@ -1338,7 +860,6 @@ public final class GlBackend {
    public void drawPreparedBlurRounded(float x, float y, float w, float h, float rounding, float alpha,
          float[] transform) {
       if (this.preparedBlurTex != 0) {
-         this.ensureInstanceCapacity();
          int colorPremul = (int) (Math.max(0.0F, Math.min(1.0F, alpha)) * 255.0F) << 24 | 16777215;
          float uScale = this.preparedBlurW > 0 ? this.preparedBlurScaleX / this.preparedBlurW : 0.0F;
          float vScale = this.preparedBlurH > 0 ? -this.preparedBlurScaleY / this.preparedBlurH : 0.0F;
@@ -1358,7 +879,6 @@ public final class GlBackend {
                   && this.preparedRegionBlurH == regionH
                   && this.preparedRegionBlurX == regionX
                   && this.preparedRegionBlurY == regionY) {
-               this.ensureInstanceCapacity();
                int colorPremul = (int) (Math.max(0.0F, Math.min(1.0F, alpha)) * 255.0F) << 24 | 16777215;
                float u0 = 0.0F;
                float v0 = 1.0F;
@@ -1371,16 +891,16 @@ public final class GlBackend {
       }
    }
 
-   public GlBackend.FrameCapture captureFullFrame() {
+   public RenderBackend.FrameCapture captureFullFrame() {
       MinecraftClient client = MinecraftClient.getInstance();
       if (client == null) {
-         return new GlBackend.FrameCapture(0, 0, 0, 0);
+         return new RenderBackend.FrameCapture(0, 0, 0, 0);
       } else {
          Framebuffer framebuffer = client.getFramebuffer();
          if (framebuffer == null) {
-            return new GlBackend.FrameCapture(0, 0, 0, 0);
+            return new RenderBackend.FrameCapture(0, 0, 0, 0);
          } else if (!(framebuffer.getColorAttachment() instanceof GlTexture glColor)) {
-            return new GlBackend.FrameCapture(0, 0, 0, 0);
+            return new RenderBackend.FrameCapture(0, 0, 0, 0);
          } else {
             int sourceColor = glColor.getGlId();
             int sourceDepth = 0;
@@ -1429,7 +949,7 @@ public final class GlBackend {
                GlState.pop(state);
             }
 
-            return new GlBackend.FrameCapture(this.fullFrameTarget.colorTex, this.fullFrameTarget.depthTex, width,
+            return new RenderBackend.FrameCapture(this.fullFrameTarget.colorTex, this.fullFrameTarget.depthTex, width,
                   height);
          }
       }
@@ -1466,6 +986,53 @@ public final class GlBackend {
             GL20.glUseProgram(0);
             GlState.pop(state);
          }
+      }
+   }
+
+   public int getPreparedBlurTexture() {
+      return this.preparedBlurTex;
+   }
+
+   public int getPreparedBlurWidth() {
+      return this.preparedBlurW;
+   }
+
+   public int getPreparedBlurHeight() {
+      return this.preparedBlurH;
+   }
+
+   public float getPreparedBlurScaleX() {
+      return this.preparedBlurScaleX;
+   }
+
+   public float getPreparedBlurScaleY() {
+      return this.preparedBlurScaleY;
+   }
+
+   public int getPreparedRegionBlurTexture() {
+      return this.preparedRegionBlurTex;
+   }
+
+   public int getPreparedRegionBlurX() {
+      return this.preparedRegionBlurX;
+   }
+
+   public int getPreparedRegionBlurY() {
+      return this.preparedRegionBlurY;
+   }
+
+   public int getPreparedRegionBlurWidth() {
+      return this.preparedRegionBlurW;
+   }
+
+   public int getPreparedRegionBlurHeight() {
+      return this.preparedRegionBlurH;
+   }
+
+   @Override
+   public void destroyTexture(int textureId) {
+      if (textureId > 0) {
+         GL11.glDeleteTextures(textureId);
       }
    }
 
@@ -1536,8 +1103,6 @@ public final class GlBackend {
          this.preparedRegionBlurH = 0;
          this.preparedRegionBlurX = 0;
          this.preparedRegionBlurY = 0;
-         this.textureToSlot.clear();
-         this.slotToTexture.clear();
          GL30.glBindVertexArray(0);
          GL20.glUseProgram(0);
          if (this.vaoDraw != 0) {
@@ -1598,7 +1163,4 @@ public final class GlBackend {
       };
    }
 
-   @Environment(EnvType.CLIENT)
-   public record FrameCapture(int colorTexture, int depthTexture, int width, int height) {
-   }
 }

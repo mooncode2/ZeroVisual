@@ -60,7 +60,7 @@ public final class WorldRenderer implements AutoCloseable {
       stack.multiplyPositionMatrix(new Matrix4f(basePositionMatrix));
       BufferAllocator allocator = new BufferAllocator(262144);
       Immediate immediate = VertexConsumerProvider.immediate(allocator);
-      float tickDelta = tickCounter.getTickProgress(false);
+      float tickDelta = tickCounter.getTickProgress(true);
       return new WorldRenderer(camera, stack, basePositionMatrix, baseWorldMatrix, new Matrix4f(projectionMatrix), allocator, immediate, tickDelta);
    }
 

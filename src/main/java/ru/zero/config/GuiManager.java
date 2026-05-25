@@ -20,7 +20,6 @@ public class GuiManager {
    private Category currentCategory = Category.Visuals;
    private boolean guiBlurEnabled = false;
    private boolean guiVanillaStyleEnabled = false;
-   private boolean guiVulcanModeEnabled = false;
 
    public void init() {
       this.file = new File(new File(Zero.get.root, "configs"), "gui.cfg");
@@ -61,11 +60,6 @@ public class GuiManager {
       this.saveSettings();
    }
 
-   public void setGuiVulcanModeEnabled(boolean enabled) {
-      this.guiVulcanModeEnabled = enabled;
-      this.saveSettings();
-   }
-
    public Theme getCurrentTheme() {
       return this.currentTheme;
    }
@@ -82,10 +76,6 @@ public class GuiManager {
       return this.guiVanillaStyleEnabled;
    }
 
-   public boolean isGuiVulcanModeEnabled() {
-      return this.guiVulcanModeEnabled;
-   }
-
    private void saveSettings() {
       try (FileWriter writer = new FileWriter(this.file)) {
          Properties props = new Properties();
@@ -93,7 +83,6 @@ public class GuiManager {
          props.setProperty("category", this.currentCategory.name());
          props.setProperty("guiBlur", String.valueOf(this.guiBlurEnabled));
          props.setProperty("guiVanillaStyle", String.valueOf(this.guiVanillaStyleEnabled));
-         props.setProperty("guiVulcanMode", String.valueOf(this.guiVulcanModeEnabled));
          props.store(writer, "GUI Settings");
       } catch (IOException var6) {
          var6.printStackTrace();
@@ -108,7 +97,6 @@ public class GuiManager {
          this.currentCategory = Category.valueOf(props.getProperty("category", Category.Visuals.name()));
          this.guiBlurEnabled = Boolean.parseBoolean(props.getProperty("guiBlur", "false"));
          this.guiVanillaStyleEnabled = Boolean.parseBoolean(props.getProperty("guiVanillaStyle", "false"));
-         this.guiVulcanModeEnabled = Boolean.parseBoolean(props.getProperty("guiVulcanMode", "false"));
       } catch (IllegalArgumentException | IOException var6) {
          var6.printStackTrace();
       }

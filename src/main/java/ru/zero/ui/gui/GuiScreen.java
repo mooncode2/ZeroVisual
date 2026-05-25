@@ -62,7 +62,6 @@ public class GuiScreen {
    public static boolean serverMapOpen = false;
    public static BooleanSetting clientBlurSetting = new BooleanSetting("Блюр (Размытие)", false);
    public static BooleanSetting clientVanillaSetting = new BooleanSetting("Ванильный", false);
-   public static BooleanSetting clientVulcanSetting = new BooleanSetting("Vulcan", false);
    public static boolean friendsTabOpen = false;
    public static boolean friendInputActive = false;
    public static String friendInputText = "";
@@ -154,9 +153,5 @@ public class GuiScreen {
 
    public static boolean isVanillaStyle() {
       return clientVanillaSetting != null && clientVanillaSetting.get();
-   }
-
-   public static boolean isVulkanMode() {
-      return clientVulcanSetting != null && clientVulcanSetting.get();
    }
 }

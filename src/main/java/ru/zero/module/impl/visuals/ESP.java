@@ -22,14 +22,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.util.BufferAllocator;
-
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
-import java.util.OptionalDouble;
+import ru.zero.util.render.world.WorldRenderer;
 import org.joml.Matrix4f;
 import ru.zero.Zero;
 import ru.zero.event.EventInit;
-import ru.zero.event.render.EventRender3D;
+import ru.zero.event.render.WorldRenderEvent;
 import ru.zero.module.api.Category;
 import ru.zero.module.api.IModule;
 import ru.zero.module.api.Module;
@@ -84,21 +82,17 @@ public class ESP extends Module {
    }
 
    @EventInit
-   public void render(EventRender3D event) {
+   public void render(WorldRenderEvent event) {
       if (mc.world != null && mc.player != null) {
-         BufferAllocator allocator = new BufferAllocator(262144);
-         Immediate immediate = VertexConsumerProvider.immediate(allocator);
+         WorldRenderer worldRenderer = event.worldRenderer();
+         Immediate immediate = worldRenderer.bufferSource();
+         MatrixStack matrices = event.matrixStack();
+         float tickDelta = worldRenderer.tickDelta();
 
-         try {
-            for (Entity ent : mc.world.getEntities()) {
-               if (this.shouldRender(ent)) {
-                  this.renderBox(event.getMatrixStack(), immediate, ent, event.getTickDelta());
-               }
+         for (Entity ent : mc.world.getEntities()) {
+            if (this.shouldRender(ent)) {
+               this.renderBox(matrices, immediate, ent, tickDelta);
             }
-
-            immediate.draw();
-         } finally {
-            allocator.close();
          }
       }
    }

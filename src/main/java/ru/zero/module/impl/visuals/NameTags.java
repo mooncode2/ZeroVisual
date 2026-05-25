@@ -12,7 +12,6 @@ import ru.zero.Zero;
 import ru.zero.event.EventInit;
 import ru.zero.event.impl.EventChangeWorld;
 import ru.zero.event.impl.EventScreen;
-import ru.zero.event.render.EventRender3D;
 import ru.zero.module.api.Category;
 import ru.zero.module.api.IModule;
 import ru.zero.module.api.Module;
@@ -59,14 +58,42 @@ public class NameTags extends Module {
    }
 
    @EventInit
-   public void onRender3D(EventRender3D event) {
-      updateTagStates(event.getTickDelta());
+   public void onRender2D(EventScreen event) {
+      if (mc.world == null || mc.player == null || event == null) {
+         return;
+      }
+
+      if (!entityType.get("Player")) {
+         return;
+      }
+
+      float tickDelta = mc.getRenderTickCounter().getTickProgress(true);
+      updateTagStates(tickDelta);
+
+      Renderer2D r2 = event.renderer();
+      DrawContext dc = event.drawContext();
+      if (r2 == null || dc == null) {
+         return;
+      }
+
+      for (Map.Entry<PlayerEntity, TagState> entry : playerTags.entrySet()) {
+         PlayerEntity p = entry.getKey();
+         TagState st = entry.getValue();
+         if (p == null || st == null) {
+            continue;
+         }
+
+         boolean friend = Zero.get != null && Zero.get.friendManager != null
+               && Zero.get.friendManager.isFriend(p.getName().getString());
+         renderPlayerTag(r2, dc, p, st, friend);
+      }
    }
 
    private void updateTagStates(float tickDelta) {
       playerTags.clear();
-      if (mc.world == null || mc.player == null || mc.getWindow() == null) return;
-      if (!entityType.get("Player")) return;
+      if (mc.world == null || mc.player == null || mc.getWindow() == null) {
+         return;
+      }
 
       float scaledW = (float) mc.getWindow().getScaledWidth();
       float scaledH = (float) mc.getWindow().getScaledHeight();
@@ -76,16 +103,26 @@ public class NameTags extends Module {
       float yRatio = scaledH > 0.0F ? fbH / scaledH : 1.0F;
 
       for (PlayerEntity p : mc.world.getPlayers()) {
-         if (p == null || p == mc.player) continue;
-         if (!mc.player.canSee(p)) continue;
+         if (p == null || p == mc.player) {
+            continue;
+         }
+
+         if (!mc.player.canSee(p)) {
+            continue;
+         }
 
          double x = lerp(tickDelta, p.lastRenderX, p.getX());
          double y = lerp(tickDelta, p.lastRenderY, p.getY()) + p.getHeight() + 0.35;
          double z = lerp(tickDelta, p.lastRenderZ, p.getZ());
 
          Vector2d projected = Renderer2D.project2D(x, y, z);
-         if (projected == null) continue;
-         if (!Double.isFinite(projected.x) || !Double.isFinite(projected.y)) continue;
+         if (projected == null) {
+            continue;
+         }
+
+         if (!Double.isFinite(projected.x) || !Double.isFinite(projected.y)) {
+            continue;
+         }
 
          float sx = (float) projected.x;
          float sy = (float) projected.y;
@@ -97,23 +134,6 @@ public class NameTags extends Module {
          scale = clamp(scale, 0.55F, 1.6F);
 
          playerTags.put(p, new TagState(fbX, fbY, sx, sy, scale, (float) dist));
-      }
-   }
-
-   @EventInit
-   public void onRender2D(EventScreen event) {
-      if (mc.world == null || mc.player == null || event == null) return;
-      if (!entityType.get("Player")) return;
-      Renderer2D r2 = event.renderer();
-      DrawContext dc = event.drawContext();
-      if (r2 == null || dc == null) return;
-
-      for (Map.Entry<PlayerEntity, TagState> entry : playerTags.entrySet()) {
-         PlayerEntity p = entry.getKey();
-         TagState st = entry.getValue();
-         if (p == null || st == null) continue;
-         boolean friend = Zero.get != null && Zero.get.friendManager != null && Zero.get.friendManager.isFriend(p.getName().getString());
-         renderPlayerTag(r2, dc, p, st, friend);
       }
    }
 

@@ -1,0 +1,188 @@
+---- Minecraft Crash Report ----
+// Oh - I know what I did wrong!
+
+Time: 2026-05-15 19:56:00
+Description: Initializing game
+
+com.moonsworth.lunar.ichor.util.FatalIchorError: [Genesis] Failed to transform net.minecraft.class_4184
+	at com.moonsworth.lunar.ichor.HOHCHOCOHHCORROOCHCRHICRRHCRCC.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.findClass(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.loadClass(Unknown Source)
+	at java.base@21.0.10/java.lang.ClassLoader.loadClass(Unknown Source)
+	at Genesis//net.minecraft.class_757.<init>(SourceFile:160)
+	at Genesis//net.minecraft.class_310.<init>(SourceFile:646)
+	at Genesis//net.minecraft.client.main.Main.redirect_lunar$main$minecraft(SourceFile:1181)
+	at Genesis//net.minecraft.client.main.Main.main(SourceFile:234)
+	at java.base@21.0.10/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base@21.0.10/java.lang.reflect.Method.invoke(Unknown Source)
+	at com.moonsworth.lunar.genesis.ClientGameBootstrap.apply(Unknown Source)
+	at java.base@21.0.10/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base@21.0.10/java.lang.reflect.Method.invoke(Unknown Source)
+	at app//com.moonsworth.lunar.genesis.ICOOCHOIRIRRHIOHCIIHOHICCRIHIH.ICOOCHOIRIRRHIOHCIIHOHICCRIHIH(Unknown Source)
+	at app//com.moonsworth.lunar.genesis.Genesis.run(Unknown Source)
+	at app//com.moonsworth.lunar.genesis.Genesis.main(Unknown Source)
+Caused by: com.moonsworth.lunar.ichor.util.FatalIchorError: [Genesis] Failed to apply MIXIN to net.minecraft.class_4184
+	at com.moonsworth.lunar.ichor.OOCROIOIIORCCCCICIIOHCIROIHOIR.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	at com.moonsworth.lunar.ichor.OOCROIOIIORCCCCICIIOHCIROIHOIR.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	at com.moonsworth.lunar.ichor.HOHCHOCOHHCORROOCHCRHICRRHCRCC.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.findClass(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.loadClass(Unknown Source)
+	at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+	at Genesis//net.minecraft.class_757.<init>(SourceFile:160)
+	at Genesis//net.minecraft.class_310.<init>(SourceFile:646)
+	at Genesis//net.minecraft.client.main.Main.redirect$zff000$lunar$main$minecraft(SourceFile:1181)
+	... 9 more
+Caused by: com.moonsworth.lunar.ichor.HIOICRIICRRCCRHCIIHCHOHCHRCRIO.RHRIOOHIHHHIOOCHOORHROHHIIHHCH: Failed to apply Mixins to net.minecraft.class_4184.
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinProxyImpl.transformClassNode(Unknown Source)
+	at com.moonsworth.lunar.ichor.OOCROIOIIORCCCCICIIOHCIROIHOIR.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	... 17 more
+Caused by: org.spongepowered.asm.mixin.transformer.throwables.MixinTransformerError: An unexpected critical error was encountered
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinProcessor.applyMixins(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinTransformer.transformClass(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinProxyImpl.transformClassNode(Unknown Source)
+	... 18 more
+Caused by: org.spongepowered.asm.mixin.injection.throwables.InjectionError: Critical injection failure: Redirector lunar$freelookRotation$v1_21_2(Lnet/minecraft/class_4184;FF)V in mixins.modern_lunar_combined.json:IRRCORHHHHCHCHCHCCCOOCHHRROCIH.RHRIOOHIHHHIOOCHOORHROHHIIHHCH from mod (unknown) failed injection check, (0/1) succeeded. Scanned 0 target(s). No refMap loaded.
+	at Genesis//org.spongepowered.asm.mixin.injection.struct.InjectionInfo.postInject(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinTargetContext.applyInjections(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinApplicatorStandard.applyInjections(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinApplicatorStandard.lambda$runApplicatorPass$7(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinApplicatorStandard.processMixins(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinApplicatorStandard.runApplicatorPass(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinApplicatorStandard.apply(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.TargetClassContext.apply(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.TargetClassContext.applyMixins(Unknown Source)
+	at Genesis//org.spongepowered.asm.mixin.transformer.MixinProcessor.applyMixins(Unknown Source)
+	... 20 more
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at com.moonsworth.lunar.ichor.HOHCHOCOHHCORROOCHCRHICRRHCRCC.RHRIOOHIHHHIOOCHOORHROHHIIHHCH(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.findClass(Unknown Source)
+	at com.moonsworth.lunar.genesis.IRRCORHHHHCHCHCHCCCOOCHHRROCIH.loadClass(Unknown Source)
+	at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+	at Genesis//net.minecraft.class_757.<init>(SourceFile:160)
+	at Genesis//net.minecraft.class_310.<init>(SourceFile:646)
+	at Genesis//net.minecraft.client.main.Main.redirect$zff000$lunar$main$minecraft(SourceFile:1181)
+
+-- Initialization --
+Details:
+	Modules: 
+Stacktrace:
+	at Genesis//net.minecraft.client.main.Main.main(SourceFile:234)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at com.moonsworth.lunar.genesis.ClientGameBootstrap.apply(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at com.moonsworth.lunar.genesis.ICOOCHOIRIRRHIOHCIIHOHICCRIHIH.ICOOCHOIRIRRHIOHCIIHOHICCRIHIH(Unknown Source)
+	at com.moonsworth.lunar.genesis.Genesis.run(Unknown Source)
+	at com.moonsworth.lunar.genesis.Genesis.main(Unknown Source)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Linux (amd64) version 6.18.25-2-cachyos-lts
+	Java Version: 21.0.10, Azul Systems, Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Azul Systems, Inc.
+	Memory: 439001128 bytes (418 MiB) / 1824522240 bytes (1740 MiB) up to 3221225472 bytes (3072 MiB)
+	CPUs: 16
+	Processor Vendor: GenuineIntel
+	Processor Name: 13th Gen Intel(R) Core(TM) i7-13620H
+	Identifier: Intel64 Family 6 Model 186 Stepping 2
+	Microarchitecture: Raptor Lake
+	Frequency (GHz): -0.00
+	Number of physical packages: 1
+	Number of physical CPUs: 10
+	Number of logical CPUs: 16
+	Graphics card #0 name: Raptor Lake-P [UHD Graphics]
+	Graphics card #0 vendor: Intel Corporation (0x8086)
+	Graphics card #0 VRAM (MiB): 256.00
+	Graphics card #0 deviceId: 0xa7a8
+	Graphics card #0 versionInfo: unknown
+	Graphics card #1 name: AD107M [GeForce RTX 4060 Max-Q / Mobile]
+	Graphics card #1 vendor: NVIDIA Corporation (0x10de)
+	Graphics card #1 VRAM (MiB): 8224.00
+	Graphics card #1 deviceId: 0x28a0
+	Graphics card #1 versionInfo: unknown
+	Virtual memory max (MiB): 23532.20
+	Virtual memory used (MiB): 28539.36
+	Swap memory total (MiB): 15688.00
+	Swap memory used (MiB): 15687.03
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 7821.59, total: 7844.21
+	Space in storage for workdir (MiB): available: 97938.73, total: 494951.78
+	JVM Flags: 8 total; -XX:+DisableAttachMechanism -XX:+DisableAttachMechanism -XX:+UseStringDeduplication -Xmx3072m -XX:+DisableAttachMechanism -XX:-CreateCoredumpOnCrash -XX:-CreateMinidumpOnCrash -XX:+DisableAttachMechanism
+	Debug Flags: 0 total; 
+	Fabric Mods: 
+		fabric-api: Fabric API 0.140.0+1.21.11
+			fabric-api-base: Fabric API Base 1.0.5+4ebb5c083e
+			fabric-api-lookup-api-v1: Fabric API Lookup API (v1) 1.6.113+1fb1cde93e
+			fabric-biome-api-v1: Fabric Biome API (v1) 17.1.1+4fc5413f3e
+			fabric-block-api-v1: Fabric Block API (v1) 1.1.10+4ebb5c083e
+			fabric-block-view-api-v2: Fabric BlockView API (v2) 1.0.39+4ebb5c083e
+			fabric-command-api-v2: Fabric Command API (v2) 2.4.7+6b42a6003e
+			fabric-content-registries-v0: Fabric Content Registries (v0) 10.2.14+4fc5413f3e
+			fabric-convention-tags-v1: Fabric Convention Tags 2.1.55+7f945d5b3e
+			fabric-convention-tags-v2: Fabric Convention Tags (v2) 2.17.3+8ef948ba3e
+			fabric-crash-report-info-v1: Fabric Crash Report Info (v1) 0.3.23+4ebb5c083e
+			fabric-data-attachment-api-v1: Fabric Data Attachment API (v1) 1.8.43+1fb1cde93e
+			fabric-data-generation-api-v1: Fabric Data Generation API (v1) 23.3.0+ae1056283e
+			fabric-dimensions-v1: Fabric Dimensions API (v1) 4.0.28+4fc5413f3e
+			fabric-entity-events-v1: Fabric Entity Events (v1) 3.0.5+4ebb5c083e
+			fabric-events-interaction-v0: Fabric Events Interaction (v0) 4.0.44+1fb1cde93e
+			fabric-game-rule-api-v1: Fabric Game Rule API (v1) 2.0.3+4fc5413f3e
+			fabric-item-api-v1: Fabric Item API (v1) 11.5.20+d0c46b9e3e
+			fabric-item-group-api-v1: Fabric Item Group API (v1) 4.2.36+4fc5413f3e
+			fabric-key-binding-api-v1: Fabric Key Binding API (v1) 1.1.7+4fc5413f3e
+			fabric-lifecycle-events-v1: Fabric Lifecycle Events (v1) 2.6.15+4ebb5c083e
+			fabric-loot-api-v2: Fabric Loot API (v2) 3.0.73+3f89f5a53e
+			fabric-loot-api-v3: Fabric Loot API (v3) 2.0.20+78c8b4663e
+			fabric-message-api-v1: Fabric Message API (v1) 6.1.12+4ebb5c083e
+			fabric-model-loading-api-v1: Fabric Model Loading API (v1) 6.0.12+4fc5413f3e
+			fabric-networking-api-v1: Fabric Networking API (v1) 5.1.5+ae1e07683e
+			fabric-object-builder-api-v1: Fabric Object Builder API (v1) 21.1.38+4fc5413f3e
+			fabric-particles-v1: Fabric Particles (v1) 4.2.11+4fc5413f3e
+			fabric-recipe-api-v1: Fabric Recipe API (v1) 8.2.3+4ebb5c083e
+			fabric-registry-sync-v0: Fabric Registry Sync (v0) 6.2.4+4ebb5c083e
+			fabric-renderer-api-v1: Fabric Renderer API (v1) 8.0.0+f4ffd2e53e
+			fabric-renderer-indigo: Fabric Renderer - Indigo 5.0.0+f4ffd2e53e
+			fabric-rendering-fluids-v1: Fabric Rendering Fluids (v1) 3.1.43+4ebb5c083e
+			fabric-rendering-v1: Fabric Rendering (v1) 16.2.7+f4ffd2e53e
+			fabric-resource-conditions-api-v1: Fabric Resource Conditions API (v1) 5.0.35+4fc5413f3e
+			fabric-resource-loader-v0: Fabric Resource Loader (v0) 3.3.4+4fc5413f3e
+			fabric-resource-loader-v1: Fabric Resource Loader (v1) 1.0.10+78c8b4663e
+			fabric-screen-api-v1: Fabric Screen API (v1) 3.1.7+4ebb5c083e
+			fabric-screen-handler-api-v1: Fabric Screen Handler API (v1) 1.3.160+4fc5413f3e
+			fabric-serialization-api-v1: Fabric Serialization API (v1) 1.0.5+4ebb5c083e
+			fabric-sound-api-v1: Fabric Sound API (v1) 1.0.51+4fc5413f3e
+			fabric-tag-api-v1: Fabric Tag API (v1) 1.2.20+4fc5413f3e
+			fabric-transfer-api-v1: Fabric Transfer API (v1) 6.0.24+4fc5413f3e
+			fabric-transitive-access-wideners-v1: Fabric Transitive Access Wideners (v1) 7.0.8+0107c3da3e
+		fabricloader: fabricloader 0.19.2
+		ichor: ichor 0.0.0
+		java: OpenJDK 64-Bit Server VM 21
+		minecraft: Minecraft 1.21.11
+		mixinextras: mixinextras 0.5.0
+		zero: Zero 1.0
+	Launched Version: 1.21.11
+	Backend library: LWJGL version 3.3.3-snapshot
+	Backend API: Mesa Intel(R) Graphics (RPL-P) GL version 4.6 (Core Profile) Mesa 26.0.6-arch2.2, Intel
+	Window size: <not initialized>
+	GFLW Platform: x11
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'lunarclient:v2.22.0-2620,fabric'
+	Universe: 404
+	Type: Client (map_client.txt)
+	Locale: 
+	System encoding: UTF-8
+	File encoding: UTF-8
+	CPU: 16x 13th Gen Intel(R) Core(TM) i7-13620H
