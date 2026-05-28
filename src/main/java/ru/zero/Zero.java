@@ -14,6 +14,7 @@ import ru.zero.client.ZeroKeyBindings;
 import ru.zero.commands.CommandBootstrap;
 import ru.zero.config.GuiManager;
 import ru.zero.config.friend.FriendManager;
+import ru.zero.config.target.TargetManager;
 import ru.zero.event.EventManager;
 import ru.zero.event.RenderHandler;
 import ru.zero.event.render.RenderEvent;
@@ -52,6 +53,7 @@ public class Zero implements ClientModInitializer {
    public GuiManager guiManager;
    public ConfigManager configManager;
    public FriendManager friendManager;
+   public TargetManager targetManager;
    public GuiClient guiClient;
    public VisualLinkingClient visualLinkingClient;
    private final RPC rpc = new RPC();
@@ -85,6 +87,8 @@ public class Zero implements ClientModInitializer {
       this.manager = new Manager();
       this.friendManager = new FriendManager();
       FriendManager.init();
+      this.targetManager = new TargetManager();
+      TargetManager.init();
       this.configManager = new ConfigManager();
       this.guiManager = new GuiManager();
       this.guiManager.init();

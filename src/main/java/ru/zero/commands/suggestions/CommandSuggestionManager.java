@@ -8,7 +8,10 @@ import ru.zero.config.ConfigCommandSuggestions;
 
 @Environment(EnvType.CLIENT)
 public final class CommandSuggestionManager {
-   private static final List<CommandSuggestionProvider> PROVIDERS = List.of(ConfigCommandSuggestions.getInstance());
+   private static final List<CommandSuggestionProvider> PROVIDERS = List.of(
+         ConfigCommandSuggestions.getInstance(),
+         SocialCommandSuggestions.getInstance()
+   );
 
    private CommandSuggestionManager() {
    }

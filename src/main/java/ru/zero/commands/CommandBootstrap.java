@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import ru.zero.config.ConfigCommand;
 import ru.zero.config.friend.FriendCommand;
+import ru.zero.config.target.TargetCommand;
 
 @Environment(EnvType.CLIENT)
 public final class CommandBootstrap {
@@ -18,6 +19,7 @@ public final class CommandBootstrap {
          CommandManager manager = CommandManager.getInstance();
          manager.register(ConfigCommand.getInstance());
          manager.register(FriendCommand.getInstance());
+         manager.register(TargetCommand.getInstance());
       }
    }
 }

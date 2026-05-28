@@ -10,6 +10,7 @@ import java.util.Iterator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderSetup;
@@ -17,6 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.VertexConsumer;
@@ -189,10 +191,14 @@ public class TargetESP extends Module {
    public void onRender(WorldRenderEvent e) {
       alpha.update();
       LivingEntity target = this.getTarget();
+      if (this.lastTarget != null && this.isLocalPlayer(this.lastTarget)) {
+         this.lastTarget = null;
+      }
+
       if (mc.world != null && mc.player != null) {
          alpha.run(target == null ? 0.0 : 1.0, 0.35F, Easings.QUART_OUT);
          if (alpha.getValue() > 0.0) {
-            if (target != null) {
+            if (target != null && !this.isLocalPlayer(target)) {
                if (this.lastTarget != target) {
                   lastTime = 0L;
                   this.currentTimeSpirits = 0L;
@@ -202,7 +208,10 @@ public class TargetESP extends Module {
                this.lastTarget = target;
             }
 
-            if (this.lastTarget != null && !typeTargetEsp.is("Не отображать")) {
+            if (this.lastTarget != null
+                  && !this.isLocalPlayer(this.lastTarget)
+                  && this.shouldRenderTargetEsp(this.lastTarget)
+                  && !typeTargetEsp.is("Не отображать")) {
                Immediate immediate = e.worldRenderer().bufferSource();
                MatrixStack stack = e.matrixStack();
                float tickDelta = e.worldRenderer().tickDelta();
@@ -254,6 +263,30 @@ public class TargetESP extends Module {
 
    private LivingEntity getTarget() {
       return CrosshairTargetUtil.getLivingCrosshairTarget();
+   }
+
+   private boolean isLocalPlayer(LivingEntity entity) {
+      return entity != null && mc.player != null && entity.getUuid().equals(mc.player.getUuid());
+   }
+
+   /** Скрывает ESP на своей модели в F5 / от третьего лица, когда прицел на себе. */
+   private boolean shouldRenderTargetEsp(LivingEntity entity) {
+      if (this.isLocalPlayer(entity)) {
+         return false;
+      }
+
+      if (!mc.options.getPerspective().isFirstPerson()) {
+         Entity aimed = mc.targetedEntity;
+         if (aimed != null && (aimed == mc.player || aimed.getUuid().equals(mc.player.getUuid()))) {
+            return false;
+         }
+
+         if (entity.squaredDistanceTo(mc.player) < 0.25) {
+            return false;
+         }
+      }
+
+      return true;
    }
 
    private void renderDiamond(MatrixStack matrices, Immediate immediate, LivingEntity target, float partialTicks) {

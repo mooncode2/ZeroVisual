@@ -43,6 +43,8 @@ public class Hat extends Module {
    public static BooleanSetting fdg = new BooleanSetting("Прикреп к бошке", true);
    public static BooleanSetting friendsHat = new BooleanSetting("Hat for friends", true);
    public static HueSetting friendColor = new HueSetting("Friend color", 36.0F).hidden(() -> !friendsHat.get());
+   public static BooleanSetting targetsHat = new BooleanSetting("Hat for targets", true);
+   public static HueSetting targetColor = new HueSetting("Target color", 0.0F).hidden(() -> !targetsHat.get());
    private static final RenderPipeline HAT_FILL_PIPELINE = RenderPipelines.register(
          RenderPipeline.builder(new Snippet[] { RenderPipelines.POSITION_COLOR_SNIPPET })
                .withLocation(Identifier.of("zero", "hat_fill"))
@@ -63,7 +65,7 @@ public class Hat extends Module {
                .build());
 
    public Hat() {
-      this.addSettings(new Setting[] { mode, fdg, friendsHat, friendColor });
+      this.addSettings(new Setting[] { mode, fdg, friendsHat, friendColor, targetsHat, targetColor });
    }
 
    @EventInit
@@ -77,9 +79,20 @@ public class Hat extends Module {
          for (PlayerEntity p : mc.world.getPlayers()) {
             if (p == null || !p.isAlive()) continue;
             boolean isSelf = p == mc.player;
+            String playerName = p.getName().getString();
             boolean isFriend = !isSelf && Zero.get != null && Zero.get.friendManager != null
-                  && Zero.get.friendManager.isFriend(p.getName().getString());
-            if (!isSelf && (!friendsHat.get() || !isFriend)) continue;
+                  && Zero.get.friendManager.isFriend(playerName);
+            boolean isTarget = !isSelf && Zero.get != null && Zero.get.targetManager != null
+                  && Zero.get.targetManager.isTarget(playerName);
+            if (!isSelf) {
+               if (isFriend && friendsHat.get()) {
+                  // friend hat below
+               } else if (isTarget && targetsHat.get()) {
+                  // target hat below
+               } else {
+                  continue;
+               }
+            }
 
             if (isSelf && mc.options.getPerspective() == Perspective.FIRST_PERSON) continue;
 
@@ -101,10 +114,17 @@ public class Hat extends Module {
             }
 
             Matrix4f matrix = matrices.peek().getPositionMatrix();
+            HueSetting customColor = null;
+            if (isFriend) {
+               customColor = friendColor;
+            } else if (isTarget) {
+               customColor = targetColor;
+            }
+
             if (mode.is("China Hat")) {
-               this.renderChinaHat(immediate, matrix, isFriend);
+               this.renderChinaHat(immediate, matrix, customColor);
             } else if (mode.is("Nimb")) {
-               this.renderNimb(immediate, matrix, isFriend);
+               this.renderNimb(immediate, matrix, customColor);
             }
 
             matrices.pop();
@@ -112,7 +132,7 @@ public class Hat extends Module {
       }
    }
 
-   private void renderChinaHat(Immediate immediate, Matrix4f matrix, boolean friend) {
+   private void renderChinaHat(Immediate immediate, Matrix4f matrix, HueSetting customColor) {
       int segments = 120;
       float radius = 0.55F;
       float height = 0.25F;
@@ -124,16 +144,16 @@ public class Hat extends Module {
          float angle2 = (float) Math.toRadians((i + 1) * (360.0 / segments));
          int c1;
          int c2;
-         if (friend) {
-            int base = ColorUtil.replAlpha(friendColor.getRGB(), 255);
-            int softGreenA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
-            int softGreenB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
-            int g1 = ColorUtil.gradient(ColorUtil.multDark(softGreenB, 0.65F), softGreenB, i * 4, 1);
-            int g2 = ColorUtil.gradient(ColorUtil.multDark(softGreenB, 0.65F), softGreenB, (i + 1) * 4, 1);
+         if (customColor != null) {
+            int base = ColorUtil.replAlpha(customColor.getRGB(), 255);
+            int softA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
+            int softB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
+            int g1 = ColorUtil.gradient(ColorUtil.multDark(softB, 0.65F), softB, i * 4, 1);
+            int g2 = ColorUtil.gradient(ColorUtil.multDark(softB, 0.65F), softB, (i + 1) * 4, 1);
             int mix1 = ColorUtil.overCol(ColorUtil.fade(i), g1, 0.75F);
             int mix2 = ColorUtil.overCol(ColorUtil.fade(i + 1), g2, 0.75F);
-            c1 = ColorUtil.multAlpha(ColorUtil.overCol(mix1, softGreenA, 0.25F), alpha);
-            c2 = ColorUtil.multAlpha(ColorUtil.overCol(mix2, softGreenA, 0.25F), alpha);
+            c1 = ColorUtil.multAlpha(ColorUtil.overCol(mix1, softA, 0.25F), alpha);
+            c2 = ColorUtil.multAlpha(ColorUtil.overCol(mix2, softA, 0.25F), alpha);
          } else {
             c1 = ColorUtil.multAlpha(ColorUtil.fade(i), alpha);
             c2 = ColorUtil.multAlpha(ColorUtil.fade(i + 1), alpha);
@@ -147,12 +167,12 @@ public class Hat extends Module {
 
       VertexConsumer lineBuffer = immediate.getBuffer(this.getHatLineLayer());
       int lineCol;
-      if (friend) {
-         int base = ColorUtil.replAlpha(friendColor.getRGB(), 255);
-         int softGreenA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
-         int softGreenB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
-         int g = ColorUtil.gradient(ColorUtil.multDark(softGreenB, 0.7F), softGreenB, 0, 1);
-         lineCol = ColorUtil.replAlpha(ColorUtil.overCol(ColorUtil.fade(), ColorUtil.overCol(g, softGreenA, 0.35F), 0.75F), 255);
+      if (customColor != null) {
+         int base = ColorUtil.replAlpha(customColor.getRGB(), 255);
+         int softA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
+         int softB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
+         int g = ColorUtil.gradient(ColorUtil.multDark(softB, 0.7F), softB, 0, 1);
+         lineCol = ColorUtil.replAlpha(ColorUtil.overCol(ColorUtil.fade(), ColorUtil.overCol(g, softA, 0.35F), 0.75F), 255);
       } else {
          lineCol = ColorUtil.replAlpha(ColorUtil.fade(), 255);
       }
@@ -167,17 +187,17 @@ public class Hat extends Module {
       }
    }
 
-   private void renderNimb(Immediate immediate, Matrix4f matrix, boolean friend) {
+   private void renderNimb(Immediate immediate, Matrix4f matrix, HueSetting customColor) {
       int segments = 120;
       float radius = 0.4F;
       VertexConsumer lineBuffer = immediate.getBuffer(this.getHatLineLayer());
       int color;
-      if (friend) {
-         int base = ColorUtil.replAlpha(friendColor.getRGB(), 255);
-         int softGreenA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
-         int softGreenB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
-         int g = ColorUtil.gradient(ColorUtil.multDark(softGreenB, 0.7F), softGreenB, 0, 1);
-         color = ColorUtil.replAlpha(ColorUtil.overCol(ColorUtil.fade(), ColorUtil.overCol(g, softGreenA, 0.35F), 0.75F), 255);
+      if (customColor != null) {
+         int base = ColorUtil.replAlpha(customColor.getRGB(), 255);
+         int softA = ColorUtil.overCol(base, ColorUtil.multDark(base, 0.75F), 0.35F);
+         int softB = ColorUtil.overCol(ColorUtil.multBright(base, 1.12F), base, 0.25F);
+         int g = ColorUtil.gradient(ColorUtil.multDark(softB, 0.7F), softB, 0, 1);
+         color = ColorUtil.replAlpha(ColorUtil.overCol(ColorUtil.fade(), ColorUtil.overCol(g, softA, 0.35F), 0.75F), 255);
       } else {
          color = ColorUtil.replAlpha(ColorUtil.fade(), 255);
       }

@@ -153,7 +153,7 @@ public class GuiMouseClickedModule extends GuiScreen {
                         return true;
                      }
 
-                     if (module.binding && pButton >= 0 && pButton <= 1) {
+                     if (module.binding && pButton >= 0 && pButton <= 7) {
                         int mouseKey = -100 - pButton;
                         module.bind = mouseKey;
                         module.binding = false;
@@ -223,7 +223,7 @@ public class GuiMouseClickedModule extends GuiScreen {
                         return true;
                      }
 
-                     if (module.binding && pButton >= 0 && pButton <= 1) {
+                     if (module.binding && pButton >= 0 && pButton <= 7) {
                         int mouseKey = -100 - pButton;
                         module.bind = mouseKey;
                         module.binding = false;

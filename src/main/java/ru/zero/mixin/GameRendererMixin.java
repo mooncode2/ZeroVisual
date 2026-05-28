@@ -18,7 +18,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -26,6 +28,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import ru.zero.Zero;
 import ru.zero.module.impl.utils.Zoom;
 import ru.zero.module.impl.visuals.AspectRation;
+import ru.zero.module.impl.visuals.BlockHiliter;
 import ru.zero.module.impl.visuals.CustomWorld;
 import ru.zero.module.impl.visuals.HUD.InformationHUD;
 import ru.zero.util.other.Mathf;
@@ -64,6 +67,26 @@ public abstract class GameRendererMixin {
          }
       }
       return original;
+   }
+
+   @ModifyArgs(
+      method = "renderWorld",
+      at = @At(
+         value = "INVOKE",
+         target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/ObjectAllocator;Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V"
+      )
+   )
+   private void zero$overrideRenderBlockOutline(Args args) {
+      if (!(boolean) args.get(2)) {
+         return;
+      }
+      if (Zero.get == null || Zero.get.manager == null) {
+         return;
+      }
+      BlockHiliter hiliter = Zero.get.manager.get(BlockHiliter.class);
+      if (hiliter != null && hiliter.enable && BlockHiliter.replaceVanilla.get()) {
+         args.set(2, false);
+      }
    }
 
    @Inject(

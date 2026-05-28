@@ -17,10 +17,8 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.util.math.RotationAxis;
-import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack.Entry;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import org.joml.Matrix3f;
@@ -32,6 +30,7 @@ import ru.zero.event.render.WorldRenderEvent;
 import ru.zero.module.api.Category;
 import ru.zero.module.api.IModule;
 import ru.zero.module.api.Module;
+import ru.zero.util.color.ColorUtil;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.animation.anim.Animation;
 import ru.zero.util.render.math.animation.anim.util.Easings;
@@ -39,9 +38,10 @@ import ru.zero.util.render.math.animation.anim.util.Easings;
 @IModule(name = "Jump Circle", description = " ", category = Category.Visuals, bind = -1)
 @Environment(EnvType.CLIENT)
 public class JumpCircle extends Module {
+   private static final long CIRCLE_LIFETIME_MS = 2500L;
+   private static final int MAX_CIRCLES = 12;
    private final List<JumpCircle.Circle> circles = new ArrayList<>();
    private static final int QUAD_BUFFER_SIZE_BYTES = 1024;
-   private static final String PIPELINE_NAMESPACE = "zero";
    private static final RenderPipeline TEXTURED_QUADS_PIPELINE = RenderPipelines.register(
          RenderPipeline.builder(new Snippet[] { RenderPipelines.POSITION_TEX_COLOR_SNIPPET })
                .withLocation(Identifier.of("zero", "pipeline/world/textured_quads"))
@@ -62,77 +62,93 @@ public class JumpCircle extends Module {
 
    @EventInit
    public void onJump(EventJump e) {
+      if (mc.player == null) {
+         return;
+      }
+
+      while (this.circles.size() >= MAX_CIRCLES) {
+         this.circles.remove(0);
+      }
+
       this.circles.add(new JumpCircle.Circle(new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ()).add(0.0, 0.05, 0.0)));
    }
 
    @EventInit
    public void onRender(WorldRenderEvent e) {
-      if (!this.circles.isEmpty()) {
-         this.circles.removeIf(cx -> System.currentTimeMillis() - cx.time > 2500L);
-         if (!this.circles.isEmpty()) {
-            Immediate immediate = e.worldRenderer().bufferSource();
-            MatrixStack pose = e.matrixStack();
+      if (this.circles.isEmpty()) {
+         return;
+      }
 
-            int color = Renderer2D.ColorUtil.getMainColor(1, 1);
-            int alpha = 255;
+      this.circles.removeIf(cx -> System.currentTimeMillis() - cx.time > CIRCLE_LIFETIME_MS);
+      if (this.circles.isEmpty()) {
+         return;
+      }
 
-            for (JumpCircle.Circle c : this.circles) {
-               if (System.currentTimeMillis() - c.time > 1000L && !c.isBack) {
-                  c.animation.animate(0.0, 1.0, Easings.BACK_IN);
-                  c.isBack = true;
-               }
+      Immediate immediate = e.worldRenderer().bufferSource();
+      MatrixStack pose = e.matrixStack();
+      Vec3d cameraPos = mc.gameRenderer.getCamera().getCameraPos();
+      int color = Renderer2D.ColorUtil.getMainColor(1, 1);
+      int rgba = ColorUtil.replAlpha(color, 255);
 
-               c.animation.update();
-               float rad = (float) c.animation.getValue();
-               double posX = c.vector3d.x - mc.gameRenderer.getCamera().getCameraPos().x;
-               double posY = c.vector3d.y - mc.gameRenderer.getCamera().getCameraPos().y;
-               double posZ = c.vector3d.z - mc.gameRenderer.getCamera().getCameraPos().z;
-               float size = 0.8F * rad;
-               pose.push();
-               pose.translate(posX, posY, posZ);
-               pose.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
-               Entry entry = pose.peek();
-               Matrix4f matrix4f = entry.getPositionMatrix();
-               Matrix3f normalMatrix = entry.getNormalMatrix();
-               VertexConsumer buffer = immediate.getBuffer(JUMP_LAYER);
-               this.drawTexturedQuad(buffer, matrix4f, normalMatrix, -size / 2.0F, -size / 2.0F, size, size, color,
-                     alpha);
-               pose.pop();
-            }
+      for (JumpCircle.Circle c : this.circles) {
+         if (System.currentTimeMillis() - c.time > 1000L && !c.isBack) {
+            c.animation.animate(0.0, 1.0, Easings.BACK_IN);
+            c.isBack = true;
          }
+
+         c.animation.update();
+         float rad = (float) c.animation.getValue();
+         if (rad <= 0.01F) {
+            continue;
+         }
+
+         double posX = c.vector3d.x - cameraPos.x;
+         double posY = c.vector3d.y - cameraPos.y;
+         double posZ = c.vector3d.z - cameraPos.z;
+         float size = 0.8F * rad;
+         pose.push();
+         pose.translate(posX, posY, posZ);
+         pose.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+         Entry entry = pose.peek();
+         Matrix4f matrix4f = entry.getPositionMatrix();
+         Matrix3f normalMatrix = entry.getNormalMatrix();
+         VertexConsumer buffer = immediate.getBuffer(JUMP_LAYER);
+         this.drawTexturedQuad(buffer, matrix4f, normalMatrix, -size / 2.0F, -size / 2.0F, size, size, rgba);
+         pose.pop();
       }
    }
 
    private void drawTexturedQuad(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix, float x, float y,
-         float width, float height, int color, int alpha) {
-      int r = color >> 16 & 0xFF;
-      int g = color >> 8 & 0xFF;
-      int b = color & 0xFF;
+         float width, float height, int rgba) {
+      int r = rgba >> 16 & 0xFF;
+      int g = rgba >> 8 & 0xFF;
+      int b = rgba & 0xFF;
+      int a = rgba >> 24 & 0xFF;
       Vector3f normal = new Vector3f(0.0F, 0.0F, 1.0F);
       normalMatrix.transform(normal);
       normal.normalize();
       float x2 = x + width;
       float y2 = y + height;
       buffer.vertex(matrix, x, y, 0.0F)
-            .color(r, g, b, alpha)
+            .color(r, g, b, a)
             .texture(0.0F, 1.0F)
             .overlay(OverlayTexture.DEFAULT_UV)
             .light(15728880)
             .normal(normal.x, normal.y, normal.z);
       buffer.vertex(matrix, x2, y, 0.0F)
-            .color(r, g, b, alpha)
+            .color(r, g, b, a)
             .texture(1.0F, 1.0F)
             .overlay(OverlayTexture.DEFAULT_UV)
             .light(15728880)
             .normal(normal.x, normal.y, normal.z);
       buffer.vertex(matrix, x2, y2, 0.0F)
-            .color(r, g, b, alpha)
+            .color(r, g, b, a)
             .texture(1.0F, 0.0F)
             .overlay(OverlayTexture.DEFAULT_UV)
             .light(15728880)
             .normal(normal.x, normal.y, normal.z);
       buffer.vertex(matrix, x, y2, 0.0F)
-            .color(r, g, b, alpha)
+            .color(r, g, b, a)
             .texture(0.0F, 0.0F)
             .overlay(OverlayTexture.DEFAULT_UV)
             .light(15728880)
@@ -140,13 +156,13 @@ public class JumpCircle extends Module {
    }
 
    @Environment(EnvType.CLIENT)
-   private class Circle {
+   private static final class Circle {
       private final Vec3d vector3d;
       private final long time;
       private final Animation animation = new Animation();
       private boolean isBack;
 
-      public Circle(Vec3d vector3d) {
+      private Circle(Vec3d vector3d) {
          this.vector3d = vector3d;
          this.time = System.currentTimeMillis();
          this.animation.animate(2.0, 1.0, Easings.BACK_OUT);

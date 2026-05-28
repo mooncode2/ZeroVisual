@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.zero.event.EventManager;
 import ru.zero.event.render.WorldRenderEvent;
-import ru.zero.util.render.backends.gl.GlState;
 import ru.zero.util.render.capture.EntityFramebufferCaptureManager;
 
 @Environment(EnvType.CLIENT)
@@ -60,25 +59,29 @@ public class WorldRendererMixin {
          captureManager.endFrame();
       }
 
+      if (!EventManager.hasListeners(WorldRenderEvent.class)) {
+         return;
+      }
+
       MinecraftClient client = MinecraftClient.getInstance();
       if (client == null || client.world == null || client.player == null) {
          return;
       }
 
       GameRenderer gameRenderer = client.gameRenderer;
-      if (gameRenderer == null || camera == null) {
+      if (camera == null || gameRenderer == null) {
          return;
       }
 
-      GlState.Snapshot snapshot = GlState.push();
       ru.zero.util.render.world.WorldRenderer worldRenderer = null;
 
       try {
-         worldRenderer = ru.zero.util.render.world.WorldRenderer.begin(client, tickCounter, camera, positionMatrix,
-               projectionMatrix);
+         worldRenderer = ru.zero.util.render.world.WorldRenderer.begin(
+               client, tickCounter, camera, positionMatrix, projectionMatrix);
 
          try {
-            EventManager.call(new WorldRenderEvent(client, gameRenderer, worldRenderer, worldRenderer.tickDelta()));
+            EventManager.call(
+                  new WorldRenderEvent(client, gameRenderer, worldRenderer, worldRenderer.tickDelta()));
          } finally {
             if (worldRenderer != null) {
                try {
@@ -88,8 +91,9 @@ public class WorldRendererMixin {
                }
             }
          }
-      } finally {
-         GlState.pop(snapshot);
+      } catch (RuntimeException e) {
+         System.err.println("[Zero] World render event failed: " + e.getMessage());
+         e.printStackTrace();
       }
    }
 }

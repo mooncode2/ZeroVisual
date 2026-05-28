@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "zero",
-  "version": "1.0",
+  "version": "2.0 Stable",
   "name": "Zero",
   "description": "Zero client",
   "authors": [
@@ -31,7 +31,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "Telegram": "https://t.me/ZeroVisual"
+        "GitHub": "https://github.com/mooncode2/ZeroVisual"
       }
     }
   }

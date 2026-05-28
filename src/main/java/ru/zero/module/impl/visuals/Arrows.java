@@ -157,8 +157,15 @@ public class Arrows extends Module {
          if (Module.mc.getTextureManager().getTexture(texture).getGlTexture() instanceof GlTexture glTexture) {
             int id = glTexture.getGlId();
             if (id > 0) {
-               int color = this.entity instanceof AbstractClientPlayerEntity p
-                     && Zero.get.friendManager.isFriend(p.getNameForScoreboard()) ? ColorUtil.GREEN : ColorUtil.fade();
+               int color = ColorUtil.fade();
+               if (this.entity instanceof AbstractClientPlayerEntity p) {
+                  String name = p.getNameForScoreboard();
+                  if (Zero.get != null && Zero.get.friendManager != null && Zero.get.friendManager.isFriend(name)) {
+                     color = ColorUtil.GREEN;
+                  } else if (Zero.get != null && Zero.get.targetManager != null && Zero.get.targetManager.isTarget(name)) {
+                     color = ColorUtil.RED;
+                  }
+               }
                int alpha = (int) (this.animation.getOutput() * 255.0F);
                Color c1 = Renderer2D.ColorUtil.getColor(
                      Renderer2D.ColorUtil.swapAlpha(Renderer2D.ColorUtil.getMainColor(1, 1),

@@ -1,30 +1,14 @@
 package ru.zero.module.impl.visuals;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.pipeline.RenderPipeline.Snippet;
-import com.mojang.blaze3d.platform.DepthTestFunction;
-import com.mojang.blaze3d.vertex.VertexFormat.DrawMode;
-import java.util.OptionalDouble;
+import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderSetup;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.util.Identifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumerProvider.Immediate;
-import ru.zero.util.render.world.WorldRenderer;
-import org.joml.Matrix4f;
 import ru.zero.Zero;
 import ru.zero.event.EventInit;
 import ru.zero.event.render.WorldRenderEvent;
@@ -36,117 +20,134 @@ import ru.zero.module.api.setting.impl.BooleanSetting;
 import ru.zero.module.api.setting.impl.HueSetting;
 import ru.zero.module.api.setting.impl.MultiBooleanSetting;
 import ru.zero.util.color.ColorUtil;
-import ru.zero.util.render.world.WorldRenderUtil;
+import ru.zero.util.render.world.WorldRenderer;
 
 @IModule(name = "ESP", description = " ", category = Category.Visuals, bind = -1)
 @Environment(EnvType.CLIENT)
 public class ESP extends Module {
-   private static final int QUAD_BUFFER_SIZE_BYTES = 1024;
+   private static final double MAX_RENDER_DISTANCE = 96.0;
+   private static final double MAX_RENDER_DISTANCE_SQ = MAX_RENDER_DISTANCE * MAX_RENDER_DISTANCE;
+   private static final int MAX_ENTITIES_PER_FRAME = 48;
+   private static final double OUTLINE_WIDTH = 1.5;
+
    public static MultiBooleanSetting targets = new MultiBooleanSetting("Кого отображать",
          new BooleanSetting("Игроки", true), new BooleanSetting("Мобы", true));
    public static HueSetting friendColor = new HueSetting("Friend color", 36.0F);
-   private static final String PIPELINE_NAMESPACE = "zero";
-   private static final RenderPipeline BOX_FILL_PIPELINE = RenderPipelines.register(
-         RenderPipeline.builder(new Snippet[] { RenderPipelines.POSITION_COLOR_SNIPPET })
-               .withLocation(Identifier.of("minecraft", "rendertype_lequal_depth_test"))
-               .withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.QUADS)
-               .withCull(false)
-               .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-               .withDepthWrite(false)
-               .withBlend(BlendFunction.LIGHTNING)
-               .build());
-   private static final RenderPipeline BOX_LINE_PIPELINE = RenderPipelines.register(
-         RenderPipeline.builder(new Snippet[] { RenderPipelines.POSITION_COLOR_SNIPPET })
-               .withLocation(Identifier.of("minecraft", "rendertype_lines"))
-               .withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.DEBUG_LINES)
-               .withCull(false)
-               .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-               .withDepthWrite(false)
-               .withBlend(BlendFunction.LIGHTNING)
-               .build());
-   private static final RenderLayer BOX_FILL_LAYER = RenderLayer.of(
-         "zero_esp_box_fill",
-         RenderSetup.builder(BOX_FILL_PIPELINE)
-               .expectedBufferSize(1024)
-               .translucent()
-               .build());
-   private static final RenderLayer BOX_LINE_LAYER = RenderLayer.of(
-         "zero_esp_box_line",
-         RenderSetup.builder(BOX_LINE_PIPELINE)
-               .expectedBufferSize(1024)
-               .translucent()
-               .build());
+   public static HueSetting targetColor = new HueSetting("Target color", 0.0F);
 
    public ESP() {
-      this.addSettings(new Setting[] { targets, friendColor });
+      this.addSettings(new Setting[] { targets, friendColor, targetColor });
    }
 
    @EventInit
    public void render(WorldRenderEvent event) {
-      if (mc.world != null && mc.player != null) {
-         WorldRenderer worldRenderer = event.worldRenderer();
-         Immediate immediate = worldRenderer.bufferSource();
-         MatrixStack matrices = event.matrixStack();
-         float tickDelta = worldRenderer.tickDelta();
+      if (mc.world == null || mc.player == null) {
+         return;
+      }
 
-         for (Entity ent : mc.world.getEntities()) {
-            if (this.shouldRender(ent)) {
-               this.renderBox(matrices, immediate, ent, tickDelta);
-            }
+      WorldRenderer worldRenderer = event.worldRenderer();
+      float tickDelta = worldRenderer.tickDelta();
+      Box searchBox = mc.player.getBoundingBox().expand(MAX_RENDER_DISTANCE);
+      List<Entity> nearby = mc.world.getOtherEntities(mc.player, searchBox, this::isCandidate);
+      int rendered = 0;
+
+      for (Entity entity : nearby) {
+         if (rendered >= MAX_ENTITIES_PER_FRAME) {
+            break;
+         }
+
+         if (this.shouldRender(entity)) {
+            this.renderBox(worldRenderer, entity, tickDelta);
+            rendered++;
          }
       }
+   }
+
+   private boolean isCandidate(Entity entity) {
+      if (entity == null || entity == mc.player || !entity.isAlive()) {
+         return false;
+      }
+
+      return entity instanceof PlayerEntity || entity instanceof LivingEntity;
    }
 
    private boolean shouldRender(Entity entity) {
-      if (entity == mc.player) {
+      if (mc.player != null && !mc.player.canSee(entity)) {
          return false;
-      } else if (!mc.player.canSee(entity)) {
-         return false;
-      } else if (entity instanceof PlayerEntity) {
-         return targets.get("Игроки");
-      } else {
-         return entity instanceof LivingEntity ? targets.get("Мобы") : false;
       }
+
+      if (entity instanceof PlayerEntity) {
+         return targets.get("Игроки");
+      }
+
+      return entity instanceof LivingEntity && targets.get("Мобы");
    }
 
-   private void renderBox(MatrixStack matrices, Immediate immediate, Entity target, float partialTicks) {
-      if (target != null) {
-         Vec3d cameraPos = mc.gameRenderer.getCamera().getCameraPos();
-         double x = target.lastRenderX + (target.getX() - target.lastRenderX) * partialTicks;
-         double y = target.lastRenderY + (target.getY() - target.lastRenderY) * partialTicks;
-         double z = target.lastRenderZ + (target.getZ() - target.lastRenderZ) * partialTicks;
-         Box boundingBox = target.getBoundingBox();
-         double padding = 0.08;
-         double minX = boundingBox.minX - target.getX() + x - padding - cameraPos.x;
-         double minY = boundingBox.minY - target.getY() + y - padding - cameraPos.y;
-         double minZ = boundingBox.minZ - target.getZ() + z - padding - cameraPos.z;
-         double maxX = boundingBox.maxX - target.getX() + x + padding - cameraPos.x;
-         double maxY = boundingBox.maxY - target.getY() + y + padding - cameraPos.y;
-         double maxZ = boundingBox.maxZ - target.getZ() + z + padding - cameraPos.z;
-         float alphaPC = 1.0F;
-         int fadeColor;
-         if (target instanceof AbstractClientPlayerEntity p && Zero.get.friendManager.isFriend(p.getNameForScoreboard())) {
+   private void renderBox(WorldRenderer worldRenderer, Entity target, float partialTicks) {
+      Vec3d cameraPos = mc.gameRenderer.getCamera().getCameraPos();
+      double x = target.lastRenderX + (target.getX() - target.lastRenderX) * partialTicks;
+      double y = target.lastRenderY + (target.getY() - target.lastRenderY) * partialTicks;
+      double z = target.lastRenderZ + (target.getZ() - target.lastRenderZ) * partialTicks;
+      if (mc.player.squaredDistanceTo(x, y, z) > MAX_RENDER_DISTANCE_SQ) {
+         return;
+      }
+
+      Box boundingBox = target.getBoundingBox();
+      double padding = 0.08;
+      double minX = boundingBox.minX - target.getX() + x - padding;
+      double minY = boundingBox.minY - target.getY() + y - padding;
+      double minZ = boundingBox.minZ - target.getZ() + z - padding;
+      double maxX = boundingBox.maxX - target.getX() + x + padding;
+      double maxY = boundingBox.maxY - target.getY() + y + padding;
+      double maxZ = boundingBox.maxZ - target.getZ() + z + padding;
+      int fadeColor;
+      if (target instanceof AbstractClientPlayerEntity player) {
+         String name = player.getNameForScoreboard();
+         if (Zero.get != null && Zero.get.friendManager != null && Zero.get.friendManager.isFriend(name)) {
             fadeColor = ColorUtil.replAlpha(friendColor.getRGB(), 255);
+         } else if (Zero.get != null && Zero.get.targetManager != null && Zero.get.targetManager.isTarget(name)) {
+            fadeColor = ColorUtil.replAlpha(targetColor.getRGB(), 255);
          } else {
             fadeColor = ColorUtil.fade();
          }
-         int baseColor = ColorUtil.multAlpha(fadeColor, alphaPC);
-         int color1 = ColorUtil.multDark(baseColor, 0.1F);
-         int color2 = ColorUtil.multDark(baseColor, 1.0F);
-         int color3 = ColorUtil.multDark(baseColor, 0.1F);
-         int color4 = ColorUtil.multDark(baseColor, 1.0F);
-         int[] gradientColors = new int[] {
-               ColorUtil.gradient(color1, color2, 0, 7),
-               ColorUtil.gradient(color2, color3, 90, 7),
-               ColorUtil.gradient(color3, color4, 180, 7),
-               ColorUtil.gradient(color4, color1, 270, 7)
-         };
-         Matrix4f matrix = matrices.peek().getPositionMatrix();
-         VertexConsumer fillBuffer = immediate.getBuffer(BOX_FILL_LAYER);
-         WorldRenderUtil.drawBoxFill(fillBuffer, matrix, minX, minY, minZ, maxX, maxY, maxZ, gradientColors, 85);
-         VertexConsumer lineBuffer = immediate.getBuffer(BOX_LINE_LAYER);
-         WorldRenderUtil.drawBoxOutline(lineBuffer, matrix, minX, minY, minZ, maxX, maxY, maxZ, gradientColors, 255,
-               0.15, 0.08);
+      } else {
+         fadeColor = ColorUtil.fade();
       }
+
+      int baseColor = ColorUtil.multAlpha(fadeColor, 1.0F);
+      int color1 = ColorUtil.multDark(baseColor, 0.1F);
+      int color2 = ColorUtil.multDark(baseColor, 1.0F);
+      int color3 = ColorUtil.multDark(baseColor, 0.1F);
+      int color4 = ColorUtil.multDark(baseColor, 1.0F);
+      int fillColor = ColorUtil.replAlpha(ColorUtil.gradient(color1, color2, 0, 7), 85);
+      int outlineColor = ColorUtil.replAlpha(ColorUtil.gradient(color2, color3, 90, 7), 255);
+      Vec3d min = new Vec3d(minX, minY, minZ);
+      Vec3d max = new Vec3d(maxX, maxY, maxZ);
+      worldRenderer.drawCube(min, max, fillColor, false);
+      this.drawOutline(worldRenderer, minX, minY, minZ, maxX, maxY, maxZ, outlineColor);
+   }
+
+   private void drawOutline(
+         WorldRenderer worldRenderer,
+         double minX,
+         double minY,
+         double minZ,
+         double maxX,
+         double maxY,
+         double maxZ,
+         int color
+   ) {
+      worldRenderer.drawLine(new Vec3d(minX, minY, minZ), new Vec3d(maxX, minY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, minY, minZ), new Vec3d(maxX, minY, maxZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, minY, maxZ), new Vec3d(minX, minY, maxZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(minX, minY, maxZ), new Vec3d(minX, minY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(minX, maxY, minZ), new Vec3d(maxX, maxY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, maxY, minZ), new Vec3d(maxX, maxY, maxZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, maxY, maxZ), new Vec3d(minX, maxY, maxZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(minX, maxY, maxZ), new Vec3d(minX, maxY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(minX, minY, minZ), new Vec3d(minX, maxY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, minY, minZ), new Vec3d(maxX, maxY, minZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(maxX, minY, maxZ), new Vec3d(maxX, maxY, maxZ), OUTLINE_WIDTH, color, false);
+      worldRenderer.drawLine(new Vec3d(minX, minY, maxZ), new Vec3d(minX, maxY, maxZ), OUTLINE_WIDTH, color, false);
    }
 }

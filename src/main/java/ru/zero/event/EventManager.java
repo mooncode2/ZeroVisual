@@ -98,6 +98,11 @@ public class EventManager {
    public static void printRegistryStatus() {
    }
 
+   public static boolean hasListeners(Class<? extends Event> eventClass) {
+      List<EventManager.MethodData> dataList = REGISTRY_MAP.get(eventClass);
+      return dataList != null && !dataList.isEmpty();
+   }
+
    public static Event call(Event event) {
       List<EventManager.MethodData> dataList = REGISTRY_MAP.get(event.getClass());
       if (dataList != null) {

@@ -1,4 +1,4 @@
-package ru.zero.config.friend;
+package ru.zero.config.target;
 
 import java.util.List;
 import java.util.Locale;
@@ -15,15 +15,15 @@ import ru.zero.commands.CommandException;
 import ru.zero.ui.Colors;
 
 @Environment(EnvType.CLIENT)
-public final class FriendCommand implements Command {
-   private static final FriendCommand INSTANCE = new FriendCommand();
-   private static final List<String> COMMAND_ALIASES = List.of(".friend", ".fr", ".fried");
-   private static final String USAGE = ".friend add <ник> | .friend remove <ник> | .friend list";
+public final class TargetCommand implements Command {
+   private static final TargetCommand INSTANCE = new TargetCommand();
+   private static final List<String> COMMAND_ALIASES = List.of(".target", ".tgt");
+   private static final String USAGE = ".target add <ник> | .target remove <ник> | .target list";
 
-   private FriendCommand() {
+   private TargetCommand() {
    }
 
-   public static FriendCommand getInstance() {
+   public static TargetCommand getInstance() {
       return INSTANCE;
    }
 
@@ -33,7 +33,7 @@ public final class FriendCommand implements Command {
 
    @Override
    public String name() {
-      return "friend";
+      return "target";
    }
 
    @Override
@@ -48,13 +48,13 @@ public final class FriendCommand implements Command {
 
    @Override
    public String description() {
-      return "Управление списком друзей";
+      return "Управление списком целей";
    }
 
    @Override
    public void execute(CommandContext context, String arguments) throws CommandException {
-      if (Zero.get == null || Zero.get.friendManager == null) {
-         throw new CommandException("Система друзей ещё не загружена");
+      if (Zero.get == null || Zero.get.targetManager == null) {
+         throw new CommandException("Система целей ещё не загружена");
       }
 
       if (arguments == null || arguments.isBlank()) {
@@ -89,47 +89,47 @@ public final class FriendCommand implements Command {
 
    private void handleAdd(CommandContext context, String name) throws CommandException {
       if (name == null || name.isBlank()) {
-         throw new CommandException("Укажи ник: .friend add <ник>");
+         throw new CommandException("Укажи ник: .target add <ник>");
       }
 
-      FriendManager manager = Zero.get.friendManager;
-      if (manager.isFriend(name)) {
-         context.sendInfo("'" + name + "' уже в списке друзей");
+      TargetManager manager = Zero.get.targetManager;
+      if (manager.isTarget(name)) {
+         context.sendInfo("'" + name + "' уже в списке целей");
          return;
       }
 
       manager.add(name);
-      context.sendSuccess("Добавлен друг: " + name);
+      context.sendSuccess("Добавлена цель: " + name);
    }
 
    private void handleRemove(CommandContext context, String name) throws CommandException {
       if (name == null || name.isBlank()) {
-         throw new CommandException("Укажи ник: .friend remove <ник>");
+         throw new CommandException("Укажи ник: .target remove <ник>");
       }
 
-      FriendManager manager = Zero.get.friendManager;
-      if (!manager.isFriend(name)) {
-         throw new CommandException("'" + name + "' нет в списке друзей");
+      TargetManager manager = Zero.get.targetManager;
+      if (!manager.isTarget(name)) {
+         throw new CommandException("'" + name + "' нет в списке целей");
       }
 
       manager.remove(name);
-      context.sendSuccess("Удалён из друзей: " + name);
+      context.sendSuccess("Удалена из целей: " + name);
    }
 
    private void handleList(CommandContext context) {
-      List<Friend> friends = FriendManager.getFriends();
-      if (friends.isEmpty()) {
-         context.sendInfo("Список друзей пуст");
+      List<Target> targetList = TargetManager.getTargets();
+      if (targetList.isEmpty()) {
+         context.sendInfo("Список целей пуст");
          return;
       }
 
-      MutableText builder = Text.literal("Друзья: ");
-      for (int i = 0; i < friends.size(); i++) {
-         String friendName = friends.get(i).getName();
-         MutableText nameText = Text.literal(friendName);
-         nameText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(Colors.getClientPrimary())));
+      MutableText builder = Text.literal("Цели: ");
+      for (int i = 0; i < targetList.size(); i++) {
+         String targetName = targetList.get(i).getName();
+         MutableText nameText = Text.literal(targetName);
+         nameText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFF5555)));
          builder.append(nameText);
-         if (i < friends.size() - 1) {
+         if (i < targetList.size() - 1) {
             builder.append(Text.literal(" | "));
          }
       }

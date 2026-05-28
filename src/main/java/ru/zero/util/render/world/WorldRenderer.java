@@ -4,6 +4,7 @@ import java.util.Objects;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
@@ -152,11 +153,33 @@ public final class WorldRenderer implements AutoCloseable {
       float v3Coord,
       int rgbaColor
    ) {
+      this.drawTexturedQuad(null, v0, v1, v2, v3, u0, v0Coord, u1, v1Coord, u2, v2Coord, u3, v3Coord, rgbaColor, true);
+   }
+
+   public void drawTexturedQuad(
+      Identifier texture,
+      Vec3d v0,
+      Vec3d v1,
+      Vec3d v2,
+      Vec3d v3,
+      float u0,
+      float v0Coord,
+      float u1,
+      float v1Coord,
+      float u2,
+      float v2Coord,
+      float u3,
+      float v3Coord,
+      int rgbaColor,
+      boolean depthTest
+   ) {
       Objects.requireNonNull(v0, "v0");
       Objects.requireNonNull(v1, "v1");
       Objects.requireNonNull(v2, "v2");
       Objects.requireNonNull(v3, "v3");
-      RenderLayer layer = WorldRenderLayers.TEXTURED_QUADS();
+      RenderLayer layer = texture != null
+            ? (depthTest ? WorldRenderLayers.TEXTURED_QUADS(texture) : WorldRenderLayers.TEXTURED_QUADS_NO_DEPTH(texture))
+            : WorldRenderLayers.TEXTURED_QUADS();
       WorldGeometryEmitter emitter = new WorldGeometryEmitter(this, this.matrixStack.peek(), this.getBuffer(layer));
       emitter.emitTexturedQuad(v0, v1, v2, v3, u0, v0Coord, u1, v1Coord, u2, v2Coord, u3, v3Coord, rgbaColor);
    }

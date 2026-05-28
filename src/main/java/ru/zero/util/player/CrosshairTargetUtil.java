@@ -18,13 +18,20 @@ public final class CrosshairTargetUtil {
       if (mc.player == null || mc.world == null) {
          return null;
       }
+
       Entity aimed = mc.targetedEntity;
       if (!(aimed instanceof LivingEntity living)) {
          return null;
       }
-      if (living == mc.player || !living.isAlive() || living instanceof ArmorStandEntity) {
+
+      if (!living.isAlive() || living instanceof ArmorStandEntity) {
          return null;
       }
+
+      if (living == mc.player || living.getUuid().equals(mc.player.getUuid())) {
+         return null;
+      }
+
       return living;
    }
 }

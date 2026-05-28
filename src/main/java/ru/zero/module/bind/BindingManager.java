@@ -10,6 +10,7 @@ import ru.zero.module.impl.client.MenuSettingsModule;
 import ru.zero.event.EventInit;
 import ru.zero.event.EventManager;
 import ru.zero.event.input.KeyInputEvent;
+import ru.zero.event.input.MouseButtonEvent;
 import ru.zero.module.api.Module;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.ui.gui.GuiScreen;
@@ -58,12 +59,38 @@ public class BindingManager {
          return;
       }
 
-      Module[] modules = Zero.get.manager.getBind(event.key());
-      if (modules != null) {
-         for (Module module : modules) {
-            module.toggle();
-         }
+      this.toggleBoundModules(event.key());
+   }
+
+   @EventInit
+   public void onMouseButton(MouseButtonEvent event) {
+      if (!event.isPress()) {
+         return;
       }
+
+      if (Module.isConfigLoadInProgress()) {
+         return;
+      }
+
+      if (event.button() < 0 || event.button() > 7) {
+         return;
+      }
+
+      if (GuiScreen.activeBindSetting != null || GuiScreen.activeModuleBind != null || this.awaitingCapture) {
+         return;
+      }
+
+      MinecraftClient client = MinecraftClient.getInstance();
+      if (client != null && client.currentScreen != null) {
+         return;
+      }
+
+      if (Zero.get == null || Zero.get.manager == null) {
+         return;
+      }
+
+      int mouseBindCode = -100 - event.button();
+      this.toggleBoundModules(mouseBindCode);
    }
 
    private static boolean isIgnoredBindKey(int key) {
@@ -137,6 +164,15 @@ public class BindingManager {
          return "Alt";
       } else {
          return keyCode >= 290 && keyCode <= 314 ? "F" + (keyCode - 290 + 1) : "Key " + keyCode;
+      }
+   }
+
+   private void toggleBoundModules(int bindCode) {
+      Module[] modules = Zero.get.manager.getBind(bindCode);
+      if (modules != null) {
+         for (Module module : modules) {
+            module.toggle();
+         }
       }
    }
 }

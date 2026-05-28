@@ -3,10 +3,10 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.properties['mod_version'] ?: '1.0.0'
+version = project.properties['mod_version'] ?: '2.0 Stable'
 group = project.properties['maven_group'] ?: 'ru.zero'
 base {
-    archivesName = project.properties['archives_base_name'] ?: 'night'
+    archivesName = project.properties['archives_base_name'] ?: 'zero'
 }
 
 loom {

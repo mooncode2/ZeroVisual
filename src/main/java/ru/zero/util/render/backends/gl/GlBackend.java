@@ -682,18 +682,42 @@ public final class GlBackend implements RenderBackend {
       }
    }
 
+   /**
+    * Detaches any color/depth images from the temporary read FBO (never call initFbo on the main framebuffer).
+    */
+   private void releaseMainFramebufferReadAttachments() {
+      if (this.fullFrameReadFbo == 0) {
+         return;
+      }
+
+      GL30.glBindFramebuffer(36008, this.fullFrameReadFbo);
+      GL30.glFramebufferTexture2D(36008, 36064, 3553, 0, 0);
+      GL30.glFramebufferTexture2D(36008, 36096, 3553, 0, 0);
+   }
+
    public int captureRegionToTexture(int x, int y, int w, int h) {
       return this.captureRegionToTexture(x, y, w, h, true);
    }
 
    public int captureRegionToTexture(int x, int y, int w, int h, boolean fullscreen) {
-      this.ensureCaptureTex(w, h, fullscreen);
+      try {
+         this.ensureCaptureTex(w, h, fullscreen);
+      } catch (RuntimeException e) {
+         return 0;
+      }
+
       int targetFbo = fullscreen ? this.captureFbo : this.regionCaptureFbo;
       int targetTex = fullscreen ? this.captureTex : this.regionCaptureTex;
+      if (targetFbo == 0 || targetTex == 0) {
+         return 0;
+      }
       int srcX = Math.max(0, Math.min(x, this.viewportWidth));
       int srcY = Math.max(0, this.viewportHeight - y - h);
       int srcW = Math.min(w, this.viewportWidth - srcX);
       int srcH = Math.min(h, this.viewportHeight - Math.max(0, this.viewportHeight - y - h));
+      if (srcW <= 0 || srcH <= 0) {
+         return 0;
+      }
       GlState.Snapshot s = GlState.push();
 
       try {
@@ -763,32 +787,8 @@ public final class GlBackend implements RenderBackend {
                   GL11.glDisable(36281);
                }
 
-               MinecraftClient client = MinecraftClient.getInstance();
-               if (client != null) {
-                  Framebuffer mainFramebuffer = client.getFramebuffer();
-                  if (mainFramebuffer != null) {
-                     if (mainFramebuffer.getColorAttachment() instanceof GlTexture glColor) {
-                        int mainFramebufferTextureId = glColor.getGlId();
-                        if (this.fullFrameReadFbo == 0) {
-                           this.fullFrameReadFbo = GL30.glGenFramebuffers();
-                        }
-
-                        GL30.glBindFramebuffer(36008, this.fullFrameReadFbo);
-                        GL30.glFramebufferTexture2D(36008, 36064, 3553, mainFramebufferTextureId, 0);
-                        GL11.glReadBuffer(36064);
-                     } else {
-                        GL30.glBindFramebuffer(36008, 0);
-                        GL11.glReadBuffer(1029);
-                     }
-                  } else {
-                     GL30.glBindFramebuffer(36008, 0);
-                     GL11.glReadBuffer(1029);
-                  }
-               } else {
-                  GL30.glBindFramebuffer(36008, 0);
-                  GL11.glReadBuffer(1029);
-               }
-
+               GL30.glBindFramebuffer(36008, 0);
+               GL11.glReadBuffer(1029);
                GL30.glBindFramebuffer(36009, this.downscaledCaptureFbo);
                GL11.glDrawBuffer(36064);
                GL30.glBlitFramebuffer(0, 0, screenW, screenH, 0, 0, this.downscaledCaptureW, this.downscaledCaptureH,
@@ -946,6 +946,7 @@ public final class GlBackend implements RenderBackend {
 
                GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, 9728);
             } finally {
+               this.releaseMainFramebufferReadAttachments();
                GlState.pop(state);
             }
 
