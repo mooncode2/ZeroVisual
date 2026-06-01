@@ -25,7 +25,6 @@ public final class ZeroMixinPlugin implements IMixinConfigPlugin {
          "WorldRendererMixin",
          "WorldRendererEntityCaptureMixin",
          "RenderLayerMultiPhaseMixin",
-         "RenderPhaseMixin",
          "CameraMixin",
          "ClientPlayerEntityMixin",
          "KeyboardInputMixin",

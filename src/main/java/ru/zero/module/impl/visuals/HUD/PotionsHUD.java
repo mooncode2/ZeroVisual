@@ -21,6 +21,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import ru.zero.module.impl.visuals.Hud;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
+import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.ScaledResolution;
 import ru.zero.util.render.math.animation.AnimationMath;
@@ -69,11 +70,6 @@ public class PotionsHUD {
                effectsToRender.add(effectTypex);
             }
          });
-         float x = 20.0F;
-         float y = 474.0F;
-         float offset = 0.0F;
-         float offsetTexture = 0.0F;
-         float maxRenderedWidth = 0.0F;
          List<RegistryEntry<StatusEffect>> sortedEffects = new ArrayList<>(effectsToRender);
          sortedEffects.sort((a, b) -> {
             boolean aActive = activeEffects.contains(a);
@@ -84,6 +80,40 @@ public class PotionsHUD {
                return 0;
             }
          });
+         float preferredX = 20.0F;
+         float preferredY = 474.0F;
+         float measureOffset = 0.0F;
+         float measureMaxWidth = 0.0F;
+
+         for (RegistryEntry<StatusEffect> effectType : sortedEffects) {
+            StatusEffectInstance effectMeasure = cachedEffects.get(effectType);
+            if (effectMeasure != null) {
+               Animation2 alphaAnimMeasure = animatedAlphas.get(effectType);
+               if (alphaAnimMeasure != null) {
+                  float currentAlpha = alphaAnimMeasure.get();
+                  if (currentAlpha > 0.01F) {
+                     String effectText = effectMeasure.getTranslationKey().replace("effect.minecraft.", "");
+                     String text = effectText.substring(0, 1).toUpperCase()
+                           + effectText.substring(1).replace("_", " ")
+                           + " "
+                           + String.valueOf(effectMeasure.getAmplifier() + 1).replace("1", "");
+                     float textWidth = r2.measureText(FontRegistry.INTER_MEDIUM, text, 20.0F).width;
+                     measureMaxWidth = Math.max(measureMaxWidth, 72.0F + textWidth);
+                     measureOffset += 34.0F * currentAlpha;
+                  }
+               }
+            }
+         }
+
+         float boundsWidth = Math.max(measureMaxWidth, 120.0F);
+         float boundsHeight = Math.max(measureOffset, 30.0F);
+         DraggableManager.DragSession dragSession = DraggableManager.getInstance()
+            .beginDrag("potions", preferredX, preferredY, boundsWidth, boundsHeight);
+         float x = dragSession.positionX();
+         float y = dragSession.positionY();
+         float offset = 0.0F;
+         float offsetTexture = 0.0F;
+         float maxRenderedWidth = 0.0F;
          int effectIndex = 0;
 
          for (RegistryEntry<StatusEffect> effectType : sortedEffects) {
@@ -141,8 +171,13 @@ public class PotionsHUD {
                      float iconAreaWidth = 37.5F;
                      float rowHeight = 30.0F;
                      float iconSize = 18.0F;
+                     float textFontSize = 20.0F;
+                     float textBaselineY = currentAnimatedY + 20.0F;
+                     float textRenderSize = textFontSize * 0.5F;
+                     int textCodepoint = text.codePointAt(0);
+                     float textCenterY = textBaselineY + FontRegistry.centeredBaselineOffset(FontRegistry.INTER_MEDIUM, textCodepoint, textRenderSize);
                      float iconX = x + x3 + (iconAreaWidth - iconSize) * 0.5F;
-                     float iconY = currentAnimatedY + (rowHeight - iconSize) * 0.5F;
+                     float iconY = textCenterY - iconSize * 0.5F;
                      float guiScale = mc.getWindow() != null ? (float) mc.getWindow().getScaleFactor() : 1.0F;
                      float scaleOriginX = HudEditor.getOriginX("potions");
                      float scaleOriginY = HudEditor.getOriginY("potions");
@@ -174,7 +209,7 @@ public class PotionsHUD {
                      boolean isBeneficial = effectx.getEffectType().value().isBeneficial();
                      int textColor = isBeneficial ? Renderer2D.ColorUtil.getTextColor(1, 1)
                            : new Color(16734547).getRGB();
-                     r2.text(FontRegistry.INTER_MEDIUM, x + 45.0F - 3.0F + x3, currentAnimatedY + 20.0F, 20.0F, text,
+                     r2.text(FontRegistry.INTER_MEDIUM, x + 45.0F - 3.0F + x3, textBaselineY, textFontSize, text,
                            textColor);
                      r2.popAlpha();
                      offsetTexture += 18.0F * currentAlpha;
@@ -199,9 +234,10 @@ public class PotionsHUD {
             Animation2 anim = animatedAlphas.get(key);
             return anim == null || anim.get() <= 0.01F && !activeEffects.contains(key);
          });
-         float boundsWidth = Math.max(maxRenderedWidth, 120.0F);
-         float boundsHeight = Math.max(offset, 30.0F);
+         boundsWidth = Math.max(maxRenderedWidth, boundsWidth);
+         boundsHeight = Math.max(offset, boundsHeight);
          HudEditor.registerRect(x, y, boundsWidth, boundsHeight);
+         DraggableManager.getInstance().endDrag(dragSession);
       }
    }
 

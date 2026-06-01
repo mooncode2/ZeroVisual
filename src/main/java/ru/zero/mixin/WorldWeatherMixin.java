@@ -13,11 +13,11 @@ import ru.zero.module.impl.visuals.CustomWorld;
 public abstract class WorldWeatherMixin {
    @ModifyReturnValue(method = {"method_8430(F)F"}, at = {@At("RETURN")})
    private float night$alwaysClear_rainGradient(float original) {
-      return (CustomWorld.isEnabled && CustomWorld.alwaysClear.get()) || Optimizer.shouldDisableWeather() ? 0.0F : original;
+      return (CustomWorld.isActive() && CustomWorld.alwaysClear.get()) || Optimizer.shouldDisableWeather() ? 0.0F : original;
    }
 
    @ModifyReturnValue(method = {"method_8478(F)F"}, at = {@At("RETURN")})
    private float night$alwaysClear_thunderGradient(float original) {
-      return (CustomWorld.isEnabled && CustomWorld.alwaysClear.get()) || Optimizer.shouldDisableWeather() ? 0.0F : original;
+      return (CustomWorld.isActive() && CustomWorld.alwaysClear.get()) || Optimizer.shouldDisableWeather() ? 0.0F : original;
    }
 }

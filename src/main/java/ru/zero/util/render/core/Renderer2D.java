@@ -922,62 +922,7 @@ public final class Renderer2D {
    }
 
    public static Vector2d project2D(double x, double y, double z) {
-      Camera camera = mc.getEntityRenderDispatcher().camera;
-      if (camera == null) {
-         return new Vector2d(0.0, 0.0);
-      } else {
-         Vec3d cameraPosition = camera.getCameraPos();
-         Quaternionf cameraRotation = new Quaternionf(camera.getRotation());
-         cameraRotation.conjugate();
-         Vector3f relativePosition = new Vector3f(
-               (float) (cameraPosition.x - x), (float) (cameraPosition.y - y), (float) (cameraPosition.z - z));
-         relativePosition.rotate(cameraRotation);
-         float tickDelta = mc.getRenderTickCounter().getDynamicDeltaTicks();
-         if ((Boolean) mc.options.getBobView().getValue()
-               && mc.getCameraEntity() instanceof PlayerEntity playerEntity) {
-            float walkedDistance = 0.0f;
-            float deltaDistance = 0.0f;
-            float interpolatedDistance = -(walkedDistance + deltaDistance * tickDelta);
-            float cameraYaw = camera.getYaw();
-            float bobAngleX = Math.abs((float) Math.cos(interpolatedDistance * (float) Math.PI - 0.2F) * cameraYaw)
-                  * 5.0F;
-            Quaternionf bobQuaternionX = new Quaternionf().rotateAxis((float) Math.toRadians(bobAngleX),
-                  new Vector3f(1.0F, 0.0F, 0.0F));
-            bobQuaternionX.conjugate();
-            relativePosition.rotate(bobQuaternionX);
-            float bobAngleZ = (float) Math.sin(interpolatedDistance * (float) Math.PI) * cameraYaw * 3.0F;
-            Quaternionf bobQuaternionZ = new Quaternionf().rotateAxis((float) Math.toRadians(bobAngleZ),
-                  new Vector3f(0.0F, 0.0F, 1.0F));
-            bobQuaternionZ.conjugate();
-            relativePosition.rotate(bobQuaternionZ);
-            Vector3f bobTranslation = new Vector3f(
-                  (float) Math.sin(interpolatedDistance * (float) Math.PI) * cameraYaw * 0.5F,
-                  -Math.abs((float) Math.cos(interpolatedDistance * (float) Math.PI) * cameraYaw),
-                  0.0F);
-            bobTranslation.y = -bobTranslation.y;
-            relativePosition.add(bobTranslation);
-         }
-
-         double fieldOfView = 70.0;
-
-         try {
-            Method getFovMethod = GameRenderer.class.getDeclaredMethod("getFov", Camera.class, float.class,
-                  boolean.class);
-            getFovMethod.setAccessible(true);
-            fieldOfView = (Double) getFovMethod.invoke(mc.gameRenderer, camera, tickDelta, true);
-         } catch (Exception var22) {
-            double fovSetting = ((Integer) mc.options.getFov().getValue()).intValue();
-            fieldOfView = fovSetting;
-         }
-
-         float halfHeight = mc.getWindow().getScaledHeight() / 2.0F;
-         float scaleFactor = halfHeight / (relativePosition.z() * (float) Math.tan(Math.toRadians(fieldOfView / 2.0)));
-         return relativePosition.z() < 0.0F
-               ? new Vector2d(
-                     -relativePosition.x() * scaleFactor + mc.getWindow().getScaledWidth() / 2,
-                     mc.getWindow().getScaledHeight() / 2 - relativePosition.y() * scaleFactor)
-               : null;
-      }
+      return ru.zero.util.render.world.WorldProjection.project(x, y, z);
    }
 
    @Environment(EnvType.CLIENT)

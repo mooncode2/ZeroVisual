@@ -16,6 +16,6 @@ public abstract class ClientWorldPropertiesMixin {
       at = {@At("RETURN")}
    )
    private long hookGetTime(long original) {
-      return CustomWorld.isEnabled && CustomWorld.customTime >= 0L ? CustomWorld.customTime : original;
+      return CustomWorld.isActive() && CustomWorld.customTime >= 0L ? CustomWorld.customTime : original;
    }
 }

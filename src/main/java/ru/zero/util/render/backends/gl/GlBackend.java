@@ -722,13 +722,13 @@ public final class GlBackend implements RenderBackend {
 
       try {
          boolean wasScissorEnabled = GL11.glIsEnabled(3089);
-         boolean wasSrgb = GL11.glIsEnabled(36281);
+         boolean wasSrgb = GlState.isFramebufferSrgbEnabled();
          if (wasScissorEnabled) {
             GL11.glDisable(3089);
          }
 
          if (wasSrgb) {
-            GL11.glDisable(36281);
+            GlState.setFramebufferSrgbEnabled(false);
          }
 
          GL30.glBindFramebuffer(36008, 0);
@@ -743,7 +743,7 @@ public final class GlBackend implements RenderBackend {
          }
 
          if (wasSrgb) {
-            GL11.glEnable(36281);
+            GlState.setFramebufferSrgbEnabled(true);
          }
       } finally {
          GlState.pop(s);
@@ -778,13 +778,13 @@ public final class GlBackend implements RenderBackend {
 
             try {
                boolean wasScissorEnabled = GL11.glIsEnabled(3089);
-               boolean wasSrgb = GL11.glIsEnabled(36281);
+               boolean wasSrgb = GlState.isFramebufferSrgbEnabled();
                if (wasScissorEnabled) {
                   GL11.glDisable(3089);
                }
 
                if (wasSrgb) {
-                  GL11.glDisable(36281);
+                  GlState.setFramebufferSrgbEnabled(false);
                }
 
                GL30.glBindFramebuffer(36008, 0);
@@ -798,7 +798,7 @@ public final class GlBackend implements RenderBackend {
                }
 
                if (wasSrgb) {
-                  GL11.glEnable(36281);
+                  GlState.setFramebufferSrgbEnabled(true);
                }
             } finally {
                GlState.pop(state);
@@ -918,7 +918,7 @@ public final class GlBackend implements RenderBackend {
                GL11.glDisable(2884);
                GL11.glDisable(3042);
                GL11.glDisable(2929);
-               GL11.glDisable(36281);
+               GlState.disableFramebufferSrgb();
                if (this.fullFrameReadFbo == 0) {
                   this.fullFrameReadFbo = GL30.glGenFramebuffers();
                }
@@ -969,7 +969,7 @@ public final class GlBackend implements RenderBackend {
             GL11.glDisable(2884);
             GL11.glDisable(2929);
             GL11.glDisable(3042);
-            GL11.glDisable(36281);
+            GlState.disableFramebufferSrgb();
             program.use();
             if (this.fullscreenSamplerLoc >= 0) {
                GL20.glUniform1i(this.fullscreenSamplerLoc, 0);
@@ -1135,6 +1135,10 @@ public final class GlBackend implements RenderBackend {
       if (this.debugCallback == null) {
          this.debugCallback = GLDebugMessageCallback
                .create((source, type, id, severity, length, message, userParam) -> {
+                  if (id == 1280) {
+                     return;
+                  }
+
                   String text = GLDebugMessageCallback.getMessage(length, message);
                   if (severity != 33387) {
                      System.err.println("[OpenGL] " + text + " (severity=" + severityToString(severity) + ")");
@@ -1145,11 +1149,13 @@ public final class GlBackend implements RenderBackend {
             GL11.glEnable(33346);
             GL43.glDebugMessageCallback(this.debugCallback, 0L);
             GL43.glDebugMessageControl(4352, 4352, 33387, (int[]) null, false);
+            GL43.glDebugMessageControl(4352, 4352, 37190, new int[] { 1280 }, false);
          } else {
             GL11.glEnable(37600);
             GL11.glEnable(33346);
             KHRDebug.glDebugMessageCallback(this.debugCallback, 0L);
             KHRDebug.glDebugMessageControl(4352, 4352, 33387, (int[]) null, false);
+            KHRDebug.glDebugMessageControl(4352, 4352, 37190, new int[] { 1280 }, false);
          }
       }
    }

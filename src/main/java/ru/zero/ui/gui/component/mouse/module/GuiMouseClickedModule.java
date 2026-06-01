@@ -88,19 +88,9 @@ public class GuiMouseClickedModule extends GuiScreen {
                   && pButton == 1
                   && !module.getSettingsForGUI().isEmpty()) {
                   if (GuiScreen.openSettingsModules.contains(module)) {
-                     GuiScreen.openSettingsModules.remove(module);
-                     GuiScreen.getModuleSettingsAnimation(module).run(0.0, 0.6F, Easings.QUART_OUT);
-                     GuiScreen.getModuleSettingsAlphaAnimation(module).run(0.0, 0.16F, Easings.SINE_OUT);
-                     if (GuiScreen.activeColorPicker != null && module.getSettingsForGUI().contains(GuiScreen.activeColorPicker)) {
-                        GuiScreen.animation15.setDirection(Direction.BACKWARDS);
-                        GuiScreen.activeColorPicker = null;
-                        GuiScreen.colorPickerX = 0.0F;
-                        GuiScreen.colorPickerY = 0.0F;
-                     }
+                     GuiScreen.closeModuleSettings(module);
                   } else {
-                     GuiScreen.openSettingsModules.add(module);
-                     GuiScreen.getModuleSettingsAlphaAnimation(module).run(1.0, 0.16F, Easings.SINE_OUT);
-                     GuiScreen.getModuleSettingsAnimation(module).run(1.0, 0.6F, Easings.QUART_OUT);
+                     GuiScreen.openModuleSettings(module);
                   }
                }
 
@@ -246,19 +236,9 @@ public class GuiMouseClickedModule extends GuiScreen {
                   && pButton == 1
                   && !module.getSettingsForGUI().isEmpty()) {
                   if (GuiScreen.openSettingsModules.contains(module)) {
-                     GuiScreen.openSettingsModules.remove(module);
-                     GuiScreen.getModuleSettingsAnimation(module).run(0.0, 0.6F, Easings.QUART_OUT);
-                     GuiScreen.getModuleSettingsAlphaAnimation(module).run(0.0, 0.16F, Easings.SINE_OUT);
-                     if (GuiScreen.activeColorPicker != null && module.getSettingsForGUI().contains(GuiScreen.activeColorPicker)) {
-                        GuiScreen.animation15.setDirection(Direction.BACKWARDS);
-                        GuiScreen.activeColorPicker = null;
-                        GuiScreen.colorPickerX = 0.0F;
-                        GuiScreen.colorPickerY = 0.0F;
-                     }
+                     GuiScreen.closeModuleSettings(module);
                   } else {
-                     GuiScreen.openSettingsModules.add(module);
-                     GuiScreen.getModuleSettingsAlphaAnimation(module).run(1.0, 0.16F, Easings.SINE_OUT);
-                     GuiScreen.getModuleSettingsAnimation(module).run(1.0, 0.6F, Easings.QUART_OUT);
+                     GuiScreen.openModuleSettings(module);
                   }
                }
 

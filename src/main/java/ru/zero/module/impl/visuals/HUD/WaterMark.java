@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import ru.zero.module.impl.visuals.Hud;
 import ru.zero.module.impl.visuals.HUD.HudEditor;
+import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.ScaledResolution;
 import ru.zero.util.render.text.FontRegistry;
@@ -19,15 +20,6 @@ public class WaterMark {
 
    public static void waterMark(Renderer2D r2) {
       new ScaledResolution(mc);
-      float x = 20.0F;
-      float y = 20.0F;
-      Color mainColorGlow = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 50));
-      Hud.drawClientRect(r2, x, y, 94.54F, 40.64F, 13.0F, 1.0F, 1.0F);
-      r2.shadow(x + 23.27F, y + 20.0F, 0.1F, 0.1F, 8.0F, 10.0F, 0.1F, mainColorGlow.getRGB());
-      // Лого: круг вместо текста/иконки Zero.
-      r2.circle(x + 23.27F, y + 20.0F, 10.0F, 0.0F, 1.0F, Renderer2D.ColorUtil.getMainColor(1, 1));
-      r2.circle(x + 23.27F, y + 20.0F, 6.5F, 0.0F, 1.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), 180));
-      r2.text(FontRegistry.INTER_SEMIBOLD, x + 42.0F, y + 25.5F, 30.0F, "Zero", Renderer2D.ColorUtil.getTextColor(1, 1));
       Calendar calendar = Calendar.getInstance();
       int hours = calendar.get(11);
       int minutes = calendar.get(12);
@@ -37,18 +29,7 @@ public class WaterMark {
          + r2.measureText(FontRegistry.INTER_SEMIBOLD, "fps", 28.0F).width
          + 40.0F;
       float time = r2.measureText(FontRegistry.INTER_MEDIUM, timeStr, 28.0F).width;
-      Hud.drawClientRect(r2, x + 103.5F, y, width + fps + time - 55.0F, 40.64F, 13.0F, 1.0F, 1.0F);
-      r2.text(FontRegistry.ICONS, x + 117.56F, y + 28.0F, 32.0F, "q", Renderer2D.ColorUtil.getMainColor(1, 1));
-      r2.text(FontRegistry.INTER_SEMIBOLD, x + 140.75F, y + 25.5F, 28.0F, mc.player.getName().getString(), Renderer2D.ColorUtil.getTextColor(1, 1));
-      r2.rect(x + width, y + 15.0F, 2.34F, 11.21F, 4.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80));
-      r2.text(FontRegistry.ICONS, x + width + 10.0F, y + 28.0F, 32.0F, "r", Renderer2D.ColorUtil.getMainColor(1, 1));
-      float fpsTextX = x + width + 33.0F;
-      r2.text(FontRegistry.INTER_SEMIBOLD, fpsTextX, y + 25.5F, 28.0F, String.valueOf(mc.getCurrentFps()), Renderer2D.ColorUtil.getTextColor(1, 1));
-      fpsTextX += r2.measureText(FontRegistry.INTER_SEMIBOLD, String.valueOf(mc.getCurrentFps()), 28.0F).width;
-      r2.text(FontRegistry.INTER_SEMIBOLD, fpsTextX, y + 25.5F, 28.0F, "fps", Renderer2D.ColorUtil.getMainColor(1, 1));
-      r2.rect(x + width + fps, y + 15.0F, 2.34F, 11.21F, 4.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80));
-      r2.text(FontRegistry.ICONS, x + width + fps + 10.0F, y + 28.0F, 32.0F, "s", Renderer2D.ColorUtil.getMainColor(1, 1));
-      r2.text(FontRegistry.INTER_SEMIBOLD, x + width + fps + 33.0F, y + 25.5F, 28.0F, timeStr, Renderer2D.ColorUtil.getTextColor(1, 1));
+
       String ip = "N/A";
       if (mc.isConnectedToLocalServer()) {
          ip = "localhost";
@@ -110,7 +91,28 @@ public class WaterMark {
       float row2Width = ipServer + pingW;
       float totalWidth = Math.max(row1Width, row2Width);
       float totalHeight = 90.24F;
-      HudEditor.registerRect(x, y, totalWidth, totalHeight);
+
+      DraggableManager.DragSession dragSession = DraggableManager.getInstance().beginDrag("watermark", 20.0F, 20.0F, totalWidth, totalHeight);
+      float x = dragSession.positionX();
+      float y = dragSession.positionY();
+      Color mainColorGlow = Renderer2D.ColorUtil.getColor(Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 50));
+      Hud.drawClientRect(r2, x, y, 94.54F, 40.64F, 13.0F, 1.0F, 1.0F);
+      r2.shadow(x + 23.27F, y + 20.0F, 0.1F, 0.1F, 8.0F, 10.0F, 0.1F, mainColorGlow.getRGB());
+      r2.circle(x + 23.27F, y + 20.0F, 10.0F, 0.0F, 1.0F, Renderer2D.ColorUtil.getMainColor(1, 1));
+      r2.circle(x + 23.27F, y + 20.0F, 6.5F, 0.0F, 1.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), 180));
+      r2.text(FontRegistry.INTER_SEMIBOLD, x + 42.0F, y + 25.5F, 30.0F, "Zero", Renderer2D.ColorUtil.getTextColor(1, 1));
+      Hud.drawClientRect(r2, x + 103.5F, y, width + fps + time - 55.0F, 40.64F, 13.0F, 1.0F, 1.0F);
+      r2.text(FontRegistry.ICONS, x + 117.56F, y + 28.0F, 32.0F, "q", Renderer2D.ColorUtil.getMainColor(1, 1));
+      r2.text(FontRegistry.INTER_SEMIBOLD, x + 140.75F, y + 25.5F, 28.0F, mc.player.getName().getString(), Renderer2D.ColorUtil.getTextColor(1, 1));
+      r2.rect(x + width, y + 15.0F, 2.34F, 11.21F, 4.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80));
+      r2.text(FontRegistry.ICONS, x + width + 10.0F, y + 28.0F, 32.0F, "r", Renderer2D.ColorUtil.getMainColor(1, 1));
+      float fpsTextX = x + width + 33.0F;
+      r2.text(FontRegistry.INTER_SEMIBOLD, fpsTextX, y + 25.5F, 28.0F, String.valueOf(mc.getCurrentFps()), Renderer2D.ColorUtil.getTextColor(1, 1));
+      fpsTextX += r2.measureText(FontRegistry.INTER_SEMIBOLD, String.valueOf(mc.getCurrentFps()), 28.0F).width;
+      r2.text(FontRegistry.INTER_SEMIBOLD, fpsTextX, y + 25.5F, 28.0F, "fps", Renderer2D.ColorUtil.getMainColor(1, 1));
+      r2.rect(x + width + fps, y + 15.0F, 2.34F, 11.21F, 4.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80));
+      r2.text(FontRegistry.ICONS, x + width + fps + 10.0F, y + 28.0F, 32.0F, "s", Renderer2D.ColorUtil.getMainColor(1, 1));
+      r2.text(FontRegistry.INTER_SEMIBOLD, x + width + fps + 33.0F, y + 25.5F, 28.0F, timeStr, Renderer2D.ColorUtil.getTextColor(1, 1));
       Hud.drawClientRect(r2, x, y + 49.6F, ipServer + pingW, 40.64F, 13.0F, 1.0F, 1.0F);
       r2.text(FontRegistry.ICONS, x + 14.06F, y + 78.0F, 36.0F, "t", Renderer2D.ColorUtil.getMainColor(1, 1));
       float ipTextX = x + 38.0F;
@@ -123,5 +125,7 @@ public class WaterMark {
       r2.text(FontRegistry.INTER_SEMIBOLD, pingTextX, y + 74.5F, 28.0F, pingValue, Renderer2D.ColorUtil.getTextColor(1, 1));
       pingTextX += pingValueWidth;
       r2.text(FontRegistry.INTER_SEMIBOLD, pingTextX, y + 74.5F, 28.0F, "ms", Renderer2D.ColorUtil.getMainColor(1, 1));
+      HudEditor.registerRect(x, y, totalWidth, totalHeight);
+      DraggableManager.getInstance().endDrag(dragSession);
    }
 }

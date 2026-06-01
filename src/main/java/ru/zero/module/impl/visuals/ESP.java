@@ -32,11 +32,12 @@ public class ESP extends Module {
 
    public static MultiBooleanSetting targets = new MultiBooleanSetting("Кого отображать",
          new BooleanSetting("Игроки", true), new BooleanSetting("Мобы", true));
+   public static BooleanSetting onlyOnHover = new BooleanSetting("Только при наведении", false);
    public static HueSetting friendColor = new HueSetting("Friend color", 36.0F);
    public static HueSetting targetColor = new HueSetting("Target color", 0.0F);
 
    public ESP() {
-      this.addSettings(new Setting[] { targets, friendColor, targetColor });
+      this.addSettings(new Setting[] { targets, onlyOnHover, friendColor, targetColor });
    }
 
    @EventInit
@@ -72,6 +73,10 @@ public class ESP extends Module {
    }
 
    private boolean shouldRender(Entity entity) {
+      if (onlyOnHover.get() && mc.targetedEntity != entity) {
+         return false;
+      }
+
       if (mc.player != null && !mc.player.canSee(entity)) {
          return false;
       }

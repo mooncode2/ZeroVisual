@@ -14,7 +14,29 @@ import org.lwjgl.system.MemoryStack;
 
 @Environment(EnvType.CLIENT)
 public final class GlState {
+   private static final int GL_NONE = 0;
+   private static final int GL_FRONT = 1028;
+   private static final int GL_BACK = 1029;
+   private static final int GL_LEFT = 1030;
+   private static final int GL_RIGHT = 1031;
+   private static final int GL_COLOR_ATTACHMENT0 = 36064;
+   private static final int GL_COLOR_ATTACHMENT15 = 36079;
+
    private GlState() {
+   }
+
+   public static boolean isFramebufferSrgbSupported() {
+      return false;
+   }
+
+   public static boolean isFramebufferSrgbEnabled() {
+      return false;
+   }
+
+   public static void setFramebufferSrgbEnabled(boolean enabled) {
+   }
+
+   public static void disableFramebufferSrgb() {
    }
 
    public static GlState.Snapshot push() {
@@ -41,7 +63,6 @@ public final class GlState {
          s.depthTestEnabled = GL11.glIsEnabled(2929);
          s.cullFaceEnabled = GL11.glIsEnabled(2884);
          s.blendEnabled = GL11.glIsEnabled(3042);
-         s.framebufferSrgbEnabled = GL11.glIsEnabled(36281);
          GL11.glGetIntegerv(32969, buf1);
          s.blendSrcRGB = buf1.get(0);
          GL11.glGetIntegerv(32968, buf1);
@@ -100,7 +121,6 @@ public final class GlState {
          setEnabled(2929, s.depthTestEnabled);
          setEnabled(2884, s.cullFaceEnabled);
          setEnabled(3042, s.blendEnabled);
-         setEnabled(36281, s.framebufferSrgbEnabled);
          GL14.glBlendFuncSeparate(s.blendSrcRGB, s.blendDstRGB, s.blendSrcAlpha, s.blendDstAlpha);
          GL11.glColorMask(s.colorMaskR, s.colorMaskG, s.colorMaskB, s.colorMaskA);
          GL11.glDepthMask(s.depthMask);
@@ -109,9 +129,45 @@ public final class GlState {
          GL30.glBindFramebuffer(36160, s.framebuffer);
          GL30.glBindFramebuffer(36009, s.drawFramebuffer);
          GL30.glBindFramebuffer(36008, s.readFramebuffer);
-         GL11.glReadBuffer(s.readBuffer);
-         GL11.glDrawBuffer(s.drawBuffer);
+         restoreDrawBuffer(s.drawFramebuffer, s.drawBuffer);
+         restoreReadBuffer(s.readFramebuffer, s.readBuffer);
       }
+   }
+
+   private static void restoreDrawBuffer(int drawFramebuffer, int drawBuffer) {
+      if (drawFramebuffer == 0) {
+         if (isDefaultFramebufferDrawBuffer(drawBuffer)) {
+            GL11.glDrawBuffer(drawBuffer);
+         }
+      } else if (isFramebufferAttachmentDrawBuffer(drawBuffer)) {
+         GL11.glDrawBuffer(drawBuffer);
+      }
+   }
+
+   private static void restoreReadBuffer(int readFramebuffer, int readBuffer) {
+      if (readFramebuffer == 0) {
+         if (isDefaultFramebufferReadBuffer(readBuffer)) {
+            GL11.glReadBuffer(readBuffer);
+         }
+      } else if (isFramebufferAttachmentReadBuffer(readBuffer)) {
+         GL11.glReadBuffer(readBuffer);
+      }
+   }
+
+   private static boolean isDefaultFramebufferDrawBuffer(int buffer) {
+      return buffer == GL_BACK || buffer == GL_FRONT || buffer == GL_LEFT || buffer == GL_RIGHT;
+   }
+
+   private static boolean isDefaultFramebufferReadBuffer(int buffer) {
+      return buffer == GL_BACK || buffer == GL_FRONT || buffer == GL_LEFT || buffer == GL_RIGHT;
+   }
+
+   private static boolean isFramebufferAttachmentDrawBuffer(int buffer) {
+      return buffer == GL_NONE || buffer >= GL_COLOR_ATTACHMENT0 && buffer <= GL_COLOR_ATTACHMENT15;
+   }
+
+   private static boolean isFramebufferAttachmentReadBuffer(int buffer) {
+      return buffer == GL_NONE || buffer >= GL_COLOR_ATTACHMENT0 && buffer <= GL_COLOR_ATTACHMENT15;
    }
 
    private static void setEnabled(int cap, boolean enabled) {
@@ -133,7 +189,6 @@ public final class GlState {
       public boolean depthTestEnabled;
       public boolean cullFaceEnabled;
       public boolean blendEnabled;
-      public boolean framebufferSrgbEnabled;
       public int blendSrcRGB;
       public int blendDstRGB;
       public int blendSrcAlpha;

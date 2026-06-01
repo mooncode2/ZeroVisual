@@ -147,8 +147,12 @@ public class Module extends Config {
             propertiesObject.addProperty(set.name, ((BindSettings)set).key);
          } else if (set instanceof StringSetting) {
             propertiesObject.addProperty(set.name, ((StringSetting)set).input);
-         } else if (set instanceof HueSetting) {
-            propertiesObject.addProperty(set.name, ((HueSetting)set).current);
+         } else if (set instanceof HueSetting hueSetting) {
+            JsonObject colorObject = new JsonObject();
+            colorObject.addProperty("hue", hueSetting.current);
+            colorObject.addProperty("saturation", hueSetting.saturation);
+            colorObject.addProperty("brightness", hueSetting.brightness);
+            propertiesObject.add(set.name, colorObject);
          } else if (set instanceof MultiBooleanSetting) {
             JsonObject multiBoolObject = new JsonObject();
 
@@ -187,8 +191,21 @@ public class Module extends Config {
                   ((BindSettings)set).key = propertiesObject.get(set.name).getAsInt();
                } else if (set instanceof StringSetting) {
                   ((StringSetting)set).input = propertiesObject.get(set.name).getAsString();
-               } else if (set instanceof HueSetting) {
-                  ((HueSetting)set).current = propertiesObject.get(set.name).getAsFloat();
+               } else if (set instanceof HueSetting hueSetting) {
+                  if (propertiesObject.get(set.name).isJsonObject()) {
+                     JsonObject colorObject = propertiesObject.getAsJsonObject(set.name);
+                     if (colorObject.has("hue")) {
+                        hueSetting.current = colorObject.get("hue").getAsFloat();
+                     }
+                     if (colorObject.has("saturation")) {
+                        hueSetting.saturation = colorObject.get("saturation").getAsFloat();
+                     }
+                     if (colorObject.has("brightness")) {
+                        hueSetting.brightness = colorObject.get("brightness").getAsFloat();
+                     }
+                  } else {
+                     hueSetting.current = propertiesObject.get(set.name).getAsFloat();
+                  }
                } else if (set instanceof MultiBooleanSetting) {
                   if (propertiesObject.get(set.name).isJsonObject()) {
                      JsonObject multiBoolObject = propertiesObject.getAsJsonObject(set.name);
@@ -228,11 +245,13 @@ public class Module extends Config {
          if (enable) {
             try {
                EventManager.register(this);
+               this.onConfigLoadEnable();
             } catch (Exception var2) {
                this.enable = false;
             }
          } else {
             EventManager.unregister(this);
+            this.onConfigLoadDisable();
          }
          return;
       }
@@ -251,5 +270,11 @@ public class Module extends Config {
       } else {
          this.onDisable();
       }
+   }
+
+   protected void onConfigLoadEnable() {
+   }
+
+   protected void onConfigLoadDisable() {
    }
 }

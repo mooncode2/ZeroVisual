@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.zero.Zero;
 import ru.zero.module.impl.utils.Optimizer;
 import ru.zero.module.impl.visuals.CustomWorld;
+import ru.zero.module.impl.visuals.NoFluid;
 import ru.zero.module.impl.visuals.NoRender;
 
 @Environment(EnvType.CLIENT)
@@ -71,6 +72,38 @@ public abstract class FogRendererMixin {
       Camera camera, int viewDistance, RenderTickCounter tickCounter, float skyDarkness, ClientWorld world, CallbackInfoReturnable<Vector4f> cir
    ) {
       if (Optimizer.shouldDisableFog()) {
+         cir.cancel();
+         float f = tickCounter.getTickProgress(false);
+         Vector4f vector4f = this.getFogColor(camera, f, world, viewDistance, skyDarkness);
+         float far = Math.max(1024.0F, viewDistance * 64.0F);
+         MappedView mappedView = RenderSystem.getDevice().createCommandEncoder().mapBuffer(this.fogBuffer.getBlocking(), false, true);
+
+         try {
+            this.applyFog(mappedView.data(), 0, vector4f, far, far, far, far, far, far);
+         } catch (Throwable var24) {
+            if (mappedView != null) {
+               try {
+                  mappedView.close();
+               } catch (Throwable var23) {
+                  var24.addSuppressed(var23);
+               }
+            }
+
+            throw var24;
+         }
+
+         if (mappedView != null) {
+            mappedView.close();
+         }
+
+         cir.setReturnValue(vector4f);
+         return;
+      }
+
+      CameraSubmersionType submersionType = this.getCameraSubmersionType(camera);
+      boolean inWater = submersionType == CameraSubmersionType.WATER;
+      boolean inLava = submersionType == CameraSubmersionType.LAVA;
+      if (NoFluid.shouldDisableFluidFog(inWater, inLava)) {
          cir.cancel();
          float f = tickCounter.getTickProgress(false);
          Vector4f vector4f = this.getFogColor(camera, f, world, viewDistance, skyDarkness);
@@ -151,6 +184,13 @@ public abstract class FogRendererMixin {
          float h = MathHelper.clamp(g / 10.0F, 4.0F, 64.0F);
          fogData.renderDistanceStart = g - h;
          fogData.renderDistanceEnd = g;
+         if (fogData.environmentalEnd <= 0.0F) {
+            fogData.environmentalStart = fogData.renderDistanceStart;
+            fogData.environmentalEnd = fogData.renderDistanceEnd;
+            fogData.skyEnd = g;
+            fogData.cloudEnd = g;
+         }
+
          MappedView mappedView = RenderSystem.getDevice().createCommandEncoder().mapBuffer(this.fogBuffer.getBlocking(), false, true);
 
          try {

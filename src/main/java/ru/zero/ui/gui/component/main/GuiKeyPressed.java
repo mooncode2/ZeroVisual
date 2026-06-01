@@ -2,6 +2,7 @@ package ru.zero.ui.gui.component.main;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.lwjgl.glfw.GLFW;
 import ru.zero.Zero;
 import ru.zero.client.ZeroKeyBindings;
 import ru.zero.module.impl.client.MenuSettingsModule;
@@ -126,15 +127,64 @@ public class GuiKeyPressed extends GuiScreen {
             if (keyCode == 256) {
                GuiScreen.activeSearch = false;
                GuiScreen.searchText = "";
+               GuiScreen.searchSelectAll = false;
                return true;
             }
 
+            if (isCtrlDown(modifiers)) {
+               if (keyCode == GLFW.GLFW_KEY_A) {
+                  GuiScreen.searchSelectAll = !GuiScreen.searchText.isEmpty();
+                  return true;
+               }
+
+               if (keyCode == GLFW.GLFW_KEY_C && mc.keyboard != null) {
+                  mc.keyboard.setClipboard(GuiScreen.searchText);
+                  return true;
+               }
+
+               if (keyCode == GLFW.GLFW_KEY_V && mc.keyboard != null) {
+                  String clipboard = mc.keyboard.getClipboard();
+                  if (clipboard != null && !clipboard.isEmpty()) {
+                     if (GuiScreen.searchSelectAll) {
+                        GuiScreen.searchText = "";
+                        GuiScreen.searchSelectAll = false;
+                     }
+
+                     GuiScreen.searchText = appendSearchText(GuiScreen.searchText, clipboard);
+                  }
+
+                  return true;
+               }
+            }
+
             if (keyCode == 259) {
+               if (GuiScreen.searchSelectAll) {
+                  GuiScreen.searchText = "";
+                  GuiScreen.searchSelectAll = false;
+               }
+
                return true;
             }
          }
 
          return false;
       }
+   }
+
+   private static boolean isCtrlDown(int modifiers) {
+      return (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
+   }
+
+   private static String appendSearchText(String current, String addition) {
+      StringBuilder builder = new StringBuilder(current);
+
+      for (int i = 0; i < addition.length() && builder.length() < 50; i++) {
+         char ch = addition.charAt(i);
+         if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == ' ') {
+            builder.append(ch);
+         }
+      }
+
+      return builder.toString();
    }
 }

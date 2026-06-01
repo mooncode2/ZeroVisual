@@ -92,7 +92,7 @@ public final class FogBlurPass {
             GL11.glDisable(2884);
             GL11.glDisable(3042);
             GL11.glDisable(2929);
-            GL11.glDisable(36281);
+            GlState.disableFramebufferSrgb();
             int blurSourceTexture = colorTexture;
             int blurSourceWidth = width;
             int blurSourceHeight = height;
@@ -131,7 +131,7 @@ public final class FogBlurPass {
                GL11.glDisable(2884);
                GL11.glDisable(3042);
                GL11.glDisable(2929);
-               GL11.glDisable(36281);
+               GlState.disableFramebufferSrgb();
                GL30.glBindFramebuffer(36160, this.compositeTarget.fbo);
                GL11.glViewport(0, 0, width, height);
                GL11.glDrawBuffer(36064);

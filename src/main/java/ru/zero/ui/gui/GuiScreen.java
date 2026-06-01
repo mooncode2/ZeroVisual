@@ -20,7 +20,9 @@ import ru.zero.module.api.setting.impl.SliderSetting;
 import ru.zero.module.api.setting.impl.StringSetting;
 import ru.zero.util.render.math.ScrollUtil;
 import ru.zero.util.render.math.animation.Animation;
+import ru.zero.util.render.math.animation.Direction;
 import ru.zero.util.render.math.animation.anim.util.Animation2;
+import ru.zero.util.render.math.animation.anim.util.Easings;
 import ru.zero.util.render.math.animation.anim2.Easing;
 import ru.zero.util.render.math.animation.impl.EaseInOutQuad;
 
@@ -55,6 +57,7 @@ public class GuiScreen {
    public static float sliderWidth = 0.0F;
    public static String searchText = "";
    public static boolean activeSearch = false;
+   public static boolean searchSelectAll = false;
    public static long lastBackspaceTime = 0L;
    public static boolean backspaceHeld = false;
    public static long firstBackspacePressTime = 0L;
@@ -84,12 +87,34 @@ public class GuiScreen {
    public static Map<Module, Animation2> moduleSettingsAlphaAnimations = new HashMap<>();
    public static Map<Module, Animation2> moduleBindAnimations = new HashMap<>();
    public static Map<SliderSetting, Animation2> sliderAnimations = new HashMap<>();
+   private static final float SETTINGS_OPEN_DURATION = 0.24F;
+   private static final float SETTINGS_CLOSE_DURATION = 0.22F;
+
+   public static void openModuleSettings(Module module) {
+      openSettingsModules.add(module);
+      getModuleSettingsAnimation(module).run(1.0, SETTINGS_OPEN_DURATION, Easings.SINE_OUT);
+      getModuleSettingsAlphaAnimation(module).run(1.0, SETTINGS_OPEN_DURATION, Easings.SINE_OUT);
+   }
+
+   public static void closeModuleSettings(Module module) {
+      openSettingsModules.remove(module);
+      getModuleSettingsAnimation(module).run(0.0, SETTINGS_CLOSE_DURATION, Easings.SINE_IN);
+      getModuleSettingsAlphaAnimation(module).run(0.0, SETTINGS_CLOSE_DURATION, Easings.SINE_IN);
+      if (activeColorPicker != null && module.getSettingsForGUI().contains(activeColorPicker)) {
+         animation15.setDirection(Direction.BACKWARDS);
+         activeColorPicker = null;
+         colorPickerX = 0.0F;
+         colorPickerY = 0.0F;
+      }
+   }
 
    public static Category[] resolveCategories() {
       boolean showPrime = Zero.get != null
          && Zero.get.visualLinkingClient != null
          && Zero.get.visualLinkingClient.isPrimeOnTargetServer();
-      return showPrime ? new Category[] { Category.Visuals, Category.Utils, Category.Prime } : new Category[] { Category.Visuals, Category.Utils };
+      return showPrime
+         ? new Category[] { Category.Visuals, Category.Utils, Category.FunTime, Category.Prime }
+         : new Category[] { Category.Visuals, Category.Utils, Category.FunTime };
    }
 
    public static void refreshCategoriesAndModules() {
@@ -110,6 +135,17 @@ public class GuiScreen {
          selectedCategories = Category.Visuals;
       } else if (selectedCategories == null) {
          selectedCategories = Category.Visuals;
+      } else {
+         boolean categoryAvailable = false;
+         for (Category category : categories) {
+            if (category == selectedCategories) {
+               categoryAvailable = true;
+               break;
+            }
+         }
+         if (!categoryAvailable) {
+            selectedCategories = Category.Visuals;
+         }
       }
 
       if (Zero.get != null && Zero.get.manager != null) {

@@ -159,7 +159,7 @@ public final class DownsampleBlur {
             GL11.glDisable(2929);
             GL11.glDisable(2884);
             GL11.glDisable(3042);
-            GL11.glDisable(36281);
+            GlState.disableFramebufferSrgb();
             GL13.glActiveTexture(33984);
             GL30.glBindVertexArray(this.quadVao);
             if (useSmallKernel) {

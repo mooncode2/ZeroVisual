@@ -52,12 +52,22 @@ public class GuiCharTyped extends GuiScreen {
 
       if (GuiScreen.activeSearch) {
          if (codePoint == '\b') {
+            if (GuiScreen.searchSelectAll) {
+               GuiScreen.searchText = "";
+               GuiScreen.searchSelectAll = false;
+            }
+
             return true;
          }
 
          if (codePoint >= ' '
             && codePoint != 127
             && (codePoint >= 'a' && codePoint <= 'z' || codePoint >= 'A' && codePoint <= 'Z' || codePoint >= '0' && codePoint <= '9' || codePoint == ' ')) {
+            if (GuiScreen.searchSelectAll) {
+               GuiScreen.searchText = "";
+               GuiScreen.searchSelectAll = false;
+            }
+
             if (GuiScreen.searchText.length() < 50) {
                GuiScreen.searchText = GuiScreen.searchText + codePoint;
             }

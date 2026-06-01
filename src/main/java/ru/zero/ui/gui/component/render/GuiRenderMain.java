@@ -46,11 +46,17 @@ public class GuiRenderMain extends GuiScreen {
                GuiScreen.backspaceHeld = true;
                GuiScreen.firstBackspacePressTime = currentTime;
                GuiScreen.lastBackspaceTime = currentTime;
-               if (!GuiScreen.searchText.isEmpty()) {
+               if (GuiScreen.searchSelectAll) {
+                  GuiScreen.searchText = "";
+                  GuiScreen.searchSelectAll = false;
+               } else if (!GuiScreen.searchText.isEmpty()) {
                   GuiScreen.searchText = GuiScreen.searchText.substring(0, GuiScreen.searchText.length() - 1);
                }
             } else if (currentTime - GuiScreen.firstBackspacePressTime > 500L && currentTime - GuiScreen.lastBackspaceTime > 30L) {
-               if (!GuiScreen.searchText.isEmpty()) {
+               if (GuiScreen.searchSelectAll) {
+                  GuiScreen.searchText = "";
+                  GuiScreen.searchSelectAll = false;
+               } else if (!GuiScreen.searchText.isEmpty()) {
                   GuiScreen.searchText = GuiScreen.searchText.substring(0, GuiScreen.searchText.length() - 1);
                }
 

@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import ru.zero.Zero;
 import ru.zero.event.EventInit;
+import ru.zero.event.impl.EventChangeWorld;
 import ru.zero.event.impl.EventUpdate;
 import ru.zero.module.api.Category;
 import ru.zero.module.api.IModule;
@@ -31,30 +32,57 @@ public class CustomWorld extends Module {
    public static HueSetting fogColor = new HueSetting("Цвет тумана", 15.0F, 1.0F, 1.0F).hidden(() -> !useFog.get() || syncFogWithTheme.get());
    public static SliderSetting fogDistance = new SliderSetting("Дистанция тумана", 1.0F, 0.0F, 1.0F, 0.01F, false);
    public static long customTime = -1L;
-   public static boolean isEnabled = false;
 
    public CustomWorld() {
       this.addSettings(new Setting[]{timeOfDay, alwaysClear, useFog, syncFogWithTheme, fogColor, fogDistance});
    }
 
+   public static boolean isActive() {
+      if (Zero.get == null || Zero.get.manager == null) {
+         return false;
+      }
+
+      CustomWorld module = Zero.get.manager.get(CustomWorld.class);
+      return module != null && module.enable;
+   }
+
    @Override
    public void onEnable() {
       super.onEnable();
-      isEnabled = true;
+      this.updateTargetTime();
+   }
+
+   @Override
+   protected void onConfigLoadEnable() {
       this.updateTargetTime();
    }
 
    @Override
    public void onDisable() {
       super.onDisable();
-      isEnabled = false;
+      customTime = -1L;
+   }
+
+   @Override
+   protected void onConfigLoadDisable() {
       customTime = -1L;
    }
 
    @EventInit
-   public void onUpdate(EventUpdate e) {
-      if (isEnabled && mc.world != null) {
+   public void onWorldChange(EventChangeWorld event) {
+      if (this.enable) {
          this.updateTargetTime();
+      }
+   }
+
+   @EventInit
+   public void onUpdate(EventUpdate e) {
+      if (this.enable) {
+         if (mc.world != null) {
+            this.updateTargetTime();
+         }
+      } else if (customTime >= 0L) {
+         customTime = -1L;
       }
    }
 

@@ -123,18 +123,17 @@ public abstract class GameRendererMixin {
    private Vector4f leet$applyFog(
       FogRenderer instance, Camera camera, int viewDistance, RenderTickCounter tickCounter, float skyDarkness, ClientWorld world
    ) {
-      return Zero.get.manager.getModule(CustomWorld.class).enable && CustomWorld.useFog.get()
-         ? this.fogRenderer
-            .applyFog(
-               camera,
-               (int)(MinecraftClient.getInstance().options.getClampedViewDistance() * CustomWorld.fogDistance.get() * 5.0F),
-               tickCounter,
-               10.0F,
-               MinecraftClient.getInstance().world
-            )
-         : this.fogRenderer
-            .applyFog(
-               camera, MinecraftClient.getInstance().options.getClampedViewDistance(), tickCounter, this.getSkyDarkness(skyDarkness), MinecraftClient.getInstance().world
-            );
+      float resolvedSkyDarkness = this.getSkyDarkness(skyDarkness);
+      MinecraftClient client = MinecraftClient.getInstance();
+      int vanillaViewDistance = client.options.getClampedViewDistance();
+      if (Zero.get != null
+            && Zero.get.manager != null
+            && Zero.get.manager.getModule(CustomWorld.class).enable
+            && CustomWorld.useFog.get()) {
+         int customViewDistance = Math.max(2, Math.round(vanillaViewDistance * CustomWorld.fogDistance.get()));
+         return this.fogRenderer.applyFog(camera, customViewDistance, tickCounter, resolvedSkyDarkness, world);
+      }
+
+      return this.fogRenderer.applyFog(camera, vanillaViewDistance, tickCounter, resolvedSkyDarkness, world);
    }
 }

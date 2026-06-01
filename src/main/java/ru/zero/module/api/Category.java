@@ -11,6 +11,7 @@ public enum Category {
    Visuals("Visuals", "e"),
    Player("Player", "g"),
    Utils("Utils", "j"),
+   FunTime("FunTime", "l"),
    Prime("Prime", "k"),
    Misc("Misc", "h");
 

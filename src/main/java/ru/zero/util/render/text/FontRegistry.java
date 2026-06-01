@@ -18,6 +18,7 @@ public final class FontRegistry {
    public static FontObject INTER_MEDIUM;
    public static FontObject ICONS;
    public static FontObject INTER_SEMIBOLD;
+   public static FontObject TBANKSANS;
 
    private FontRegistry() {
    }
@@ -29,6 +30,7 @@ public final class FontRegistry {
          renderer.registerTextRenderer(INTER_MEDIUM, createTextRenderer(INTER_MEDIUM));
          renderer.registerTextRenderer(ICONS, createTextRenderer(ICONS));
          renderer.registerTextRenderer(INTER_SEMIBOLD, createTextRenderer(INTER_SEMIBOLD));
+         renderer.registerTextRenderer(TBANKSANS, createTextRenderer(TBANKSANS));
          rendererFontsInitialized = true;
       }
    }
@@ -109,6 +111,7 @@ public final class FontRegistry {
       INTER_MEDIUM = register("inter_medium", "assets/zero/fonts/medium.json", "assets/zero/fonts/medium.png");
       ICONS = register("icons", "assets/zero/fonts/icons.json", "assets/zero/fonts/icons.png");
       INTER_SEMIBOLD = register("inter_semibold", "assets/zero/fonts/semibold.json", "assets/zero/fonts/semibold.png");
+      TBANKSANS = register("tbanksans", "assets/zero/fonts/tbanksans.json", "assets/zero/fonts/tbanksans.png");
    }
 
    private static void ensureBackendConfigured() {
@@ -126,5 +129,6 @@ public final class FontRegistry {
       INTER_MEDIUM = null;
       ICONS = null;
       INTER_SEMIBOLD = null;
+      TBANKSANS = null;
    }
 }

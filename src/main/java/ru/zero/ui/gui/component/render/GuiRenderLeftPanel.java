@@ -16,6 +16,12 @@ import ru.zero.util.render.text.FontRegistry;
 
 @Environment(EnvType.CLIENT)
 public class GuiRenderLeftPanel extends GuiScreen {
+   private static final float CATEGORY_ICON_X = 9.145F;
+   private static final float CATEGORY_ICON_Y_OFFSET = 50.185F;
+   private static final float CATEGORY_ICON_BASELINE_OFFSET = 8.0F;
+   private static final float CATEGORY_ICON_SIZE = 16.0F;
+   private static final float FUNTIME_TEXT_SIZE = 12.0F;
+
    public static void renderLeftPanel(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
       if (mainAlpha <= 0.001F) {
          return;
@@ -53,17 +59,40 @@ public class GuiRenderLeftPanel extends GuiScreen {
          renderer2D.shadow(
             GuiScreen.x, GuiScreen.y + 43.365F + downY, 1.0F, 21.825F, 0.0F, 1.0F, 0.1F, ColorUtil.overCol(0, mainColorGlow.getRGB(), category.anim33.get())
          );
-         renderer2D.text(FontRegistry.ICONS, GuiScreen.x + 9.145F, GuiScreen.y + 50.185F + yicons + downY + 8.0F, 16.0F, category.getIcon(), mainColor);
-         renderer2D.shadow(
-            GuiScreen.x + 9.145F + 3.5F,
-            GuiScreen.y + 50.185F + downY + yicons + 3.5F,
-            0.1F,
-            0.1F,
-            8.0F,
-            5.7F,
-            0.1F,
-            ColorUtil.overCol(0, mainColorGlow35.getRGB(), category.anim33.get())
-         );
+         if (category == Category.FunTime) {
+            drawFunTimeLetters(renderer2D, downY, mainColor);
+            float ftGlowX = funTimeIconCenterX(downY);
+            float ftGlowY = funTimeIconCenterY(downY);
+            renderer2D.shadow(
+               ftGlowX,
+               ftGlowY,
+               0.1F,
+               0.1F,
+               8.0F,
+               5.7F,
+               0.1F,
+               ColorUtil.overCol(0, mainColorGlow35.getRGB(), category.anim33.get())
+            );
+         } else {
+            renderer2D.text(
+               FontRegistry.ICONS,
+               GuiScreen.x + CATEGORY_ICON_X,
+               GuiScreen.y + CATEGORY_ICON_Y_OFFSET + yicons + downY + CATEGORY_ICON_BASELINE_OFFSET,
+               CATEGORY_ICON_SIZE,
+               category.getIcon(),
+               mainColor
+            );
+            renderer2D.shadow(
+               GuiScreen.x + CATEGORY_ICON_X + 3.5F,
+               GuiScreen.y + CATEGORY_ICON_Y_OFFSET + downY + yicons + 3.5F,
+               0.1F,
+               0.1F,
+               8.0F,
+               5.7F,
+               0.1F,
+               ColorUtil.overCol(0, mainColorGlow35.getRGB(), category.anim33.get())
+            );
+         }
          renderer2D.text(
             FontRegistry.INTER_MEDIUM,
             GuiScreen.x + 21.995F,
@@ -72,14 +101,18 @@ public class GuiRenderLeftPanel extends GuiScreen {
             category.getName(),
             ColorUtil.overCol(0, textColor, category.anim33.get())
          );
-         renderer2D.text(
-            FontRegistry.ICONS,
-            GuiScreen.x + 9.145F,
-            GuiScreen.y + 50.185F + yicons + downY + 8.0F,
-            16.0F,
-            category.getIcon(),
-            ColorUtil.overCol(mainColor40, 0, category.anim33.get())
-         );
+         if (category == Category.FunTime) {
+            drawFunTimeLetters(renderer2D, downY, ColorUtil.overCol(mainColor40, 0, category.anim33.get()));
+         } else {
+            renderer2D.text(
+               FontRegistry.ICONS,
+               GuiScreen.x + CATEGORY_ICON_X,
+               GuiScreen.y + CATEGORY_ICON_Y_OFFSET + yicons + downY + CATEGORY_ICON_BASELINE_OFFSET,
+               CATEGORY_ICON_SIZE,
+               category.getIcon(),
+               ColorUtil.overCol(mainColor40, 0, category.anim33.get())
+            );
+         }
          renderer2D.text(
             FontRegistry.INTER_MEDIUM,
             GuiScreen.x + 21.995F,
@@ -114,6 +147,37 @@ public class GuiRenderLeftPanel extends GuiScreen {
          12.0F,
          "i",
          Renderer2D.ColorUtil.rgba(255, 205, 0, (int)(255.0F * GuiScreen.alphaPC.get()))
+      );
+   }
+
+   private static float funTimeLabelBaselineY(float downY) {
+      return GuiScreen.y + 49.77F + downY + 7.0F + 0.2F;
+   }
+
+   private static float funTimeIconCenterX(float downY) {
+      return GuiScreen.x + CATEGORY_ICON_X + CATEGORY_ICON_SIZE * 0.5F;
+   }
+
+   private static float funTimeIconCenterY(float downY) {
+      float labelBaselineY = funTimeLabelBaselineY(downY);
+      float labelRenderSize = 14.0F * 0.5F;
+      return labelBaselineY + FontRegistry.centeredBaselineOffset(FontRegistry.INTER_MEDIUM, 'F', labelRenderSize);
+   }
+
+   private static void drawFunTimeLetters(Renderer2D renderer2D, float downY, int color) {
+      float labelBaselineY = funTimeLabelBaselineY(downY);
+      float labelRenderSize = 14.0F * 0.5F;
+      float ftRenderSize = FUNTIME_TEXT_SIZE * 0.5F;
+      float labelCenterY = labelBaselineY + FontRegistry.centeredBaselineOffset(FontRegistry.INTER_MEDIUM, 'F', labelRenderSize);
+      float ftBaselineY = labelCenterY - FontRegistry.centeredBaselineOffset(FontRegistry.INTER_MEDIUM, 'F', ftRenderSize);
+      renderer2D.text(
+         FontRegistry.INTER_MEDIUM,
+         funTimeIconCenterX(downY),
+         ftBaselineY,
+         FUNTIME_TEXT_SIZE,
+         "FT",
+         color,
+         "c"
       );
    }
 }

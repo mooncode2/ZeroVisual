@@ -226,10 +226,10 @@ public class InGameHudMixin {
                   GL30.glBindFramebuffer(36160, 0);
                }
 
+               GlState.Snapshot snapshot = GlState.push();
                GL11.glColorMask(true, true, true, true);
                GL11.glDisable(2929);
                GL11.glEnable(3042);
-               GlState.Snapshot snapshot = GlState.push();
 
                try {
                   AnimationSystem.getInstance().tick();

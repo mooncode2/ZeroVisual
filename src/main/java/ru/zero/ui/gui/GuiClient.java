@@ -118,6 +118,7 @@ public class GuiClient extends Screen {
       MovementManager.getInstance().unlockMovement("Search");
       GuiScreen.activeSearch = false;
       GuiScreen.searchText = "";
+      GuiScreen.searchSelectAll = false;
       Zero.get.guiManager.setGuiCategory(GuiScreen.selectedCategories);
       super.close();
    }
@@ -168,6 +169,8 @@ public class GuiClient extends Screen {
             }
          }
          GuiScreen.selectedCategories = primeAvailable ? Category.Prime : Category.Visuals;
+      } else if (savedCategory == Category.FunTime) {
+         GuiScreen.selectedCategories = Category.FunTime;
       } else {
          GuiScreen.selectedCategories = savedCategory == Category.Utils ? Category.Utils : Category.Visuals;
       }

@@ -27,6 +27,7 @@ import ru.zero.util.render.animation.util.Animation;
 import ru.zero.util.render.animation.util.Easings;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.ui.draggable.DraggableManager;
 import ru.zero.ui.gui.GuiScreen;
 
 @IModule(
@@ -87,7 +88,7 @@ public class Hud extends Module {
          if (r2 != null) {
             HotBarHUD.tick();
             if (element.get("Уведомления")) {
-               this.renderNotifications(r2);
+               HudEditor.renderElement("notifications", r2, () -> this.renderNotifications(r2));
             }
 
             if (element.get("Ватер марк")) {
@@ -169,11 +170,11 @@ public class Hud extends Module {
          float screenCenterY = mc.getWindow().getHeight() / 2.0F + 140.0F;
          float screenCenterX = mc.getWindow().getWidth() / 2.0F;
          boolean vanillaStyle = GuiScreen.isVanillaStyle();
-         float currentY = screenCenterY;
-
          int maxNotifications = Optimizer.getMaxNotifications();
-         int rendered = 0;
-         for (int i = this.notifications.size() - 1; i >= 0 && rendered < maxNotifications; i--) {
+         float measureMaxWidth = 0.0F;
+         float measureTotalHeight = 0.0F;
+
+         for (int i = this.notifications.size() - 1; i >= 0; i--) {
             Hud.Notification notification = this.notifications.get(i);
             boolean shouldShow = !notification.isExpired();
             notification.animation.run(shouldShow ? 1.0 : 0.0, Optimizer.getHudAnimationSpeed(0.16F), Easings.QUAD_OUT, false);
@@ -182,7 +183,27 @@ public class Hud extends Module {
                float iconWidth = 8.0F;
                float textWidth = matrix.measureText(FontRegistry.INTER_MEDIUM, notification.text, 26.0F).width;
                float notificationWidth = margin * 3.0F + iconWidth + textWidth + 8.0F + 30.0F;
-               float targetX = screenCenterX - notificationWidth / 2.0F;
+               measureMaxWidth = Math.max(measureMaxWidth, notificationWidth + 8.0F);
+               measureTotalHeight += (notificationHeight + spacing) * animValue;
+            }
+         }
+
+         float preferredX = screenCenterX - measureMaxWidth / 2.0F;
+         DraggableManager.DragSession dragSession = DraggableManager.getInstance()
+            .beginDrag("notifications", preferredX, screenCenterY, measureMaxWidth, Math.max(measureTotalHeight, notificationHeight));
+         float anchorX = dragSession.positionX();
+         float currentY = dragSession.positionY();
+         float stackCenterX = anchorX + measureMaxWidth / 2.0F;
+         int rendered = 0;
+
+         for (int i = this.notifications.size() - 1; i >= 0 && rendered < maxNotifications; i--) {
+            Hud.Notification notification = this.notifications.get(i);
+            float animValue = notification.animation.get();
+            if (!(animValue <= 0.01F)) {
+               float iconWidth = 8.0F;
+               float textWidth = matrix.measureText(FontRegistry.INTER_MEDIUM, notification.text, 26.0F).width;
+               float notificationWidth = margin * 3.0F + iconWidth + textWidth + 8.0F + 30.0F;
+               float targetX = stackCenterX - notificationWidth / 2.0F;
                notification.yAnimation.run(currentY, Optimizer.getHudAnimationSpeed(0.1F), Easings.QUAD_OUT, false);
                float scale = 0.9F + 0.1F * animValue;
                matrix.pushTranslation(targetX + notificationWidth / 2.0F, currentY + notificationHeight / 2.0F);
@@ -263,6 +284,9 @@ public class Hud extends Module {
                rendered++;
             }
          }
+
+         HudEditor.registerRect(anchorX, dragSession.positionY(), measureMaxWidth, Math.max(measureTotalHeight, notificationHeight));
+         DraggableManager.getInstance().endDrag(dragSession);
       }
    }
 
