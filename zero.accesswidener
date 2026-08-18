@@ -1,0 +1,10 @@
+accessWidener	v1	intermediary
+accessible	method	net/minecraft/class_10799	method_67887	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+accessible	field	net/minecraft/class_10799	field_56860	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/class_10799	field_56864	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/class_10799	field_56859	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	method	net/minecraft/class_8113$class_8123	method_48915	()Lnet/minecraft/class_2561;
+accessible	field	net/minecraft/class_1309	field_6283	F
+accessible	field	net/minecraft/class_1309	field_6220	F
+accessible	field	net/minecraft/class_12247	field_63987	Ljava/util/Map;
+accessible	class	net/minecraft/class_12247$class_12338

@@ -1,0 +1,111 @@
+plugins {
+    id 'fabric-loom' version '1.14.1'
+    id 'maven-publish'
+}
+
+version = project.properties['mod_version'] ?: '3.0'
+group = project.properties['maven_group'] ?: 'ru.zero'
+base {
+    archivesName = project.properties['archives_base_name'] ?: 'zero'
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/zero.accesswidener")
+}
+
+// Отключаем валидацию access widener для сборки с нативными библиотеками
+tasks.named('validateAccessWidener') {
+    enabled = false
+}
+
+repositories {
+    mavenLocal()
+    maven { url = uri("repo") } // локальный репозиторий проекта
+    mavenCentral()
+    maven { url "https://maven.fabricmc.net/" }
+    maven { url "https://libraries.minecraft.net/" }
+    maven { url "https://jitpack.io" }
+    maven { url "https://repo.clojars.org" }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    compileOnly "org.projectlombok:lombok:1.18.42"
+    annotationProcessor "org.projectlombok:lombok:1.18.42"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
+    testImplementation "org.mockito:mockito-core:5.3.1"
+    testImplementation "org.mockito:mockito-inline:5.2.0"
+    testImplementation "net.bytebuddy:byte-buddy:1.14.11"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.9.2"
+
+    // Discord Rich Presence реализован собственным IPC-клиентом (ru.zero.rpc.DiscordIpcClient)
+    // на чистом java.nio + gson, поэтому legacy-библиотека discord-rpc больше не нужна.
+    // JNA оставлена: используется для медиа-клавиш (WindowsMediaTransport / MediaKeys).
+    implementation "net.java.dev.jna:jna:5.15.0"
+    include "net.java.dev.jna:jna:5.15.0"
+
+    // Vulkan render backend (bindings only; использует системный vulkan-1.dll, отдельные natives не требуются).
+    implementation "org.lwjgl:lwjgl-vulkan:3.3.3"
+    include "org.lwjgl:lwjgl-vulkan:3.3.3"
+    // Runtime компиляция GLSL -> SPIR-V (shaderc, с natives для standalone smoke-test).
+    implementation "org.lwjgl:lwjgl-shaderc:3.3.3"
+    include "org.lwjgl:lwjgl-shaderc:3.3.3"
+    // Нативный lwjgl для standalone smoke-test (в Minecraft loom уже подкладывает natives).
+    runtimeOnly "org.lwjgl:lwjgl:3.3.3:natives-windows"
+    runtimeOnly "org.lwjgl:lwjgl-shaderc:3.3.3:natives-windows"
+    runtimeOnly "org.lwjgl:lwjgl-vulkan:3.3.3"
+}
+
+// Standalone проверка инициализации Vulkan без запуска Minecraft.
+// Запуск: gradlew runSmokeTest
+task('runSmokeTest', type: JavaExec) {
+    group = 'verification'
+    description = 'Инициализирует VulkanContext без Minecraft и печатает результат.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ru.zero.util.render.backends.vk.VulkanSmokeTest'
+    // lwjgl-vulkan грузит vulkan-1.dll из System32; natives не нужны, но LWJGL core требует загрузки.
+    systemProperty 'org.lwjgl.system.allocator', 'system'
+    standardOutput = System.out
+    errorOutput = System.err
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+    it.options.encoding = 'UTF-8'
+    it.options.compilerArgs.addAll(['-Xmaxerrs', '10000'])
+}
+
+java {
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}"}
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

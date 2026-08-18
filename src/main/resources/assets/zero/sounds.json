@@ -1,0 +1,17 @@
+{
+  "clickgui_open": {
+    "sounds": ["zero:clickgui_open"]
+  },
+  "toggle": {
+    "sounds": ["zero:toggle"]
+  },
+  "crit1": {
+    "sounds": ["zero:crit1"]
+  },
+  "crit2": {
+    "sounds": ["zero:crit2"]
+  },
+  "crit3": {
+    "sounds": ["zero:crit3"]
+  }
+}
