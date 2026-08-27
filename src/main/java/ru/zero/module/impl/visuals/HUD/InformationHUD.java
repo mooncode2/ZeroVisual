@@ -113,10 +113,9 @@ public class InformationHUD {
       float textY = y + 25.0F;
       Hud.drawClientRect(r2, x, y, 40.64F, 40.64F, 13.0F, 1.0F, 1.0F);
       r2.shadow(x + 15.0F, y + 22.0F, 0.1F, 0.1F, 8.0F, 10.0F, 0.1F, mainColorGlow.getRGB());
-      boolean vanillaStyle = GuiScreen.isVanillaStyle();
-      r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 11.0F, y + 30.0F, 36.0F, vanillaStyle ? "i" : "0", Renderer2D.ColorUtil.getMainColor(1, 1));
-      Hud.drawClientRect(r2, x + 49.6F, y, coordsWidth + bpsWidth + 100.0F, 40.64F, 13.0F, 1.0F, 1.0F);
-      r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 66.56F, y + 28.0F, 32.0F, vanillaStyle ? "XYZ" : "1", Renderer2D.ColorUtil.getMainColor(1, 1));
+       r2.text(FontRegistry.ICONS, x + 11.0F, y + 30.0F, 36.0F, "0", Renderer2D.ColorUtil.getMainColor(1, 1));
+       Hud.drawClientRect(r2, x + 49.6F, y, coordsWidth + bpsWidth + 100.0F, 40.64F, 13.0F, 1.0F, 1.0F);
+       r2.text(FontRegistry.ICONS, x + 66.56F, y + 28.0F, 32.0F, "1", Renderer2D.ColorUtil.getMainColor(1, 1));
       r2.text(FontRegistry.INTER_MEDIUM, textX, textY, fontSize, xStr, Renderer2D.ColorUtil.getTextColor(1, 1));
       textX += r2.measureText(FontRegistry.INTER_MEDIUM, xStr, fontSize).width;
       r2.text(FontRegistry.INTER_MEDIUM, textX, textY, fontSize, "x ", Renderer2D.ColorUtil.getMainColor(1, 1));
@@ -130,7 +129,7 @@ public class InformationHUD {
       r2.text(FontRegistry.INTER_MEDIUM, textX, textY, fontSize, "z", Renderer2D.ColorUtil.getMainColor(1, 1));
       textX += labelZWidth;
       r2.rect(x + coordsWidth + 98.0F, y + 15.0F, 2.34F, 11.21F, 4.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80));
-      r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + coordsWidth + 108.0F, y + 28.0F, 32.0F, vanillaStyle ? "S" : "2", Renderer2D.ColorUtil.getMainColor(1, 1));
+       r2.text(FontRegistry.ICONS, x + coordsWidth + 108.0F, y + 28.0F, 32.0F, "2", Renderer2D.ColorUtil.getMainColor(1, 1));
       float bpsTextX = x + coordsWidth + 132.0F;
       r2.text(FontRegistry.INTER_MEDIUM, bpsTextX, y + 25.0F, fontSize, bpsValue, Renderer2D.ColorUtil.getTextColor(1, 1));
       bpsTextX += r2.measureText(FontRegistry.INTER_MEDIUM, bpsValue, fontSize).width;

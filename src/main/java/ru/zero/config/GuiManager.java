@@ -18,9 +18,9 @@ public class GuiManager {
    private File file;
    private Theme currentTheme = Theme.THEME1;
    private Category currentCategory = Category.Visuals;
-   private boolean guiBlurEnabled = false;
-   private boolean guiVanillaStyleEnabled = false;
-   private boolean guiSoundEnabled = true;
+    private boolean guiBlurEnabled = false;
+    private boolean guiVanillaStyleEnabled = false;
+    private boolean guiSoundEnabled = true;
    private boolean guiLiquidGlassEnabled = false;
 
    public void init() {
@@ -52,17 +52,17 @@ public class GuiManager {
       this.saveSettings();
    }
 
-   public void setGuiBlurEnabled(boolean enabled) {
-      this.guiBlurEnabled = enabled;
-      this.saveSettings();
-   }
+    public void setGuiBlurEnabled(boolean enabled) {
+       this.guiBlurEnabled = enabled;
+       this.saveSettings();
+    }
 
-   public void setGuiVanillaStyleEnabled(boolean enabled) {
-      this.guiVanillaStyleEnabled = enabled;
-      this.saveSettings();
-   }
+    public void setGuiVanillaStyleEnabled(boolean enabled) {
+       this.guiVanillaStyleEnabled = enabled;
+       this.saveSettings();
+    }
 
-   public void setGuiSoundEnabled(boolean enabled) {
+    public void setGuiSoundEnabled(boolean enabled) {
       this.guiSoundEnabled = enabled;
       this.saveSettings();
    }
@@ -80,15 +80,15 @@ public class GuiManager {
       return this.currentCategory;
    }
 
-   public boolean isGuiBlurEnabled() {
-      return this.guiBlurEnabled;
-   }
+    public boolean isGuiBlurEnabled() {
+       return this.guiBlurEnabled;
+    }
 
-   public boolean isGuiVanillaStyleEnabled() {
-      return this.guiVanillaStyleEnabled;
-   }
+    public boolean isGuiVanillaStyleEnabled() {
+       return this.guiVanillaStyleEnabled;
+    }
 
-   public boolean isGuiSoundEnabled() {
+    public boolean isGuiSoundEnabled() {
       return this.guiSoundEnabled;
    }
 
@@ -101,9 +101,9 @@ public class GuiManager {
          Properties props = new Properties();
          props.setProperty("theme", this.currentTheme.name());
          props.setProperty("category", this.currentCategory.name());
-         props.setProperty("guiBlur", String.valueOf(this.guiBlurEnabled));
-         props.setProperty("guiVanillaStyle", String.valueOf(this.guiVanillaStyleEnabled));
-         props.setProperty("guiSound", String.valueOf(this.guiSoundEnabled));
+          props.setProperty("guiBlur", String.valueOf(this.guiBlurEnabled));
+          props.setProperty("guiVanillaStyle", String.valueOf(this.guiVanillaStyleEnabled));
+          props.setProperty("guiSound", String.valueOf(this.guiSoundEnabled));
          props.setProperty("guiLiquidGlass", String.valueOf(this.guiLiquidGlassEnabled));
          props.store(writer, "GUI Settings");
       } catch (IOException var6) {
@@ -117,9 +117,9 @@ public class GuiManager {
          props.load(reader);
          this.currentTheme = Theme.valueOf(props.getProperty("theme", Theme.THEME1.name()));
          this.currentCategory = Category.valueOf(props.getProperty("category", Category.Visuals.name()));
-         this.guiBlurEnabled = Boolean.parseBoolean(props.getProperty("guiBlur", "false"));
-         this.guiVanillaStyleEnabled = Boolean.parseBoolean(props.getProperty("guiVanillaStyle", "false"));
-         this.guiSoundEnabled = Boolean.parseBoolean(props.getProperty("guiSound", "true"));
+          this.guiBlurEnabled = Boolean.parseBoolean(props.getProperty("guiBlur", "false"));
+          this.guiVanillaStyleEnabled = Boolean.parseBoolean(props.getProperty("guiVanillaStyle", "false"));
+          this.guiSoundEnabled = Boolean.parseBoolean(props.getProperty("guiSound", "true"));
           this.guiLiquidGlassEnabled = Boolean.parseBoolean(props.getProperty("guiLiquidGlass", "false"));
       } catch (IllegalArgumentException | IOException var6) {
          var6.printStackTrace();

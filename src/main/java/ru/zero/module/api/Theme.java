@@ -16,9 +16,8 @@ public enum Theme {
    THEME6(new Color(14191615), new Color(2559280), new Color(2888502), new Color(14191615), new Color(16240127), new Color(14388479)),
    THEME7(new Color(16747513), new Color(3149103), new Color(3412790), new Color(16747513), new Color(16764408), new Color(16747773)),
    THEME8(new Color(16747467), new Color(3149089), new Color(3543849), new Color(16747467), new Color(16764391), new Color(16747733)),
-   THEME9(new Color(13684944), new Color(789516), new Color(1118481), new Color(12105912), new Color(15790320), new Color(10066329)),
-   VANILLA_CLASSIC(new Color(15921906), new Color(4079166), new Color(4868682), new Color(7434609), new Color(15790320), new Color(11184810)),
-   LIQUID_GLASS(new Color(0x66CCFF), new Color(0x1B2838), new Color(0x243447), new Color(0x88CCFF), new Color(0xE8F1F8), new Color(0xAABED0));
+    THEME9(new Color(13684944), new Color(789516), new Color(1118481), new Color(12105912), new Color(15790320), new Color(10066329)),
+     LIQUID_GLASS(new Color(0x66CCFF), new Color(0x1B2838), new Color(0x243447), new Color(0x88CCFF), new Color(0xE8F1F8), new Color(0xAABED0));
 
    private final Color main;
    private final Color bg;

@@ -64,9 +64,9 @@ public class GuiScreen {
    public static long firstBackspacePressTime = 0L;
    public static boolean showClientSettingsPopup = false;
    public static boolean serverMapOpen = false;
-   public static BooleanSetting clientBlurSetting = new BooleanSetting("Блюр (Размытие)", false);
-   public static BooleanSetting clientVanillaSetting = new BooleanSetting("Ванильный", false);
-   public static BooleanSetting clientSoundSetting = new BooleanSetting("Звуки", true);
+    public static BooleanSetting clientBlurSetting = new BooleanSetting("Блюр (Размытие)", false);
+    public static BooleanSetting clientVanillaSetting = new BooleanSetting("Ванильный", false);
+    public static BooleanSetting clientSoundSetting = new BooleanSetting("Звуки", true);
     public static BooleanSetting clientLiquidGlassSetting = new BooleanSetting("Liquid Glass", false);
    public static boolean friendsTabOpen = false;
    public static boolean friendInputActive = false;
@@ -195,9 +195,9 @@ public class GuiScreen {
          newAnim.setValue(targetProgress);
          return newAnim;
       });
-   }
+    }
 
-   public static boolean isVanillaStyle() {
-      return false;
-   }
+    public static boolean isVanillaStyle() {
+       return GuiScreen.clientVanillaSetting.get();
+    }
 }

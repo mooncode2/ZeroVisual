@@ -60,9 +60,8 @@ public class HotBarHUD {
 
    public static void hotbar(Renderer2D r2, DrawContext drawContext) {
       if (mc.player != null && mc.world != null) {
-         boolean vanillaStyle = GuiScreen.isVanillaStyle();
-         float hotbarWidth = vanillaStyle ? 206.0F : 463.5F;
-         float hotbarHeight = vanillaStyle ? 24.0F : 51.5F;
+          float hotbarWidth = 463.5F;
+          float hotbarHeight = 51.5F;
          float screenWidth = mc.getWindow().getWidth();
          float screenHeight = mc.getWindow().getHeight();
          float defaultX = (screenWidth - hotbarWidth) / 2.0F;
@@ -75,11 +74,11 @@ public class HotBarHUD {
          float guiScale = mc.getWindow().getScaleFactor();
          float deltaScX = guiScale > 0.0F ? deltaFbX / guiScale : 0.0F;
          float deltaScY = guiScale > 0.0F ? deltaFbY / guiScale : 0.0F;
-         Hud.drawClientRect(r2, x, y, hotbarWidth, hotbarHeight, vanillaStyle ? 2.0F : 13.0F, 1.0F, 1.0F);
+          Hud.drawClientRect(r2, x, y, hotbarWidth, hotbarHeight, 13.0F, 1.0F, 1.0F);
          int slots = 9;
-         float normalSlotSize = vanillaStyle ? 20.0F : 35.0F;
-         float selectedSlotSize = vanillaStyle ? 20.0F : 51.5F;
-         float paddingX = vanillaStyle ? 13.0F : 25.0F;
+          float normalSlotSize = 35.0F;
+          float selectedSlotSize = 51.5F;
+          float paddingX = 25.0F;
          float availableWidth = hotbarWidth - 2.0F * paddingX;
          float slotCenterSpacing = availableWidth / (slots - 1);
          int selectedSlot = mc.player.getInventory().getSelectedSlot();
@@ -91,34 +90,23 @@ public class HotBarHUD {
             float currentSlotSize = isSelected ? selectedSlotSize : normalSlotSize;
             float slotX = slotCenterX - currentSlotSize / 2.0F;
             float slotY = y + (hotbarHeight - currentSlotSize) / 2.0F;
-            if (isSelected) {
-               if (vanillaStyle) {
-                  r2.rectOutline(slotX, slotY, currentSlotSize, currentSlotSize, 2.0F, Renderer2D.ColorUtil.replAlpha(-1, 180), 1.0F);
-               } else {
-                  r2.rectOutline(
-                     slotX + 1.0F, slotY, currentSlotSize, currentSlotSize, 13.0F, 1, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 20)
-                  );
-                  r2.rect(
-                     slotX + 1.0F, slotY, currentSlotSize, currentSlotSize, 13.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 15)
-                  );
-               }
-            }
+             if (isSelected) {
+                r2.rectOutline(
+                   slotX + 1.0F, slotY, currentSlotSize, currentSlotSize, 13.0F, 1, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 20)
+                );
+                r2.rect(
+                   slotX + 1.0F, slotY, currentSlotSize, currentSlotSize, 13.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 15)
+                );
+             }
 
-            if (vanillaStyle) {
-               r2.rect(slotX, slotY, currentSlotSize, currentSlotSize, 2.0F, Renderer2D.ColorUtil.replAlpha(0x222222, 190));
-               r2.rectOutline(slotX, slotY, currentSlotSize, currentSlotSize, 2.0F, Renderer2D.ColorUtil.replAlpha(0x8B8B8B, 190), 1.0F);
-            }
-
-            if (!vanillaStyle) {
-               r2.text(
-                  FontRegistry.INTER_SEMIBOLD,
-                  x + offset + 5.5F,
-                  y + 45.0F,
-                  26.0F,
-                  String.valueOf(i + 1),
-                  Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80)
-               );
-            }
+             r2.text(
+                FontRegistry.INTER_SEMIBOLD,
+                x + offset + 5.5F,
+                y + 45.0F,
+                26.0F,
+                String.valueOf(i + 1),
+                Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 80)
+             );
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (!stack.isEmpty()) {
                float itemScale = 1.0F;
@@ -131,7 +119,7 @@ public class HotBarHUD {
             offset += 51.5F;
          }
 
-         renderOffhandSlot(r2, drawContext, x, y, hotbarWidth, hotbarHeight, selectedSlotSize, vanillaStyle);
+          renderOffhandSlot(r2, drawContext, x, y, hotbarWidth, hotbarHeight, selectedSlotSize);
          boolean hasStatusBars = mc.interactionManager != null && mc.interactionManager.hasStatusBars();
          if (deltaScX != 0.0F || deltaScY != 0.0F || hasStatusBars) {
             drawContext.getMatrices().pushMatrix();
@@ -355,27 +343,23 @@ public class HotBarHUD {
       return air != 0 && submergedInWater ? 1 : 0;
    }
 
-   private static void renderOffhandSlot(
-      Renderer2D r2, DrawContext drawContext, float hotbarX, float hotbarY, float hotbarWidth, float hotbarHeight, float slotSize, boolean vanillaStyle
-   ) {
-      if (mc.player != null) {
-         ItemStack offhandStack = mc.player.getOffHandStack();
-         if (!offhandStack.isEmpty()) {
-            Arm mainArm = (Arm)mc.options.getMainArm().getValue();
-            boolean isRightHanded = mainArm == Arm.RIGHT;
-            float offhandGap = 10.0F;
-            float offhandSlotX;
-            if (isRightHanded) {
-               offhandSlotX = hotbarX - slotSize - offhandGap;
-            } else {
-               offhandSlotX = hotbarX + hotbarWidth + offhandGap;
-            }
+    private static void renderOffhandSlot(
+       Renderer2D r2, DrawContext drawContext, float hotbarX, float hotbarY, float hotbarWidth, float hotbarHeight, float slotSize
+    ) {
+       if (mc.player != null) {
+          ItemStack offhandStack = mc.player.getOffHandStack();
+          if (!offhandStack.isEmpty()) {
+             Arm mainArm = (Arm)mc.options.getMainArm().getValue();
+             boolean isRightHanded = mainArm == Arm.RIGHT;
+             float offhandGap = 10.0F;
+             float offhandSlotX;
+             if (isRightHanded) {
+                offhandSlotX = hotbarX - slotSize - offhandGap;
+             } else {
+                offhandSlotX = hotbarX + hotbarWidth + offhandGap;
+             }
 
-            Hud.drawClientRect(r2, offhandSlotX, hotbarY, slotSize, slotSize, vanillaStyle ? 2.0F : 13.0F, 1.0F, 1.0F);
-            if (vanillaStyle) {
-               r2.rect(offhandSlotX, hotbarY, slotSize, slotSize, 2.0F, Renderer2D.ColorUtil.replAlpha(0x222222, 190));
-               r2.rectOutline(offhandSlotX, hotbarY, slotSize, slotSize, 2.0F, Renderer2D.ColorUtil.replAlpha(0x8B8B8B, 190), 1.0F);
-            }
+             Hud.drawClientRect(r2, offhandSlotX, hotbarY, slotSize, slotSize, 13.0F, 1.0F, 1.0F);
             float guiScale = mc.getWindow().getScaleFactor();
             float itemScale = 1.0F;
             float itemRenderSize = 16.0F * itemScale;

@@ -1,0 +1,471 @@
+#shaders/lang/fr_FR.lang
+
+profile.LOW=Bas
+profile.MEDIUM=Moyen
+profile.HIGH=Haut (Défaut)
+profile.ULTRA=Ultra
+
+option.SOLAS_BY_SEPTONIOUS=§6Solas Shader
+value.SOLAS_BY_SEPTONIOUS.1=§bPar Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. §cNe téléchargez QUE depuis §6CurseForge §cOU §aModrinth§c!!!
+
+#=======================================================# ATMOSPHERICS #=======================================================#
+
+screen.ATMOSPHERICS=Atmosphère
+
+#----------------------------------------------------------------------------------#
+
+screen.VC_CONFIG=Configuration Nuages Volumétriques
+
+option.VC=Nuages Volumétriques
+option.BLOCKY_CLOUDS=Nuages en Blocks
+option.VC_DETAIL=Détails
+option.VC_DENSITY=Densité
+option.VC_AMOUNT=Quantité
+option.VC_HEIGHT=Hauteur
+option.VC_THICKNESS=Épaisseur
+option.VC_SPEED=Vitesse
+option.VC_DISTANCE=Distance de Rendu
+option.VC_OPACITY=Opacité
+option.VC_SHADOWS=Rayons des Nuages
+option.VC_SHADOWS.comment=Permet aux nuages d'agir comme de la LV (Lumière Volumétrique) quand la lumière du soleil est osbtruée par les blocks.
+
+#----------------------------------------------------------------------------------#
+
+screen.PC_CONFIG=Configuration Nuages Planaires
+
+option.PLANAR_CLOUDS=Nuages Planaires
+option.PLANAR_CLOUDS_BRIGHTNESS=Luminosité  
+option.PLANAR_CLOUDS_OPACITY=Opacité
+
+#----------------------------------------------------------------------------------#
+
+screen.VL_CONFIG=Configuration Lumière Volumétrique
+
+option.VL=Lumière Volumétrique
+option.VL_STRENGTH=Intensité
+option.VL_SAMPLES=Échantillons
+option.VL_STRENGTH_RATIO=Ratio de l'Intensité
+option.VL_STRENGTH_RATIO.comment=Contrôle l'intensité de la LV en fonction de la distance au soleil. Des valeurs plus basses rendent la LV plus forte près du soleil, et plus faible loin du soleil.
+
+#----------------------------------------------------------------------------------#
+
+screen.NETHER_SMOKE_CONFIG=Configuration Brouillard du Nether
+
+option.NETHER_SMOKE=Brouillard du Nether
+option.NETHER_SMOKE_STRENGTH=Intensité
+option.NETHER_SMOKE_SPEED=Vitesse
+option.NETHER_SMOKE_FREQUENCY=Fréquence
+
+#----------------------------------------------------------------------------------#
+
+screen.END_DISK_CONFIG=Configuration Nuages de l'End
+
+option.END_DISK=Nuages de l'End
+option.END_DISK_HEIGHT=Hauteur
+option.END_DISK_OPACITY=Opacité
+option.END_DISK_AMOUNT=Quantité
+option.END_DISK_THICKNESS=Épaisseur
+
+#----------------------------------------------------------------------------------#
+
+screen.LPV_FOG_CONFIG=Configuration Illumination du Brouillard
+
+option.LPV_FOG=Illumination du Brouillard
+option.LPV_FOG.comment=Permet aux sources lumineuses de contribuer à l'illumination du brouillard.
+option.LPV_FOG_STRENGTH=Intensité
+option.LPV_FOG_SAMPLES=Échantillons
+
+#----------------------------------------------------------------------------------#
+
+screen.FOG_CONFIG=Configuration du Brouillard
+
+option.DISTANT_FADE=Distance d'Estompage
+option.DISTANT_FADE_STYLE=Style d'Estompage
+option.DISTANT_FADE_STYLE.comment=L'estompage sphérique fonctionne comme le jeu de base. L'estompage cylindrique ignore l'axe Y.
+value.DISTANT_FADE_STYLE.0=Sphérique
+value.DISTANT_FADE_STYLE.1=Cylindrique
+option.FOG_DENSITY=Densité du Brouillard
+option.FOG_HEIGHT=Hauteur du Brouillard au sol
+
+#----------------------------------------------------------------------------------#
+
+screen.SKY_CONFIG=Configuration du Ciel
+
+option.STARS=Étoiles
+option.STAR_BRIGHTNESS=Luminosité des Étoiles
+option.STAR_AMOUNT=Quantité d'Étoiles
+option.STAR_SIZE=Taille des Étoiles
+option.END_STARS=Étoiles de l'End
+option.MILKY_WAY=Voie Lactée
+option.MILKY_WAY_BRIGHTNESS=Luminosité de la Voie Lactée
+option.END_NEBULA=Nébuleuse de l'End
+option.END_NEBULA_BRIGHTNESS=Luminosité de la Nébuleuse de l'End
+option.RAINBOW=Arcs En Ciel
+option.AURORA=Aurores Boréales
+option.AURORA_COLD_BIOME_VISIBILITY=Aurores - Biomes Froids Seulement
+option.AURORA_COLD_BIOME_VISIBILITY.comment=Active les aurores boréales seulement dans les biomes froids.
+option.AURORA_FULL_MOON_VISIBILITY=Aurores - Pleine Lune Seulement
+option.AURORA_FULL_MOON_VISIBILITY.comment=Active les aurores boréales seulement lors de la pleine lune.
+
+#----------------------------------------------------------------------------------#
+
+option.END_BLACK_HOLE=Trou Noir de l'End
+option.END_BLACK_HOLE.comment=Active ou désactive le trou noir de l'End.
+option.END_BLACK_HOLE_SIZE=Taille
+
+#=======================================================# WATER #=======================================================#
+
+screen.WATER=Eau
+
+option.WATER_FOG=Brouillard Aquatique
+option.WATER_FOG_EXPONENT=Densité du Brouillard Aquatique
+option.WATER_CAUSTICS=Caustiques de l'Eau
+option.WATER_CAUSTICS_STRENGTH=Intensité des Caustiques
+option.WATER_NORMALS=Type de Vagues (normal mapping)
+option.WATER_NORMALS.comment=Active la génération en temps réel des vagues pour l'eau.
+value.WATER_NORMALS.0=§Désactivées
+value.WATER_NORMALS.1=Worley
+value.WATER_NORMALS.2=Perlin
+option.WATER_NORMAL_BUMP=Hauteur des Vagues
+option.WATER_NORMAL_OFFSET=Décalage des Vagues
+option.WATER_NORMAL_DETAIL=Détails
+option.WATER_NORMAL_DETAIL.comment=Ajuste le ratio entre les grandes et plus petites vagues. 
+value.WATER_NORMAL_DETAIL.0.05=5%
+value.WATER_NORMAL_DETAIL.0.10=10%
+value.WATER_NORMAL_DETAIL.0.15=15%
+value.WATER_NORMAL_DETAIL.0.20=20%
+value.WATER_NORMAL_DETAIL.0.25=25%
+value.WATER_NORMAL_DETAIL.0.30=30%
+value.WATER_NORMAL_DETAIL.0.35=35%
+value.WATER_NORMAL_DETAIL.0.40=40%
+value.WATER_NORMAL_DETAIL.0.45=45%
+value.WATER_NORMAL_DETAIL.0.50=50%
+option.REFRACTION=Réfraction de la Lumière
+option.REFRACTION_STRENGTH=Intensité de la Réfraction
+
+#=======================================================# LIGHTING #=======================================================#
+
+screen.LIGHTING=Éclairage
+
+option.DYNAMIC_HANDLIGHT=Éclairage Dynamique des mains
+option.DYNAMIC_HANDLIGHT.comment=Autorise les objets tenus en mains à générer de la lumière.
+option.DYNAMIC_HANDLIGHT_STRENGTH=Luminosité de l'Éclairage des mains
+option.FLOODFILL_BRIGHTNESS=Luminosité de l'Éclairage Coloré
+option.FLOODFILL_RADIUS=Taille de l'Éclairage Coloré
+option.FLOODFILL_RADIUS.comment=Contrôle la distance que parcourt la lumière colorée.
+option.VOXEL_VOLUME_SIZE=Distance de Voxelization
+option.VOXEL_VOLUME_SIZE.comment=Contrôle la distance de voxelization pour la lumière colorée. §c[-]§r Des valeurs hautes réduisent fortement les performances.
+option.AO=Occlusion Ambiante d'Écran (SSAO)
+option.AO.comment=Rend les zones où les blocks ou les entités se connectent plus sombres.
+option.VANILLA_AO=Occlusion Ambiante par Défaut
+option.VANILLA_AO.comment=Rend les zones où les blocks ou les entités se connectent plus sombres. La qualité est moindre qu'avec le SSAO. 
+option.AO_STRENGTH=Intensité de l'OA
+option.AO_RADIUS=Taille de l'OA
+
+#----------------------------------------------------------------------------------#
+
+screen.SHADOWS=Configuration des Ombres
+
+option.shadowMapResolution=Résolution des Ombres
+option.shadowDistance=Distance de Rendu des Ombres
+option.entityShadowDistanceMul=Distance des Ombres d'Entités 
+option.sunPathRotation=Angle du Soleil
+option.VPS=Ombres Variables (VPS)
+option.VPS.comment=Permet aux ombres d'être plus floues/nettes en fonction de la distance. 
+option.VPS_BLUR_STRENGTH=Intensité des Ombres Variables (VPS)
+option.SHADOW_SAMPLE_COUNT=Nombre d'Échantillons d'Ombres
+option.SHADOW_COLOR=Ombres Colorées
+option.ENTITY_SHADOWS=Ombres des Entités
+
+#=======================================================# Generated PBR #=======================================================#
+
+screen.PBR_MENU=Configuration du PBR
+
+screen.IPBR=PBR Intégré
+
+option.GENERATED_SPECULAR=Spéculaires Générées (specular mapping)
+option.GENERATED_SPECULAR.comment=Détermine automatiquement les reflets de certains blocks. §c[-]§r NE PAS UTILISER AVEC UN RESOURCEPACK PBR EXTERNE. 
+
+#----------------------------------------------------------------------------------#
+
+screen.ISPECULAR=Configuration des Spéculaires
+
+option.RAIN_PUDDLES=Flaques d'Eau
+option.RAIN_PUDDLES_STRENGTH=Intensité des Flaques d'Eau
+option.SPECULAR_STRENGTH=Intensité des Spéculaires
+option.WATER_REFLECTIONS=Réflection de l'Eau
+
+option.GENERATED_EMISSION=Émissions Générées
+option.GENERATED_EMISSION.comment=Détermine automatique les émissions lumineuses des blocks.
+
+#----------------------------------------------------------------------------------#
+
+screen.IEMISSION=Configuration des Émissions
+
+option.EMISSIVE_FLOWERS=Fleurs Émissives
+option.EMISSIVE_ORES=Minerais Émissifs
+option.EMISSIVE_CONCRETE=Béton Émissif
+option.EMISSION_STRENGTH=Intensité des Émissions
+
+#----------------------------------------------------------------------------------#
+
+screen.INORMALS=Configuration des Normales
+
+option.GENERATED_NORMALS=Normales Générées (normal mapping) 
+option.GENERATED_NORMALS.comment=Génère automatiquement les cartes de normales sur les blocks.
+option.NORMAL_STRENGTH=Intensité
+option.NORMAL_RESOLUTION=Résolution
+option.NORMAL_THRESHOLD=Seuil de Génération
+
+#=======================================================# Resourcepack PBR #=======================================================#
+
+screen.PBR=PBR du Resourcepack
+
+option.PBR=PBR du Resourcepack
+option.PBR.comment=Active l'utilisation des cartes de spéculaires et des cartes de normales du resourcepack, qui permettent plus de détails sur de nombreux blocks.  §e[*]§rCette option requiert l'usage d'un resourcepack qui contient des cartes de normales/spéculaires (normal mapping, specular mapping) désactivez s'il n'y en a pas. §e[*]§rLes options qui nécessitent des matériaux avancés sont marquées d'un *, changer ces options n'affectera pas les visuels ni les performances tant que les matériaux avancés sont désactivés.
+option.MATERIAL_FORMAT=Format des Matériaux*
+option.MATERIAL_FORMAT.comment=Détermine le format des cartes de spéculaires et de normales utilisées par le resourcepack . §e[*]§rL'artiste du RP précise généralement quel format est utilisé. Utiliser le mauvais format peut donner des résultats étranges.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+#----------------------------------------------------------------------------------#
+
+screen.PARALLAX_CONFIG=Configuration de la Parallaxe
+
+option.PARALLAX=Occlusion Parallaxe*
+option.PARALLAX.comment=Ajoute des déplacements sur les surfaces à l'iade de la carte des hauteurs.
+option.PARALLAX_DEPTH=Profondeur de la Parallaxe*
+option.PARALLAX_DEPTH.comment=Ajuste la profondeur de la Parallaxe.
+value.PARALLAX_DEPTH.0.05=5 cm
+value.PARALLAX_DEPTH.0.10=10 cm
+value.PARALLAX_DEPTH.0.15=15 cm
+value.PARALLAX_DEPTH.0.20=20 cm
+value.PARALLAX_DEPTH.0.25=25 cm
+value.PARALLAX_DEPTH.0.30=30 cm
+value.PARALLAX_DEPTH.0.35=35 cm
+value.PARALLAX_DEPTH.0.40=40 cm
+value.PARALLAX_DEPTH.0.45=45 cm
+value.PARALLAX_DEPTH.0.50=50 cm
+option.PARALLAX_QUALITY=Échantillons de Parallaxe*
+option.PARALLAX_QUALITY.comment=Ajuste la qualité de la cartographie d'occulsion parallaxe.
+option.PARALLAX_DISTANCE=Distance de la Parallaxe*
+option.PARALLAX_DISTANCE.comment=Ajuste la distance à laquelle la parallaxe et les ombres auto peuvent être générées.
+
+#----------------------------------------------------------------------------------#
+
+screen.SELF_SHADOW_CONFIG=Configuration des Ombres Auto
+
+option.SELF_SHADOW=Ombres Auto*
+option.SELF_SHADOW.comment=Permet aux surfaces de générer des ombres sur soi même à l'aide de la carte des hauteures.
+option.SELF_SHADOW_ANGLE=Angle des Ombres Auto*
+option.SELF_SHADOW_ANGLE.comment=Ajuste l'angle des ombres auto, des valeurs plus hautes permettent aux ombres de parcourir une plus grande distance.
+option.SELF_SHADOW_QUALITY=Échantillons d'Ombres Auto*
+option.SELF_SHADOW_QUALITY.comment=Ajuste la qualité des ombres auto.
+option.SELF_SHADOW_STRENGTH=Intensité des Ombres Auto*
+option.SELF_SHADOW_STRENGTH.comment=Ajuste l'intensité des ombres auto.
+
+#=======================================================# COLOR #=======================================================#
+
+screen.COLOR=Couleurs
+
+screen.LIGHTAMBIENT_COLOR=Lumière du Jour/Nuit
+
+option.LIGHTTEMP_SS=Lever/Coucher de Soleil
+option.LIGHTTEMP_ME=Matin/Soir
+option.LIGHTTEMP_D=Jour
+option.LIGHTTEMP_N=Nuit
+option.LIGHTINTENSITY_SS=Intensité du Lever/Coucher de Soleil
+option.LIGHTINTENSITY_ME=Intensité du Matin/Soir
+option.LIGHTINTENSITY_D=Intensité du Jour
+option.LIGHTINTENSITY_N=Intensité de la Nuit
+
+#----------------------------------------------------------------------------------#
+
+screen.END_COLOR=Lumière de l'End et Couleur Ambiante
+
+option.LIGHT_END_R=Rouge
+option.LIGHT_END_G=Vert
+option.LIGHT_END_B=Bleu
+option.LIGHT_END_I=Intensité
+option.AMBIENT_END_R=Rouge
+option.AMBIENT_END_G=Vert
+option.AMBIENT_END_B=Bleu
+option.AMBIENT_END_I=Intensité
+
+#----------------------------------------------------------------------------------#
+
+screen.MINLIGHT=Lumière des Grottes (Lumière Minimale)
+
+option.MINLIGHT_R=Rouge
+option.MINLIGHT_G=Vert
+option.MINLIGHT_B=Bleu
+option.MINLIGHT_I=Intensité
+
+#----------------------------------------------------------------------------------#
+
+screen.BLOCKLIGHT_COLOR=Lumière des Blocks
+
+option.BLOCKLIGHT_R=Rouge
+option.BLOCKLIGHT_G=Vert
+option.BLOCKLIGHT_B=Bleu
+option.BLOCKLIGHT_I=Intensité
+
+#----------------------------------------------------------------------------------#
+
+screen.WATER_COLOR=Couleur de l'Eau
+
+option.WATER_R=Rouge
+option.WATER_G=Vert
+option.WATER_B=Bleu
+option.WATER_I=Intensité
+option.WATER_A=Opacité
+
+
+
+#=======================================================# POST #=======================================================#
+
+screen.POST=Effets Ultérieurs
+
+option.SHARPENING=Netteté de l'Image
+option.CHROMATIC_ABERRATION=Aberration Chromatique (AC)
+option.CHROMATIC_ABERRATION_STRENGTH=Intensité de l'AC
+option.LENS_FLARE=Lens Flare
+option.LENS_FLARE_STRENGTH=Intensité du Lens Flare
+
+#----------------------------------------------------------------------------------#
+
+screen.TONEMAP=Configuration du Mappage de Ton (tonemap)
+
+option.LIGHTNESS_INTENSITY=Luminosité
+option.DARKNESS_INTENSITY=Obscurité
+option.CONTRAST=Contraste
+
+#----------------------------------------------------------------------------------#
+
+screen.DOF_CONFIG=Configuration de la Profondeur de Champ
+
+option.DOF=Profondeur de Champ (DoF)
+option.DOF.comment=Floute les objets en dehors du point focal du joueur.
+option.DOF_STRENGTH=Intensité du DoF
+option.DISTANT_BLUR=Flou de Distance
+option.DISTANT_BLUR_RANGE=Portée du Flou de Distance
+option.DISTANT_BLUR_STRENGTH=Itensité du Flou de Distance
+
+option.MANUAL_FOCUS=DoF Manuel
+option.MANUAL_FOCUS.comment=Définit un point focal manuel du DoF. 
+option.DOF_FOCUS=Distance du Point Focal
+option.TILT=Inclinaison
+option.SHIFT=Décalage
+
+#----------------------------------------------------------------------------------#
+
+screen.BLOOM_CONFIG=Configuration du Bloom
+
+option.BLOOM=Bloom
+option.BLOOM_STRENGTH_OVERWORLD=Intensité du Bloom (Overworld)
+option.BLOOM_STRENGTH_NETHER=Intensité du Bloom (Nether)
+option.BLOOM_STRENGTH_END=Intensité du Bloom (End)
+option.BLOOM_TILE_SIZE=Taille d'un Carreau
+option.BLOOM_TILE_SIZE.comment=Ajuste la taille des carreaux de Bloom. Des valeurs plus hautes permettent un rayon de bloom plus élevé, à précision moindre. Des valeurs plus basses permettent un rayon moindre de bloom, avec une précision plus élevée.
+option.BLOOM_CONTRAST=Contraste
+option.BLOOM_CONTRAST.comment=Définit si le bloom devrait préserver le contraste de ses couleurs ou la visibilité des détails. Des valeurs plus hautes préservent le contraste des couleurs, alors que des valeurs plus basses préservent la visibilité des détails.
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
+
+#=======================================================# OTHER #=======================================================#
+
+screen.OTHER=Autre
+
+option.WAVING_PLANTS=Vent dans les Plantes
+option.WAVING_LEAVES=Vent dans les Feuilles
+option.WAVING_SPEED=Vitesse du Mouvemenent des Plantes/Feuilles
+option.WAVING_AMPLITUDE=Amplitude Mouvement des Plantes/Feuilles
+
+option.FIREFLIES=Lucioles
+option.FIREFLIES.comment=Active les lucioles volumétriques la nuit. §c[-]§rAffecte les performances.
+option.FIREFLIES_BRIGHTNESS=Luminosité des Lucioles
+# BSL-style resourcepack PBR
+screen.MATERIAL=Material
+screen.SPECULAR=Specular & Reflections
+screen.NORMALS=Normals & Parallax
+
+option.ADVANCED_MATERIALS=Advanced Materials
+option.ADVANCED_MATERIALS.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which require advanced materials are indicated by *, changing these options won't affect visuals or performance while advanced materials is disabled.
+
+option.MATERIAL_FORMAT=Material Format*
+option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+option.REFLECTION=Reflections
+option.REFLECTION.comment=Enables reflections on smooth or metallic surfaces.
+value.REFLECTION.0=§cOff
+value.REFLECTION.1=Sky & Specular Only
+value.REFLECTION.2=Full
+
+option.REFLECTION_MODE=Reflection Mode
+option.REFLECTION_MODE.comment=Adjusts screen-space reflection behavior.
+value.REFLECTION_MODE.0=Less Duplicates
+value.REFLECTION_MODE.1=Balanced
+value.REFLECTION_MODE.2=More Gap Filling
+
+
+option.SPECULAR_HIGHLIGHT=Specular Highlight
+option.SPECULAR_HIGHLIGHT.comment=Enables bright spot which appears on shiny surfaces.
+value.SPECULAR_HIGHLIGHT.0=§cOff
+value.SPECULAR_HIGHLIGHT.1=Opaque Only
+value.SPECULAR_HIGHLIGHT.2=Full
+
+option.REFLECTION_LOD=LOD Reflection
+option.REFLECTION_LOD.comment=Determines the quality of DH and Voxy chunks in reflections.
+value.REFLECTION_LOD.0=Fast
+value.REFLECTION_LOD.1=Fancy
+
+option.REFLECTION_SKY_FALLOFF=Sky Reflection Falloff
+option.REFLECTION_SKY_FALLOFF.comment=Adjusts how far sky reflection fades out under low skylight.
+value.REFLECTION_SKY_FALLOFF.1=Very Soft
+value.REFLECTION_SKY_FALLOFF.2=Soft
+value.REFLECTION_SKY_FALLOFF.4=Balanced
+value.REFLECTION_SKY_FALLOFF.8=Sharp
+value.REFLECTION_SKY_FALLOFF.16=Very Sharp
+
+
+option.REFLECTION_SPECULAR=Specular Reflection*
+option.REFLECTION_SPECULAR.comment=Enables reflection on smooth or metallic resourcepack-PBR surfaces.
+
+option.REFLECTION_ROUGH=Rough Reflection*
+option.REFLECTION_ROUGH.comment=Allows lower-smoothness surfaces to render blurry reflections.
+
+option.REFLECTION_RAIN=Rain Reflection*
+option.REFLECTION_RAIN.comment=Allows surfaces to be wet while raining. §e[*]§rRequires specular reflection.
+
+option.REFLECTION_RAIN_AMOUNT=Puddle Amount
+option.REFLECTION_RAIN_AMOUNT.comment=Adjusts the amount of puddles created while raining.
+value.REFLECTION_RAIN_AMOUNT.0.4=Very Low
+value.REFLECTION_RAIN_AMOUNT.0.5=Low
+value.REFLECTION_RAIN_AMOUNT.0.6=Medium
+value.REFLECTION_RAIN_AMOUNT.0.7=High
+value.REFLECTION_RAIN_AMOUNT.1.0=Very High
+
+option.SPECULAR_HIGHLIGHT_ROUGH=Rough Specular Highlight*
+option.SPECULAR_HIGHLIGHT_ROUGH.comment=Allows rough surfaces to have weak gloss.
+
+option.ALBEDO_METAL=Albedo Metal*
+option.ALBEDO_METAL.comment=Uses albedo color more strongly for metallic reflectance.
+
+
+
+
+option.NORMAL_DAMPENING=Normal Dampening*
+option.NORMAL_DAMPENING.comment=Reduces normal map strength to prevent reflections being too noisy.
+
+option.NORMAL_PLANTS=Up-facing Plants
+option.NORMAL_PLANTS.comment=Adjusts plant shading. Disable this if non-flat plant models or plant normal maps are used.

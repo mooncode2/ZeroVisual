@@ -24,6 +24,13 @@ public class WaterMark {
    private static int cachedFps = -1;
    private static String cachedFpsStr = "";
 
+   private static boolean isLocalAddress(String address) {
+      return address.equalsIgnoreCase("localhost")
+         || address.startsWith("127.")
+         || address.equals("::1")
+         || address.equals("0:0:0:0:0:0:0:1");
+   }
+
    public static void waterMark(Renderer2D r2) {
       long currentSecond = System.currentTimeMillis() / 1000L;
       if (currentSecond != lastTimeSecond) {
@@ -53,8 +60,9 @@ public class WaterMark {
 
       String ip = "N/A";
       if (mc.isConnectedToLocalServer()) {
-         ip = "localhost";
+         ip = "Integrated Server";
       } else {
+         String resolvedIp = null;
          String domainName = null;
          if (mc.getCurrentServerEntry() != null) {
             domainName = mc.getCurrentServerEntry().address;
@@ -63,9 +71,9 @@ public class WaterMark {
          if (domainName != null && !domainName.isEmpty() && DOMAIN_LETTER_PATTERN.matcher(domainName).find()) {
             int colonIndex = domainName.lastIndexOf(58);
             if (colonIndex > 0) {
-               ip = domainName.substring(0, colonIndex);
+               resolvedIp = domainName.substring(0, colonIndex);
             } else {
-               ip = domainName;
+               resolvedIp = domainName;
             }
          } else if (mc.getNetworkHandler() != null && mc.getNetworkHandler().getConnection() != null) {
             SocketAddress address = mc.getNetworkHandler().getConnection().getAddress();
@@ -77,11 +85,15 @@ public class WaterMark {
 
                int colonIndex = addr.lastIndexOf(58);
                if (colonIndex > 0) {
-                  ip = addr.substring(0, colonIndex);
+                  resolvedIp = addr.substring(0, colonIndex);
                } else {
-                  ip = addr;
+                  resolvedIp = addr;
                }
             }
+         }
+
+         if (resolvedIp != null) {
+            ip = isLocalAddress(resolvedIp) ? "Local Server" : resolvedIp;
          }
       }
 

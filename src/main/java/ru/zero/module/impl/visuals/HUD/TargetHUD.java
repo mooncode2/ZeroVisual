@@ -142,9 +142,8 @@ public class TargetHUD {
       }
 
       r2.popAlpha();
-      if (targetPlayer.getArmor() > 0) {
-         boolean vanillaStyle = GuiScreen.isVanillaStyle();
-         float armorAnim = (1.0F - alpha) * 20.0F;
+       if (targetPlayer.getArmor() > 0) {
+          float armorAnim = (1.0F - alpha) * 20.0F;
          float armorX = x + width - 100.0F + armorAnim;
          float armorY = y - 35.0F - armorAnim;
          Hud.drawClientRect(r2, armorX, armorY, 100.0F, 26.0F, 8.0F, alpha, 1.0F);
@@ -167,9 +166,9 @@ public class TargetHUD {
                pendingItems.add(new TargetHUD.PendingItemRender(targetPlayer, stack, scaledX, scaledY, i, 0.5F * lastScale));
             } else {
                r2.pushAlpha(alpha);
-               r2.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, slotX + 3.5F, slotY + 13.35F, 20.0F, vanillaStyle ? "-" : "6",
-                     Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 100));
+                r2.text(
+                      FontRegistry.ICONS, slotX + 3.5F, slotY + 13.35F, 20.0F, "6",
+                      Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 100));
                r2.popAlpha();
             }
          }
@@ -178,10 +177,9 @@ public class TargetHUD {
 
    private static void renderLiving(Renderer2D r2, LivingEntity entity, float x, float y, float width, float height,
          float alpha) {
-      r2.pushAlpha(alpha);
-      boolean vanillaStyle = GuiScreen.isVanillaStyle();
-      r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 18.0F, y + 45.5F, 60.0F, vanillaStyle ? "?" : "6",
-            Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 100));
+       r2.pushAlpha(alpha);
+       r2.text(FontRegistry.ICONS, x + 18.0F, y + 45.5F, 60.0F, "6",
+             Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), 100));
       String name = entity instanceof CreeperEntity ? Lang.t("Грустный крипер") : entity.getName().getString();
       r2.text(FontRegistry.INTER_MEDIUM, x + 74.0F, y + 22.0F, 28.0F, name, -1);
       float targetWidth = Math.min(entity.getHealth() / entity.getMaxHealth() * 105.0F, 105.0F);

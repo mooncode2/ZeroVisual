@@ -63,11 +63,9 @@ public class Hud extends Module {
       new BooleanSetting("Низкая прочность брони", true)
    );
    public static BooleanSetting blur = new BooleanSetting("Блюр (Размытие)", true);
-   private final List<Hud.Notification> notifications = new ArrayList<>();
-   private static final int VANILLA_OUTLINE = new java.awt.Color(96, 96, 96).getRGB();
-   private static final int VANILLA_BACKGROUND = new java.awt.Color(45, 45, 45).getRGB();
+    private final List<Hud.Notification> notifications = new ArrayList<>();
 
-   public static enum NotificationType {
+    public static enum NotificationType {
       SUCCESS("on"),
       WARNING("warn"),
       INFO("cfg"),
@@ -186,9 +184,8 @@ public class Hud extends Module {
          float notificationHeight = 40.0F;
          float spacing = 6.0F;
          float screenCenterY = mc.getWindow().getHeight() / 2.0F + 80.0F;
-         float screenCenterX = mc.getWindow().getWidth() / 2.0F;
-         boolean vanillaStyle = GuiScreen.isVanillaStyle();
-         int maxNotifications = Optimizer.getMaxNotifications();
+          float screenCenterX = mc.getWindow().getWidth() / 2.0F;
+          int maxNotifications = Optimizer.getMaxNotifications();
          float measureMaxWidth = 0.0F;
          float measureTotalHeight = 0.0F;
 
@@ -241,52 +238,52 @@ public class Hud extends Module {
                 int iconColor = notification.iconColor == -1
                    ? ColorUtil.replAlpha(fadeCol, animValue)
                    : ColorUtil.replAlpha(notification.iconColor, animValue);
-               if (notification.icon.contains("on")) {
-                  matrix.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-                     targetX + margin + margin + 2.0F,
-                     currentY + notificationHeight / 2.0F + 7.5F,
-                     37.0F,
-                     vanillaStyle ? "+" : "L",
-                     ColorUtil.replAlpha(iconColor, animValue)
-                  );
-               } else if (notification.icon.contains("off")) {
-                  matrix.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-                     targetX + margin + margin + 2.0F,
-                     currentY + notificationHeight / 2.0F + 7.5F,
-                     37.0F,
-                     vanillaStyle ? "-" : "J",
-                     ColorUtil.replAlpha(iconColor, animValue)
-                  );
-               } else if (notification.icon.contains("warn")) {
-                  matrix.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-                     targetX + margin + margin + 2.0F,
-                     currentY + notificationHeight / 2.0F + 5.5F,
-                     28.0F,
-                     vanillaStyle ? "!" : "F",
-                     ColorUtil.replAlpha(iconColor, animValue)
-                  );
-               } else if (notification.icon.contains("cfg")) {
-                  matrix.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-                     targetX + margin + margin + 2.0F,
-                     currentY + notificationHeight / 2.0F + 5.5F,
-                     28.0F,
-                     vanillaStyle ? "*" : "G",
-                     ColorUtil.replAlpha(iconColor, animValue)
-                  );
-               } else {
-                  matrix.text(
-                     vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-                     targetX + margin + margin + 2.0F,
-                     currentY + notificationHeight / 2.0F + 7.5F,
-                     37.0F,
-                     notification.icon,
-                     ColorUtil.replAlpha(iconColor, animValue)
-                  );
-               }
+                if (notification.icon.contains("on")) {
+                   matrix.text(
+                      FontRegistry.ICONS,
+                      targetX + margin + margin + 2.0F,
+                      currentY + notificationHeight / 2.0F + 7.5F,
+                      37.0F,
+                      "L",
+                      ColorUtil.replAlpha(iconColor, animValue)
+                   );
+                } else if (notification.icon.contains("off")) {
+                   matrix.text(
+                      FontRegistry.ICONS,
+                      targetX + margin + margin + 2.0F,
+                      currentY + notificationHeight / 2.0F + 7.5F,
+                      37.0F,
+                      "J",
+                      ColorUtil.replAlpha(iconColor, animValue)
+                   );
+                } else if (notification.icon.contains("warn")) {
+                   matrix.text(
+                      FontRegistry.ICONS,
+                      targetX + margin + margin + 2.0F,
+                      currentY + notificationHeight / 2.0F + 5.5F,
+                      28.0F,
+                      "F",
+                      ColorUtil.replAlpha(iconColor, animValue)
+                   );
+                } else if (notification.icon.contains("cfg")) {
+                   matrix.text(
+                      FontRegistry.ICONS,
+                      targetX + margin + margin + 2.0F,
+                      currentY + notificationHeight / 2.0F + 5.5F,
+                      28.0F,
+                      "G",
+                      ColorUtil.replAlpha(iconColor, animValue)
+                   );
+                } else {
+                   matrix.text(
+                      FontRegistry.ICONS,
+                      targetX + margin + margin + 2.0F,
+                      currentY + notificationHeight / 2.0F + 7.5F,
+                      37.0F,
+                      notification.icon,
+                      ColorUtil.replAlpha(iconColor, animValue)
+                   );
+                }
 
                matrix.text(
                   FontRegistry.INTER_MEDIUM,
@@ -310,16 +307,10 @@ public class Hud extends Module {
       }
    }
 
-    public static void drawClientRect(Renderer2D r2, float x, float y, float w, float h, float radius, float alpha, float thickness) {
-       if (GuiScreen.isVanillaStyle()) {
-          float vanillaRadius = 1.25F;
-          int outline = ColorUtil.replAlpha(VANILLA_OUTLINE, alpha);
-          int background = ColorUtil.replAlpha(VANILLA_BACKGROUND, alpha * 0.9F);
-          r2.rectOutline(x - 1.0F, y - 1.0F, w + 2.0F, h + 2.0F, vanillaRadius, outline, 1.0F);
-          r2.rect(x, y, w, h, vanillaRadius, background);
-       } else if (ru.zero.util.render.glass.LiquidGlassRenderer.isEnabled()) {
-          ru.zero.util.render.glass.LiquidGlassRenderer.drawGlass(r2, x, y, w, h, radius, alpha);
-       } else {
+     public static void drawClientRect(Renderer2D r2, float x, float y, float w, float h, float radius, float alpha, float thickness) {
+        if (ru.zero.util.render.glass.LiquidGlassRenderer.isEnabled()) {
+           ru.zero.util.render.glass.LiquidGlassRenderer.drawGlass(r2, x, y, w, h, radius, alpha);
+        } else {
           if (Optimizer.shouldRenderHudShadow()) {
              r2.shadow(x, y, w, h, radius, 8.6F, 0.5F, ColorUtil.getColor(0, alpha * 0.15F));
           }

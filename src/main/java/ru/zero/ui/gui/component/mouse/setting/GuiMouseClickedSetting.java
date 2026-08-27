@@ -30,13 +30,13 @@ public class GuiMouseClickedSetting extends GuiScreen {
          float checkBoxY = y + 2.0F;
          if (button == 0 && GuiRenderMain.isHovered(mouseX, mouseY, checkBoxX, checkBoxY, checkBoxSize, checkBoxSize)) {
             boolSetting.set(!boolSetting.get());
-            if (boolSetting == GuiScreen.clientBlurSetting && Zero.get != null && Zero.get.guiManager != null) {
-               Zero.get.guiManager.setGuiBlurEnabled(boolSetting.get());
-            }
-            if (boolSetting == GuiScreen.clientVanillaSetting && Zero.get != null && Zero.get.guiManager != null) {
-               Zero.get.guiManager.setGuiVanillaStyleEnabled(boolSetting.get());
-            }
-            if (boolSetting == GuiScreen.clientSoundSetting && Zero.get != null && Zero.get.guiManager != null) {
+             if (boolSetting == GuiScreen.clientBlurSetting && Zero.get != null && Zero.get.guiManager != null) {
+                Zero.get.guiManager.setGuiBlurEnabled(boolSetting.get());
+             }
+             if (boolSetting == GuiScreen.clientVanillaSetting && Zero.get != null && Zero.get.guiManager != null) {
+                Zero.get.guiManager.setGuiVanillaStyleEnabled(boolSetting.get());
+             }
+             if (boolSetting == GuiScreen.clientSoundSetting && Zero.get != null && Zero.get.guiManager != null) {
                Zero.get.guiManager.setGuiSoundEnabled(boolSetting.get());
             }
             if (boolSetting == GuiScreen.clientLiquidGlassSetting && Zero.get != null && Zero.get.guiManager != null) {

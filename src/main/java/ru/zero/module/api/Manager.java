@@ -25,6 +25,7 @@ import ru.zero.module.impl.visuals.Crosshair;
 import ru.zero.module.impl.visuals.CustomHitbox;
 import ru.zero.module.impl.visuals.NoFluid;
 import ru.zero.module.impl.visuals.ShulkerPreview;
+import ru.zero.module.impl.visuals.SkyBox;
 import ru.zero.module.impl.visuals.NightVision;
 import ru.zero.module.impl.visuals.NoRender;
 import ru.zero.module.impl.visuals.Particles;
@@ -74,6 +75,7 @@ public class Manager {
       this.module.add(new Hat());
       this.module.add(new TargetESP());
       this.module.add(new CustomWorld());
+      this.module.add(new SkyBox());
       this.module.add(new NightVision());
       this.module.add(new AspectRation());
       this.module.add(new RTXSounds());

@@ -1,0 +1,822 @@
+#shaders/lang/ru_RU.lang
+
+profile.LOW=Низко
+profile.MEDIUM=Средне
+profile.HIGH=Высоко (По умолчанию)
+profile.ULTRA=Ультра
+
+option.SOLAS_BY_SEPTONIOUS=§6Solas Shader
+value.SOLAS_BY_SEPTONIOUS.1=§bОт Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский).
+
+#=======================================================# ATMOSPHERICS #=======================================================#
+
+screen.ATMOSPHERICS=Атмосфера
+
+screen.SHADER_CLOUDS_CONFIG=Настройки Шейдерных Облаков
+
+#----------------------------------------------------------------------------------#
+
+screen.VANILLA_CLOUDS_CONFIG=Настройки Ванильных Облаков
+
+option.VANILLA_CLOUDS=Ванильные Облака
+option.VANILLA_CLOUD_FOG=Туман Вдали
+option.VANILLA_CLOUD_OPACITY=Непрозрачность
+
+#----------------------------------------------------------------------------------#
+
+screen.VC_CONFIG=Настройки 3D Облаков
+
+option.VOLUMETRIC_CLOUDS=3D Облака
+option.VC_DETAIL=Детальность
+option.VC_DENSITY=Плотность
+option.VC_AMOUNT=Количество
+option.VC_HEIGHT=Высота
+option.VC_THICKNESS=Размер
+option.VC_SPEED=Скорость
+option.VC_DISTANCE=Дистанция Рендера
+option.VC_OPACITY=Непрозрачность
+option.VC_ATTENUATION=Толщина
+option.VC_SCALE=Размер
+option.VC_SCALE.comment=Меньшие значения уменьшают облака, большие - увеличивают.
+option.VC_DYNAMIC_WEATHER=Динамическая Погода
+option.VC_DYNAMIC_WEATHER.comment=Включает динамическую симуляцию реалистичной погоды. Облака будут менять свои параметры каждый день.
+option.VC_SHADOWS=Тени от Облаков
+
+#----------------------------------------------------------------------------------#
+
+screen.PLANAR_CLOUDS_CONFIG=Настройки 2D Облаков
+
+option.PLANAR_CLOUDS=2D Облака
+option.PLANAR_CLOUDS_AMOUNT=Количество
+option.PLANAR_CLOUDS_HEIGHT=Высота
+option.PLANAR_CLOUDS_BRIGHTNESS=Яркость
+option.PLANAR_CLOUDS_OPACITY=Непрозрачность
+
+#----------------------------------------------------------------------------------#
+
+screen.VL_CONFIG=Настройки Солнечных Лучей
+
+option.VL=Солнечные Лучи
+option.VL_STRENGTH=Общая Яркость
+option.VL_SAMPLES=Качество
+option.VL_STRENGTH_RATIO=Отношение Яркости
+option.VL_STRENGTH_RATIO.comment=Определяет яркость лучей ближе к солнцу. Низкие значения делают лучи ярче у солнца и слабее позади.
+option.VL_DAY=Яркость Днём
+option.VL_MORNING_EVENING=Яркость Утром/Вечером
+option.VL_NIGHT=Яркость Ночью
+
+#----------------------------------------------------------------------------------#
+
+screen.NETHER_SMOKE_CONFIG=Настройки 3D Дыма в Аду
+
+option.NETHER_SMOKE=Дым в Аду
+option.NETHER_SMOKE_STRENGTH=Яркость
+option.NETHER_SMOKE_SPEED=Скорость
+option.NETHER_SMOKE_FREQUENCY=Частота
+
+#----------------------------------------------------------------------------------#
+
+screen.END_DISK_CONFIG=Настройки 3D Тумана в Энде
+
+option.END_DISK=3D Туман в Энде
+option.END_DISK_HEIGHT=Высота
+option.END_DISK_OPACITY=Непрозрачность
+option.END_DISK_AMOUNT=Количество
+option.END_DISK_THICKNESS=Размер
+option.END_FLASHES=Вспышки в Энде (1.21.9+)
+option.END_FLASHES.comment=Включает вспышки сверхновых в Энде. Работают только на новейших версиях майнкрафта.
+option.END_FLASH_BRIGHTNESS=Яркость Вспышек
+
+#----------------------------------------------------------------------------------#
+
+screen.LPV_FOG_CONFIG=Настройки Светового Тумана
+
+option.LPV_FOG=Световой Туман
+option.LPV_FOG.comment=Позволяет источникам света освещать туман вокруг.
+option.LPV_FOG_STRENGTH=Сила
+
+#----------------------------------------------------------------------------------#
+
+screen.FOG_CONFIG=Настройки Тумана
+
+option.DISTANT_FADE=Дальний Туман
+option.DISTANT_FADE_STYLE=Стиль Дальнего Тумана
+option.DISTANT_FADE_STYLE.comment=Сферический выглядит как ванильный туман. Цилиндрический игнорирует ось Y
+value.DISTANT_FADE_STYLE.0=Сферический
+value.DISTANT_FADE_STYLE.1=Цилиндрический
+option.FOG_DENSITY=Плотность Тумана
+option.FOG_HEIGHT=Высота Тумана
+
+#----------------------------------------------------------------------------------#
+
+screen.SKY_CONFIG=Настройки Неба
+
+option.STARS=Звёзды
+option.END_STARS=Звёзды в Краю
+option.SHOOTING_STARS=Падающие Звезды / Метеоры
+option.MILKY_WAY=Млечный Путь
+option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
+option.END_NEBULA=Туманность в Краю
+option.END_NEBULA_BRIGHTNESS=Яркость Туманности
+option.RAINBOW=Радуга
+option.RAINBOW_BRIGHTNESS=Яркость Радуги
+option.ROUND_SUN_MOON=Круглые Солнце и Луна
+
+#----------------------------------------------------------------------------------#
+
+screen.OVERWORLD_ATMOSPHERE_CONFIG=Небо Обычного Мира
+screen.END_ATMOSPHERE_CONFIG=Небо Энда
+
+option.KARMAN_LINE=Линия Кармана (Метры)
+option.KARMAN_LINE.comment=Поехали! По мере приближения к этой высоте, атмосфера будет постепенно превращаться в планету под игроком. Далее только просторы космоса и тысячи звёзд
+option.SUNRISE_SUNSET_INTENSITY=Насыщенность Рассветов и Закатов
+
+#----------------------------------------------------------------------------------#
+
+screen.STARS_CONFIG=Настройки Звёзд
+
+option.STAR_BRIGHTNESS=Яркость Звёзд
+option.STAR_AMOUNT=Число Звёзд
+option.STAR_SIZE=Размер Звёзд
+option.SHOOTING_STARS_SIZE=Размер Метеоров
+option.SHOOTING_STARS_SPEED=Скорость Метеоров
+option.SHOOTING_STARS_CHANCE=Шанс Метеоров
+option.SHOOTING_STARS_COUNT=Число Метеоров
+option.SHOOTING_STARS_LINE_THICKNESS=Толщина Следа Метеоров
+option.SHOOTING_STARS_TRAIL_LENGTH=Длина Следа Метеоров
+
+#----------------------------------------------------------------------------------#
+
+screen.AURORA_CONFIG=Настройки Полярного Сияния
+
+option.AURORA=Полярное Сияние
+option.AURORA_LIGHTING_INFLUENCE=Освещение Объектов
+option.AURORA_LIGHTING_INFLUENCE.comment=Позволяет ярким полярным сиянияем слегка освещать землю и облака.
+option.AURORA_BRIGHTNESS=Яркость Сияния
+option.AURORA_ALTITUDE=Высота Сияния
+
+#----------------------------------------------------------------------------------#
+
+option.END_BLACK_HOLE=Чёрная Дыра в Энде
+option.END_BLACK_HOLE_SIZE=Радиус Чёрной Дыры
+value.END_BLACK_HOLE_SIZE.3.0=Очень Маленький
+value.END_BLACK_HOLE_SIZE.2.5=Маленький
+value.END_BLACK_HOLE_SIZE.2.0=Нормальный
+value.END_BLACK_HOLE_SIZE.1.5=Большой
+value.END_BLACK_HOLE_SIZE.1.0=Очень Большой
+
+#=======================================================# WATER #=======================================================#
+
+screen.WATER=Вода
+
+option.VANILLA_WATER=Ванильная Текстура Воды
+option.WATER_FOG=Водный Туман
+option.WATER_FOG_EXPONENT=Плотность Водного Тумана
+option.WATER_CAUSTICS=Каустики
+option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
+option.WATER_NORMALS=Волны
+option.WATER_NORMALS.comment=Переключает режим генерации волн на воде (метод шума).
+value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.1=Worley
+value.WATER_NORMALS.2=Perlin
+value.WATER_NORMALS.3=Perlin-Worley
+option.WATER_NORMAL_BUMP=Высота Волн
+option.WATER_NORMAL_OFFSET=Смещение Волн
+option.WATER_NORMAL_DETAIL=Детализация Волн
+option.WATER_NORMAL_DETAIL.comment=Изменяет соотношение размера малых и больших волн.
+value.WATER_NORMAL_DETAIL.0.05=5%
+value.WATER_NORMAL_DETAIL.0.10=10%
+value.WATER_NORMAL_DETAIL.0.15=15%
+value.WATER_NORMAL_DETAIL.0.20=20%
+value.WATER_NORMAL_DETAIL.0.25=25%
+value.WATER_NORMAL_DETAIL.0.30=30%
+value.WATER_NORMAL_DETAIL.0.35=35%
+value.WATER_NORMAL_DETAIL.0.40=40%
+value.WATER_NORMAL_DETAIL.0.45=45%
+value.WATER_NORMAL_DETAIL.0.50=50%
+option.REFRACTION=Преломление Света
+option.REFRACTION_STRENGTH=Сила Преломления
+
+#=======================================================# LIGHTING #=======================================================#
+
+screen.LIGHTING=Освещение
+
+option.DYNAMIC_HANDLIGHT=Ручное Освещение
+option.DYNAMIC_HANDLIGHT.comment=Позволяет предметам в руке излучать свет.
+option.DYNAMIC_HANDLIGHT_STRENGTH=Яркость Ручного Освещения
+option.FLOODFILL_BRIGHTNESS=Яркость Цветного Освещения
+option.FLOODFILL_RADIUS=Радиус Цветного Освещения
+option.FLOODFILL_RADIUS.comment=Определяет дальность распространения света от источников.
+option.DOORS_BLOCK_LIGHT=Двери/Люки Блокируют Свет
+option.VOXEL_VOLUME_SIZE=Размер Массива Вокселей
+option.VOXEL_VOLUME_SIZE.comment=Определяет размер массива вокселей для цветного освещения. §c[-]§r Сильно влияет на производительность.
+option.AO=Шейдерное AO
+option.AO.comment=Тени в точках соприкосновения блоков или существ.
+option.VANILLA_AO=Ванильное AO
+option.VANILLA_AO.comment=Тени в точках соприкосновения блоков или существ.
+option.AO_STRENGTH=Сила АО
+option.AO_RADIUS=Радиус АО
+
+#----------------------------------------------------------------------------------#
+
+screen.SHADOWS=Настройки Теней
+
+option.shadowMapResolution=Разрешение Теней
+option.shadowDistance=Дистанция Рендера Теней
+option.SUN_ANGLE_OVERWORLD=Угол Солнца/Луны (Обычный Мир)
+option.SUN_ANGLE_END=Угол Чёрной Дыры (Энд)
+option.SHADOW_COLOR=Цветные Тени
+option.SHADOW_PIXEL=Пиксельные Тени
+option.SHADOW_PIXEL.comment=Делает тени пиксельными как в Vibrant Visuals. Чем больше значение, тем выше число пикселей.
+option.SHADOW_ENTITIES=Тени от Существ
+option.REALTIME_SHADOWS=Реалистичные Тени
+option.SS_SHADOWS=Тени на LOD'ах
+option.SS_SHADOWS.comment=Рендерятся после конца дистанции рендера реальных теней. Полезно с модами Voxy и Distant Horizons.
+
+#=======================================================# Generated PBR #=======================================================#
+
+screen.PBR=Настройки PBR
+
+screen.IPBR=Встроенный PBR
+
+option.GENERATED_SPECULAR=Встроенные Отражения
+option.GENERATED_SPECULAR.comment=Автоматически определяет отражающие блоки. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
+
+#----------------------------------------------------------------------------------#
+
+screen.ISPECULAR=Настройки Отражений
+
+option.RAIN_PUDDLES=Дождевые Лужи
+option.RAIN_PUDDLES_STRENGTH=Сила Дождевых Луж
+option.SPECULAR_STRENGTH=Сила Отражений
+option.WATER_REFLECTIONS=Отражения в Воде
+option.WATER_REFLECTIONS_STRENGTH=Сила Отражений в Воде
+
+#----------------------------------------------------------------------------------#
+
+screen.IEMISSION=Настройки Свечения
+
+option.GENERATED_EMISSION=Встроенное Свечение
+option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
+option.EMISSIVE_FLOWERS=Светящиеся Цветы
+option.EMISSIVE_ORES=Светящиеся Руды
+option.EMISSIVE_EMERALD_ORE=Светящаяся Изумрудная Руда
+option.EMISSIVE_DIAMOND_ORE=Светящаяся Алмазная Руда
+option.EMISSIVE_LAPIS_ORE=Светящаяся Лазуритовая Руда
+option.EMISSIVE_REDSTONE_ORE=Светящаяся Редстоуновая Руда
+option.EMISSIVE_COPPER_ORE=Светящаяся Медная Руда
+option.EMISSIVE_GOLD_ORE=Светящаяся Золотая Руда
+option.EMISSIVE_IRON_ORE=Светящаяся Железная Руда
+option.EMISSIVE_ARMOR_TRIMS=Светящиеся Вставки Брони
+option.EMISSION_STRENGTH=Яркость Свечения
+
+#----------------------------------------------------------------------------------#
+
+screen.INORMALS=Настройки Нормалей
+
+option.GENERATED_NORMALS=Встроенные Нормали
+option.GENERATED_NORMALS.comment=Автоматически генерирует нормали на блоках. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
+option.NORMAL_STRENGTH=Сила
+option.NORMAL_RESOLUTION=Разрешение
+option.NORMAL_THRESHOLD=Порог Генерации
+
+#=======================================================# Resourcepack PBR #=======================================================#
+
+screen.RPPBR=PBR Ресурспак
+
+option.SPECULAR_HIGHLIGHTS=Отражение Солнца/Луны
+option.PBR=PBR Ресурспак
+option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
+option.MATERIAL_FORMAT=Формат Ресурспака*
+option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+#----------------------------------------------------------------------------------#
+
+screen.PARALLAX_CONFIG=Настройки Параллакса
+
+option.PARALLAX=Параллакс
+option.PARALLAX.comment=Adds displacement on a surface using height map.
+option.PARALLAX_DEPTH=Глубина Параллакса
+option.PARALLAX_DEPTH.comment=Adjusts parallax deepness.
+value.PARALLAX_DEPTH.0.05=5 cm
+value.PARALLAX_DEPTH.0.10=10 cm
+value.PARALLAX_DEPTH.0.15=15 cm
+value.PARALLAX_DEPTH.0.20=20 cm
+value.PARALLAX_DEPTH.0.25=25 cm
+value.PARALLAX_DEPTH.0.30=30 cm
+value.PARALLAX_DEPTH.0.35=35 cm
+value.PARALLAX_DEPTH.0.40=40 cm
+value.PARALLAX_DEPTH.0.45=45 cm
+value.PARALLAX_DEPTH.0.50=50 cm
+option.PARALLAX_QUALITY=Качество Параллакса
+option.PARALLAX_DISTANCE=Дистанция Рендера Параллакса
+
+#----------------------------------------------------------------------------------#
+
+screen.SELF_SHADOW_CONFIG=Настройки Шейдинга
+
+option.SELF_SHADOW=Тени от Нормалей
+option.SELF_SHADOW_ANGLE=Угол Теней
+option.SELF_SHADOW_QUALITY=Качество Теней
+option.SELF_SHADOW_STRENGTH=Сила Теней
+
+#=======================================================# COLOR #=======================================================#
+
+screen.COLOR=Цвета
+
+screen.LIGHT_COLOR=Свет & Тень (Обычный Мир)
+
+screen.LIGHT_SR=Свет (Рассвет)
+option.LIGHT_SRR=Красный
+option.LIGHT_SRG=Зелёный
+option.LIGHT_SRB=Синий
+option.LIGHT_SRI=Intensity
+
+screen.LIGHT_M=Свет (Утро)
+option.LIGHT_MR=Красный
+option.LIGHT_MG=Зелёный
+option.LIGHT_MB=Синий
+option.LIGHT_MI=Intensity
+
+screen.LIGHT_D=Свет (День)
+option.LIGHT_DR=Красный
+option.LIGHT_DG=Зелёный
+option.LIGHT_DB=Синий
+option.LIGHT_DI=Intensity
+
+screen.LIGHT_E=Свет (Вечер)
+option.LIGHT_ER=Красный
+option.LIGHT_EG=Зелёный
+option.LIGHT_EB=Синий
+option.LIGHT_EI=Intensity
+
+screen.LIGHT_SS=Свет (Закат)
+option.LIGHT_SSR=Красный
+option.LIGHT_SSG=Зелёный
+option.LIGHT_SSB=Синий
+option.LIGHT_SSI=Intensity
+
+screen.LIGHT_M=Свет (Ночь)
+option.LIGHT_NR=Красный
+option.LIGHT_NG=Зелёный
+option.LIGHT_NB=Синий
+option.LIGHT_NI=Intensity
+
+screen.AMBIENT_SR=Тень (Рассвет)
+option.AMBIENT_SRR=Красный
+option.AMBIENT_SRG=Зелёный
+option.AMBIENT_SRB=Синий
+option.AMBIENT_SRI=Intensity
+
+screen.AMBIENT_M=Тень (Утро)
+option.AMBIENT_MR=Красный
+option.AMBIENT_MG=Зелёный
+option.AMBIENT_MB=Синий
+option.AMBIENT_MI=Intensity
+
+screen.AMBIENT_D=Тень (День)
+option.AMBIENT_DR=Красный
+option.AMBIENT_DG=Зелёный
+option.AMBIENT_DB=Синий
+option.AMBIENT_DI=Intensity
+
+screen.AMBIENT_E=Тень (Вечер)
+option.AMBIENT_ER=Красный
+option.AMBIENT_EG=Зелёный
+option.AMBIENT_EB=Синий
+option.AMBIENT_EI=Intensity
+
+screen.AMBIENT_SS=Тень (Закат)
+option.AMBIENT_SSR=Красный
+option.AMBIENT_SSG=Зелёный
+option.AMBIENT_SSB=Синий
+option.AMBIENT_SSI=Intensity
+
+screen.AMBIENT_N=Тень (Ночь)
+option.AMBIENT_NR=Красный
+option.AMBIENT_NG=Зелёный
+option.AMBIENT_NB=Синий
+option.AMBIENT_NI=Intensity
+
+#----------------------------------------------------------------------------------#
+
+screen.END_COLOR=Цвета Энда
+
+screen.LIGHT_END=Свет
+
+option.LIGHT_END_R=Красный
+option.LIGHT_END_G=Зелёный
+option.LIGHT_END_B=Синий
+option.LIGHT_END_I=Яркость
+
+screen.AMBIENT_END=Тень
+
+option.AMBIENT_END_R=Красный
+option.AMBIENT_END_G=Зелёный
+option.AMBIENT_END_B=Синий
+option.AMBIENT_END_I=Яркость
+
+screen.FLASH_END=Вспышки Сверхновых
+
+option.FLASH_END_R=Красный
+option.FLASH_END_G=Зелёный
+option.FLASH_END_B=Синий
+option.FLASH_END_I=Яркость
+
+screen.NEBULA_END_FIRST=Туманность (Основной цвет)
+
+option.NEBULA_END_FIRST_R=Красный
+option.NEBULA_END_FIRST_G=Зелёный
+option.NEBULA_END_FIRST_B=Синий
+option.NEBULA_END_FIRST_I=Яркость
+
+screen.NEBULA_END_SECOND=Туманность (Вторичный цвет)
+
+option.NEBULA_END_SECOND_R=Красный
+option.NEBULA_END_SECOND_G=Зелёный
+option.NEBULA_END_SECOND_B=Синий
+option.NEBULA_END_SECOND_I=Яркость
+
+#----------------------------------------------------------------------------------#
+
+screen.MINLIGHT=Минимальное Освещение
+
+option.MINLIGHT_R=Красный
+option.MINLIGHT_G=Зелёный
+option.MINLIGHT_B=Синий
+option.MINLIGHT_I=Яркость
+
+#----------------------------------------------------------------------------------#
+
+screen.BLOCKLIGHT_COLOR=Цвет Ванильного Освещения от Блоков
+
+option.BLOCKLIGHT_R=Красный
+option.BLOCKLIGHT_G=Зелёный
+option.BLOCKLIGHT_B=Синий
+option.BLOCKLIGHT_I=Яркость
+
+#----------------------------------------------------------------------------------#
+
+screen.WATER_COLOR=Цвет Воды
+
+option.WATER_R=Красный
+option.WATER_G=Зелёный
+option.WATER_B=Синий
+option.WATER_I=Яркость
+option.WATER_A=Непрозрачность
+
+#----------------------------------------------------------------------------------#
+
+screen.LPV_COLOR=Цвета Освещения от Блоков
+screen.GLSP=Светящийся Лишайник
+screen.BS=Варочная Стойка (LET HIM COOK!!!)
+screen.TLCF=Факел, Фонарь и т.д.
+screen.SOUL=Факел Душ, Фонарь Душ и т.д.
+screen.CTL=Медный Факел и Лампа
+screen.ER=Стержень Энда
+screen.SL=Морской Фонарь
+screen.GS=Светокамень
+screen.SLRL=Грибосвет, Редстоун Фонарь
+screen.RACO=Якорь Возрождения, Плачущий Обсидан
+screen.LAVA=Лава
+screen.CB=Светящиеся Ягоды
+screen.AM=Аметист
+screen.MB=Блок Магмы
+screen.NP=Адский Портал
+screen.JL=Светильник Джека
+screen.ET=Стол Зачарований
+screen.BC=Маяк
+screen.EP=Рамка Портала в Энд
+screen.OF=Охристая Квампа
+screen.VF=Малахитовая Квампа
+screen.PF=Перламутровая Квампа
+screen.LIGHT=Блок Света
+
+option.GLSP_R=Красный
+option.GLSP_G=Зелёный
+option.GLSP_B=Синий
+option.GLSP_I=Яркость
+
+option.BS_R=Красный
+option.BS_G=Зелёный
+option.BS_B=Синий
+option.BS_I=Яркость
+
+option.TLCF_R=Красный
+option.TLCF_G=Зелёный
+option.TLCF_B=Синий
+option.TLCF_I=Яркость
+
+option.SOUL_R=Красный
+option.SOUL_G=Зелёный
+option.SOUL_B=Синий
+option.SOUL_I=Яркость
+
+option.ER_R=Красный
+option.ER_G=Зелёный
+option.ER_B=Синий
+option.ER_I=Яркость
+
+option.SL_R=Красный
+option.SL_G=Зелёный
+option.SL_B=Синий
+option.SL_I=Яркость
+
+option.CTL_R=Красный
+option.CTL_G=Зелёный
+option.CTL_B=Синий
+option.CTL_I=Яркость
+
+option.GS_R=Красный
+option.GS_G=Зелёный
+option.GS_B=Синий
+option.GS_I=Яркость
+
+option.SLRL_R=Красный
+option.SLRL_G=Зелёный
+option.SLRL_B=Синий
+option.SLRL_I=Яркость
+
+option.RACO_R=Красный
+option.RACO_G=Зелёный
+option.RACO_B=Синий
+option.RACO_I=Яркость
+
+option.LAVA_R=Красный
+option.LAVA_G=Зелёный
+option.LAVA_B=Синий
+option.LAVA_I=Яркость
+
+option.CB_R=Красный
+option.CB_G=Зелёный
+option.CB_B=Синий
+option.CB_I=Яркость
+
+option.AM_R=Красный
+option.AM_G=Зелёный
+option.AM_B=Синий
+option.AM_I=Яркость
+
+option.MB_R=Красный
+option.MB_G=Зелёный
+option.MB_B=Синий
+option.MB_I=Яркость
+
+option.NP_R=Красный
+option.NP_G=Зелёный
+option.NP_B=Синий
+option.NP_I=Яркость
+
+option.JL_R=Красный
+option.JL_G=Зелёный
+option.JL_B=Синий
+option.JL_I=Яркость
+
+option.ET_R=Красный
+option.ET_G=Зелёный
+option.ET_B=Синий
+option.ET_I=Яркость
+
+option.BC_R=Красный
+option.BC_G=Зелёный
+option.BC_B=Синий
+option.BC_I=Яркость
+
+option.EP_R=Красный
+option.EP_G=Зелёный
+option.EP_B=Синий
+option.EP_I=Яркость
+
+option.OF_R=Красный
+option.OF_G=Зелёный
+option.OF_B=Синий
+option.OF_I=Яркость
+
+option.VF_R=Красный
+option.VF_G=Зелёный
+option.VF_B=Синий
+option.VF_I=Яркость
+
+option.PF_R=Красный
+option.PF_G=Зелёный
+option.PF_B=Синий
+option.PF_I=Яркость
+
+option.LIGHT_R=Красный
+option.LIGHT_G=Зелёный
+option.LIGHT_B=Синий
+option.LIGHT_I=Яркость
+
+#=======================================================# POST #=======================================================#
+
+screen.POST=Постобработка
+
+option.SHARPENING=Заострение Изображения
+option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА)
+option.CHROMATIC_ABERRATION.comment=Добавляет синие и красные края объектам (как в логотипе тиктока).
+option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
+option.MOTION_BLUR=Размытие в Движении
+option.MOTION_BLUR_STRENGTH=Сила Размытия в Движении
+
+#----------------------------------------------------------------------------------#
+
+option.LENS_FLARE=Солнечные Блики
+option.LENS_FLARE_STRENGTH=Яркость Бликов
+
+screen.LENS_FLARE_CONFIG=Lens Flare Config
+
+screen.BASELENS=Основные блики
+screen.OVERLAPLENS=Перекрывающиеся блики
+screen.RINGLENS=Кольца
+screen.SUNRINGS=Кольца вокруг солнца
+screen.POINTLENS=Точечные блики
+
+option.BASELENS1=Основной блик 1
+option.BASELENS2=Основной блик 2
+option.BASELENS3=Основной блик 3
+option.BASELENS4=Основной блик 4
+option.BASELENS5=Основной блик 5
+option.BASELENS6=Основной блик 6
+
+option.OVERLAPLENS1=Перекрывающийся блик 1
+option.OVERLAPLENS2=Перекрывающийся блик 2
+option.OVERLAPLENS3=Перекрывающийся блик 3
+option.OVERLAPLENS4=Перекрывающийся блик 4
+option.OVERLAPLENS5=Перекрывающийся блик 5
+
+option.RAINBOW1=Радужное кольцо 1
+option.RAINBOW2=Радужное кольцо 2
+option.RAINBOW3=Радужное кольцо 3
+
+option.RING1=Кольцо 1
+option.RING2=Кольцо 2
+option.RING3=Кольцо 3
+option.RING4=Кольцо 4
+option.RING5=Кольцо 5
+option.RING6=Кольцо 6
+option.RING7=Кольцо 7
+option.RING8=Кольцо 8
+option.RING9=Кольцо 9
+option.RING10=Кольцо 10
+option.RING11=Кольцо 11
+option.RING12=Кольцо 12
+option.RING13=Кольцо 13
+option.RING14=Кольцо 14
+
+option.POINT1=Точка 1
+option.POINT2=Точка 2
+option.POINT3=Точка 3
+option.POINT4=Точка 4
+option.POINT5=Точка 5
+option.POINT6=Точка 6
+option.POINT7=Точка 7
+option.POINT8=Точка 8
+option.POINT9=Точка 9
+option.POINT10=Точка 10
+option.POINT11=Точка 11
+
+option.ANAMORPHICLENS=Горизонтальная линия
+
+#----------------------------------------------------------------------------------#
+
+screen.TONEMAP=Настройки Цветовой Палитры
+
+option.TONEMAP_BRIGHTNESS=Яркость
+option.TONEMAP_CONTRAST=Контрастность
+option.TONEMAP_HIGHLIGHTS=Яркость Света
+option.TONEMAP_SHADOWS=Яркость Теней
+option.TONEMAP_WHITE_THRESHOLD=Порог Белого
+option.SATURATION=Линейная насыщенность
+option.VIBRANCE=Пропорциональная насыщенность
+
+#----------------------------------------------------------------------------------#
+
+screen.DOF_CONFIG=Настройки Размытия
+
+option.DOF=Глубина Резкости (ГР)
+option.DOF.comment=Размывает объекты вне точки фокуса игрока.
+option.DOF_STRENGTH=Сила ГР
+option.DISTANT_BLUR=Дальнее Размытие (ДР)
+option.DISTANT_BLUR.comment=Размывает всё вдали.
+option.DISTANT_BLUR_RANGE=Дистанция ДР
+option.DISTANT_BLUR_STRENGTH=Сила ДР
+
+option.MANUAL_FOCUS=Ручная Фокусировка
+option.MANUAL_FOCUS.comment=Позволяет вручную задать дистанцию фокуса камеры.
+option.DOF_FOCUS=Дистанция Фокуса
+option.TILT=Наклон
+option.SHIFT=Смещение
+
+#----------------------------------------------------------------------------------#
+
+screen.BLOOM_CONFIG=Настройки Свечения
+
+option.BLOOM=Свечение
+option.BLOOM=Добавляет световое гало вокруг ярких источников света.
+option.BLOOM_STRENGTH_OVERWORLD=Сила Свечения в Обычном Мире
+option.BLOOM_STRENGTH_NETHER=Сила Свечения в Незере
+option.BLOOM_STRENGTH_END=Сила Свечения в Энде
+option.BLOOM_TILE_SIZE=Радиус
+option.BLOOM_CONTRAST=Контраст
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
+
+#=======================================================# OTHER #=======================================================#
+
+screen.OTHER=Прочее
+
+option.WAVING_PLANTS=Развевающиеся Растения
+option.WAVING_LEAVES=Развевающиеся Листья
+option.WAVING_SPEED=Скорость
+option.WAVING_AMPLITUDE=Амплитуда
+
+option.FIREFLIES=Светлячки
+option.FIREFLIES.comment=Добавляет светлячков ночью. §c[-]§rРаботают только при включенном Световом Тумане.
+option.FIREFLIES_BRIGHTNESS=Яркость Светлячков
+# BSL-style resourcepack PBR
+screen.MATERIAL=Material
+screen.SPECULAR=Specular & Reflections
+screen.NORMALS=Normals & Parallax
+
+option.ADVANCED_MATERIALS=Advanced Materials
+option.ADVANCED_MATERIALS.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which require advanced materials are indicated by *, changing these options won't affect visuals or performance while advanced materials is disabled.
+
+option.MATERIAL_FORMAT=Material Format*
+option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+option.REFLECTION=Reflections
+option.REFLECTION.comment=Enables reflections on smooth or metallic surfaces.
+value.REFLECTION.0=§cOff
+value.REFLECTION.1=Sky & Specular Only
+value.REFLECTION.2=Full
+
+option.REFLECTION_MODE=Reflection Mode
+option.REFLECTION_MODE.comment=Adjusts screen-space reflection behavior.
+value.REFLECTION_MODE.0=Less Duplicates
+value.REFLECTION_MODE.1=Balanced
+value.REFLECTION_MODE.2=More Gap Filling
+
+
+option.SPECULAR_HIGHLIGHT=Specular Highlight
+option.SPECULAR_HIGHLIGHT.comment=Enables bright spot which appears on shiny surfaces.
+value.SPECULAR_HIGHLIGHT.0=§cOff
+value.SPECULAR_HIGHLIGHT.1=Opaque Only
+value.SPECULAR_HIGHLIGHT.2=Full
+
+option.REFLECTION_LOD=LOD Reflection
+option.REFLECTION_LOD.comment=Determines the quality of DH and Voxy chunks in reflections.
+value.REFLECTION_LOD.0=Fast
+value.REFLECTION_LOD.1=Fancy
+
+option.REFLECTION_SKY_FALLOFF=Sky Reflection Falloff
+option.REFLECTION_SKY_FALLOFF.comment=Adjusts how far sky reflection fades out under low skylight.
+value.REFLECTION_SKY_FALLOFF.1=Very Soft
+value.REFLECTION_SKY_FALLOFF.2=Soft
+value.REFLECTION_SKY_FALLOFF.4=Balanced
+value.REFLECTION_SKY_FALLOFF.8=Sharp
+value.REFLECTION_SKY_FALLOFF.16=Very Sharp
+
+
+option.REFLECTION_SPECULAR=Specular Reflection*
+option.REFLECTION_SPECULAR.comment=Enables reflection on smooth or metallic resourcepack-PBR surfaces.
+
+option.REFLECTION_ROUGH=Rough Reflection*
+option.REFLECTION_ROUGH.comment=Allows lower-smoothness surfaces to render blurry reflections.
+
+option.REFLECTION_RAIN=Rain Reflection*
+option.REFLECTION_RAIN.comment=Allows surfaces to be wet while raining. §e[*]§rRequires specular reflection.
+
+option.REFLECTION_RAIN_AMOUNT=Puddle Amount
+option.REFLECTION_RAIN_AMOUNT.comment=Adjusts the amount of puddles created while raining.
+value.REFLECTION_RAIN_AMOUNT.0.4=Very Low
+value.REFLECTION_RAIN_AMOUNT.0.5=Low
+value.REFLECTION_RAIN_AMOUNT.0.6=Medium
+value.REFLECTION_RAIN_AMOUNT.0.7=High
+value.REFLECTION_RAIN_AMOUNT.1.0=Very High
+
+option.SPECULAR_HIGHLIGHT_ROUGH=Rough Specular Highlight*
+option.SPECULAR_HIGHLIGHT_ROUGH.comment=Allows rough surfaces to have weak gloss.
+
+option.ALBEDO_METAL=Albedo Metal*
+option.ALBEDO_METAL.comment=Uses albedo color more strongly for metallic reflectance.
+
+
+
+
+option.NORMAL_DAMPENING=Normal Dampening*
+option.NORMAL_DAMPENING.comment=Reduces normal map strength to prevent reflections being too noisy.
+
+option.NORMAL_PLANTS=Up-facing Plants
+option.NORMAL_PLANTS.comment=Adjusts plant shading. Disable this if non-flat plant models or plant normal maps are used.

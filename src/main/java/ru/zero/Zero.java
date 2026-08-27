@@ -119,9 +119,9 @@ public class Zero implements ClientModInitializer {
       this.guiManager = new GuiManager();
       this.guiManager.init();
       ru.zero.ui.gui.color.ColorPresetStorage.load();
-       GuiScreen.clientBlurSetting.set(this.guiManager.isGuiBlurEnabled());
-       GuiScreen.clientVanillaSetting.set(this.guiManager.isGuiVanillaStyleEnabled());
-       GuiScreen.clientSoundSetting.set(this.guiManager.isGuiSoundEnabled());
+        GuiScreen.clientBlurSetting.set(this.guiManager.isGuiBlurEnabled());
+        GuiScreen.clientVanillaSetting.set(this.guiManager.isGuiVanillaStyleEnabled());
+        GuiScreen.clientSoundSetting.set(this.guiManager.isGuiSoundEnabled());
        GuiScreen.clientLiquidGlassSetting.set(this.guiManager.isGuiLiquidGlassEnabled());
       if (!Boolean.parseBoolean(System.getProperty("zero.glass.vulkan", "true"))) {
          GuiScreen.clientLiquidGlassSetting.set(false);

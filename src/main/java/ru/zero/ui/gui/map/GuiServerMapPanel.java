@@ -9,6 +9,7 @@ import net.minecraft.util.Util;
 import ru.zero.Zero;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.ui.gui.component.render.GuiRenderMain;
+import ru.zero.ui.gui.theme.MinecraftTheme;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
 import ru.zero.util.client.Lang;
@@ -76,50 +77,76 @@ public final class GuiServerMapPanel extends GuiScreen {
          return;
       }
 
-      boolean vanillaStyle = GuiScreen.isVanillaStyle();
-      int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int) (20.4F * mainAlpha));
-      int backGroundThreeColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (10.2F * mainAlpha));
-      int mainColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
-      int activeBg = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (40.0F * mainAlpha));
-      float bx = mapButtonX();
-      float by = mapButtonY();
-      if (GuiScreen.serverMapOpen) {
-         renderer2D.rect(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, 5.5F, activeBg);
-      }
+        boolean vanillaStyle = GuiScreen.isVanillaStyle();
+        int outlineColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.OUTLINE, 255)
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int) (20.4F * mainAlpha));
+        int backGroundThreeColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.PANEL_LIGHT, (int) (235.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (10.2F * mainAlpha));
+        int mainColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.GOLD, (int) (255.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
+        int activeBg = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.GOLD, (int) (60.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (40.0F * mainAlpha));
+        float radius = vanillaStyle ? 0.0F : 5.5F;
+        float bx = mapButtonX();
+        float by = mapButtonY();
+        if (GuiScreen.serverMapOpen) {
+            renderer2D.rect(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, radius, activeBg);
+        }
 
-      renderer2D.rectOutline(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, 5.5F, outlineColor, 0.1F);
-      renderer2D.rect(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, 5.5F, backGroundThreeColor);
-      renderer2D.text(
-            vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS,
-            bx + 6.2F,
-            by + 12.85F - 1.5F + 9.65F,
-            18.0F,
-            vanillaStyle ? "M" : "\ue55b",
-            mainColor
-      );
-   }
+        renderer2D.rectOutline(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, radius, outlineColor, vanillaStyle ? 1.0F : 0.1F);
+        renderer2D.rect(bx, by, MAP_BUTTON_SIZE, MAP_BUTTON_SIZE, radius, backGroundThreeColor);
+        if (vanillaStyle) {
+            MinecraftTheme.drawIcon(renderer2D, MinecraftTheme.IconType.MAP, bx + 2.6F, by + 2.6F, 16.0F, mainColor);
+        } else {
+            renderer2D.text(
+                  FontRegistry.ICONS,
+                  bx + 6.2F,
+                  by + 12.85F - 1.5F + 9.65F,
+                  18.0F,
+                  "\ue55b",
+                  mainColor
+            );
+        }
+    }
 
    public static void renderPanel(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
       if (!GuiScreen.serverMapOpen || mainAlpha <= 0.001F) {
          return;
       }
 
-      int outlineColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int) (20.4F * mainAlpha));
-      int backGroundThreeColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (10.2F * mainAlpha));
-      int textColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextColor(1, 1), (int) (255.0F * mainAlpha));
-      int textMuted = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextTwoColor(1, 1), (int) (120.0F * mainAlpha));
-      int mainColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
-      float panelX = GuiScreen.x + 8.0F;
-      float panelY = GuiScreen.y + 38.0F;
-      float panelW = GuiScreen.width - 16.0F;
-      float panelH = GuiScreen.height - 46.0F;
-      renderer2D.rectOutline(panelX, panelY, panelW, panelH, 6.0F, outlineColor, 0.1F);
-      renderer2D.rect(panelX, panelY, panelW, panelH, 6.0F, backGroundThreeColor);
+        boolean vanillaStyle = GuiScreen.isVanillaStyle();
+        int outlineColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.OUTLINE, 255)
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int) (20.4F * mainAlpha));
+        int backGroundThreeColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.PANEL, (int) (235.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (10.2F * mainAlpha));
+        int textColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.TEXT, (int) (255.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextColor(1, 1), (int) (255.0F * mainAlpha));
+        int textMuted = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.DISABLED, (int) (200.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getTextTwoColor(1, 1), (int) (120.0F * mainAlpha));
+        int mainColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.GOLD, (int) (255.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
+        float panelRadius = vanillaStyle ? 0.0F : 6.0F;
+        float boxRadius = vanillaStyle ? 0.0F : 5.0F;
+        float panelX = GuiScreen.x + 8.0F;
+        float panelY = GuiScreen.y + 38.0F;
+        float panelW = GuiScreen.width - 16.0F;
+        float panelH = GuiScreen.height - 46.0F;
+        renderer2D.rectOutline(panelX, panelY, panelW, panelH, panelRadius, outlineColor, vanillaStyle ? 1.0F : 0.1F);
+        renderer2D.rect(panelX, panelY, panelW, panelH, panelRadius, backGroundThreeColor);
       float mapX = panelX + 6.0F;
       float mapY = panelY + 24.0F;
       float mapW = panelW - 12.0F;
       float mapH = panelH - 50.0F;
-      renderer2D.rect(mapX, mapY, mapW, mapH, 5.0F, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), (int) (120.0F * mainAlpha)));
+        renderer2D.rect(mapX, mapY, mapW, mapH, boxRadius, Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getBackGroundColor(1, 1), (int) (120.0F * mainAlpha)));
       renderer2D.text(FontRegistry.INTER_MEDIUM, panelX + 10.0F, panelY + 8.0F + 7.0F, 14.0F, Lang.t("Карта сервера"), textColor);
       if (TILE_VIEW.hasTiles()) {
          renderTiles(renderer2D, mapX, mapY, mapW, mapH, mainAlpha);
@@ -134,10 +161,12 @@ public final class GuiServerMapPanel extends GuiScreen {
       float buttonY = panelY + panelH - 30.0F;
       float buttonW = panelW - 16.0F;
       float buttonH = 22.0F;
-      boolean hoverBrowser = GuiRenderMain.isHovered(GuiScreen.currentMouseX, GuiScreen.currentMouseY, buttonX, buttonY, buttonW, buttonH);
-      int buttonBg = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) ((hoverBrowser ? 55.0F : 28.0F) * mainAlpha));
-      renderer2D.rect(buttonX, buttonY, buttonW, buttonH, 5.0F, buttonBg);
-      renderer2D.rectOutline(buttonX, buttonY, buttonW, buttonH, 5.0F, outlineColor, 0.1F);
+        boolean hoverBrowser = GuiRenderMain.isHovered(GuiScreen.currentMouseX, GuiScreen.currentMouseY, buttonX, buttonY, buttonW, buttonH);
+        int buttonBg = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.GOLD, (int) ((hoverBrowser ? 90.0F : 50.0F) * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) ((hoverBrowser ? 55.0F : 28.0F) * mainAlpha));
+        renderer2D.rect(buttonX, buttonY, buttonW, buttonH, boxRadius, buttonBg);
+        renderer2D.rectOutline(buttonX, buttonY, buttonW, buttonH, boxRadius, outlineColor, vanillaStyle ? 1.0F : 0.1F);
       float textW = renderer2D.measureText(FontRegistry.INTER_MEDIUM, Lang.t("Открыть в браузере"), 13.0F).width;
       renderer2D.text(
             FontRegistry.INTER_MEDIUM,
@@ -149,8 +178,9 @@ public final class GuiServerMapPanel extends GuiScreen {
       );
    }
 
-   private static void renderTiles(Renderer2D renderer2D, float mapX, float mapY, float mapW, float mapH, float mainAlpha) {
-      int lod = TILE_VIEW.getResolvedLod();
+    private static void renderTiles(Renderer2D renderer2D, float mapX, float mapY, float mapW, float mapH, float mainAlpha) {
+        boolean vanillaStyle = GuiScreen.isVanillaStyle();
+        int lod = TILE_VIEW.getResolvedLod();
       if (lod < 0) {
          return;
       }
@@ -185,7 +215,9 @@ public final class GuiServerMapPanel extends GuiScreen {
          float localZ = (blockZ - playerTileZ * blocksPerTile) / (float) blocksPerTile;
          float markerX = originX + (playerTileX - centerX) * tileScreen + localX * tileScreen - 2.0F;
          float markerZ = originZ + (playerTileZ - centerZ) * tileScreen + localZ * tileScreen - 2.0F;
-         int markerColor = Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
+          int markerColor = vanillaStyle
+            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.GOLD, (int) (255.0F * mainAlpha))
+            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), (int) (255.0F * mainAlpha));
          renderer2D.rect(markerX, markerZ, 4.0F, 4.0F, 2.0F, markerColor);
       }
    }

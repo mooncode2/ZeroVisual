@@ -126,10 +126,9 @@ public class KeyBindHUD {
          DraggableManager.DragSession session = DraggableManager.getInstance().beginDrag("keybinds", preferredX, preferredY, animatedWidth, animatedHeight);
          float x = session.positionX();
          float y = session.positionY() - 40.0F + 40.0F * anim2.get();
-         boolean vanillaStyle = GuiScreen.isVanillaStyle();
-         HudEditor.registerRect(x, y, animatedWidth, animatedHeight);
-         Hud.drawClientRect(r2, x, y, animatedWidth, animatedHeight, 13.0F, 1.0F * anim2.get(), 1.0F);
-         r2.text(vanillaStyle ? FontRegistry.INTER_MEDIUM : FontRegistry.ICONS, x + 12.0F, y + 22.5F, 26.0F, vanillaStyle ? "K" : "x", ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), anim2.get()));
+          HudEditor.registerRect(x, y, animatedWidth, animatedHeight);
+          Hud.drawClientRect(r2, x, y, animatedWidth, animatedHeight, 13.0F, 1.0F * anim2.get(), 1.0F);
+          r2.text(FontRegistry.ICONS, x + 12.0F, y + 22.5F, 26.0F, "x", ColorUtil.replAlpha(Renderer2D.ColorUtil.getMainColor(1, 1), anim2.get()));
          r2.shadow(
             x + 17.0F,
             y + 16.0F,
