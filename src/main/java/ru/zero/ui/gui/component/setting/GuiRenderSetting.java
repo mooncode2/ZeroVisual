@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.BindSettings;
 import ru.zero.module.api.setting.impl.BooleanSetting;
+import ru.zero.module.api.setting.impl.ButtonSetting;
 import ru.zero.module.api.setting.impl.HueSetting;
 import ru.zero.module.api.setting.impl.ModeSetting;
 import ru.zero.module.api.setting.impl.MultiBooleanSetting;
@@ -87,6 +88,8 @@ public class GuiRenderSetting {
          }
 
          return currentY - 0.0F + boolHeight;
+      } else if (setting instanceof ButtonSetting) {
+         return 15.0F;
       } else {
          return 15.0F;
       }
@@ -350,6 +353,23 @@ public class GuiRenderSetting {
          }
 
          height = currentY - y + boolHeight;
+      } else if (setting instanceof ButtonSetting buttonSetting) {
+         float buttonHeight = 10.075F;
+         float buttonWidth = width - 2.0F;
+         boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + buttonWidth && mouseY < y + buttonHeight;
+         renderer2D.rectOutline(x, y, buttonWidth, buttonHeight, 3.0F, outlineColor, 0.1F);
+         renderer2D.rect(x, y, buttonWidth, buttonHeight, 3.0F, hovered ? mainColor40 : mainColor6);
+         String buttonLabel = Lang.t(setting.name);
+         float buttonLabelWidth = renderer2D.measureText(FontRegistry.INTER_MEDIUM, buttonLabel, 12.0F).width;
+         renderer2D.text(
+            FontRegistry.INTER_MEDIUM,
+            x + buttonWidth * 0.5F - buttonLabelWidth * 0.5F,
+            y + 1.5F + 5.7F,
+            12.0F,
+            buttonLabel,
+            mainColor
+         );
+         height = 15.0F;
       }
 
       return height + 1.0F;

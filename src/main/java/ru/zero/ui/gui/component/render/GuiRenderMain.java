@@ -8,6 +8,7 @@ import java.util.Map;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
+import ru.zero.module.api.Category;
 import ru.zero.module.api.Module;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.HueSetting;
@@ -71,12 +72,17 @@ public class GuiRenderMain extends GuiScreen {
             GuiScreen.backspaceHeld = false;
             GuiScreen.firstBackspacePressTime = 0L;
          }
-      } else {
-         GuiScreen.backspaceHeld = false;
-         GuiScreen.firstBackspacePressTime = 0L;
-      }
+       } else {
+          GuiScreen.backspaceHeld = false;
+          GuiScreen.firstBackspacePressTime = 0L;
+       }
 
-       boolean vanillaStyle = GuiScreen.isVanillaStyle();
+       if (GuiScreen.selectedCategories == Category.Cosmetics) {
+          CosmeticsGui.render(renderer2D, mouseX, mouseY, mainAlpha);
+          return;
+       }
+
+        boolean vanillaStyle = GuiScreen.isVanillaStyle();
        int outlineColor = vanillaStyle
            ? Renderer2D.ColorUtil.replAlpha(MinecraftTheme.OUTLINE, 255)
            : Renderer2D.ColorUtil.replAlpha(Renderer2D.ColorUtil.getOutLineColor(1, 1), (int)(20.4F * mainAlpha));

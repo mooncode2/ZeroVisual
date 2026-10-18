@@ -56,16 +56,16 @@ import org.joml.Vector3f;
 @IModule(name = "TargetESP", description = "Не таргет есп", category = Category.Visuals, bind = -1)
 @Environment(EnvType.CLIENT)
 public class TargetESP extends Module {
-   public static ModeSetting typeTargetEsp = new ModeSetting("Режим", "Картинка", "Картинка", "Призраки", "Кольцо",
-         "Кубики", "Круг");
+public static ModeSetting typeTargetEsp = new ModeSetting("Режим", "Картинка", "Картинка", "Призраки", "Кольцо",
+          "Кубики", "Круг");
    public static ModeSetting typeGhost = new ModeSetting("Режим призраков", "Обычный", "Обычный", "Новый", "Старый")
          .hidden(() -> !typeTargetEsp.is("Призраки"));
    public static ModeSetting typeImage = new ModeSetting("Режим картинки", "Клиент", "Клиент", "Ромб", "Ромб 2")
          .hidden(() -> !typeTargetEsp.is("Картинка"));
    public static ModeSetting typeCube = new ModeSetting("Режим кубиков", "Новый", "Новый", "Старый")
          .hidden(() -> !typeTargetEsp.is("Кубики"));
-   public static SliderSetting circleSize = new SliderSetting("Размер круга", 1.2F, 0.5F, 3.0F, 0.1F, false)
-         .hidden(() -> !typeTargetEsp.is("Круг"));
+public static SliderSetting circleSize = new SliderSetting("Размер круга", 1.2F, 0.5F, 3.0F, 0.1F, false)
+          .hidden(() -> !typeTargetEsp.is("Круг"));
    private static final Identifier TARGET_TEXTURE = Identifier.of("zero", "textures/world/target.png");
    private static final Identifier TARGET_TEXTURE_C = Identifier.of("zero", "textures/world/targetn2.png");
    private static final Identifier TARGET_TEXTURE_N = Identifier.of("zero", "textures/world/targetn.png");
@@ -202,13 +202,13 @@ public class TargetESP extends Module {
                .withDepthWrite(false)
                .withBlend(BlendFunction.LIGHTNING)
                .build());
-   private static final RenderLayer CRYSTAL_LAYER = RenderLayer.of(
-         "zero/target_esp/crystals",
-         RenderSetup.builder(CRYSTAL_TRIANGLES_PIPELINE).expectedBufferSize(4096).translucent().build());
+private static final RenderLayer CRYSTAL_LAYER = RenderLayer.of(
+          "zero/target_esp/crystals",
+          RenderSetup.builder(CRYSTAL_TRIANGLES_PIPELINE).expectedBufferSize(4096).translucent().build());
 
-   public TargetESP() {
-      this.addSettings(new Setting[] { typeTargetEsp, typeGhost, typeImage, typeCube, circleSize });
-   }
+public TargetESP() {
+       this.addSettings(new Setting[] { typeTargetEsp, typeGhost, typeImage, typeCube, circleSize });
+    }
 
    @EventInit
    public void onRender(WorldRenderEvent e) {
@@ -276,9 +276,9 @@ public class TargetESP extends Module {
                }
 
 
-               if (typeTargetEsp.is("Круг")) {
-                  this.render3DCircle(stack, immediate, this.lastTarget, tickDelta);
-               }
+if (typeTargetEsp.is("Круг")) {
+                   this.render3DCircle(stack, immediate, this.lastTarget, tickDelta);
+                }
             }
          } else {
             this.lastTarget = null;
@@ -354,10 +354,10 @@ public class TargetESP extends Module {
          buffer.vertex(matrix, x, y, z).color(r, g, b, a);
       }
 
-      matrices.pop();
-   }
+matrices.pop();
+    }
 
-   private void renderDiamond(MatrixStack matrices, Immediate immediate, LivingEntity target, float partialTicks) {
+    private void renderDiamond(MatrixStack matrices, Immediate immediate, LivingEntity target, float partialTicks) {
       Vec3d lerpedPos = target.getLerpedPos(partialTicks);
       double x = lerpedPos.x;
       double y = lerpedPos.y;

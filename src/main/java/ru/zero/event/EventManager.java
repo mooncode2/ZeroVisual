@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,6 +21,7 @@ public class EventManager {
    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
    private static boolean debugLogged = false;
    private static int renderEventCalls = 0;
+   private static final Set<String> LOGGED_HANDLER_ERRORS = ConcurrentHashMap.newKeySet();
 
    public static void register(Object object) {
       for (Method method : object.getClass().getDeclaredMethods()) {
@@ -35,6 +38,7 @@ public class EventManager {
          dataList.removeIf(data -> data.getSource().equals(object));
       }
 
+      LOGGED_HANDLER_ERRORS.clear();
       cleanMap(true);
    }
 
@@ -123,15 +127,23 @@ public class EventManager {
          data.getHandle().invoke(data.getSource(), argument);
       } catch (Throwable var4) {
          Throwable cause = var4 instanceof java.lang.reflect.InvocationTargetException ? var4.getCause() : var4;
+         String errorKey = data.getSource().getClass().getName()
+            + "#"
+            + data.getTarget().getName()
+            + ":"
+            + (cause != null ? cause.getClass().getName() + ":" + cause.getMessage() : String.valueOf(var4));
+         if (!LOGGED_HANDLER_ERRORS.add(errorKey)) {
+            return;
+         }
          System.err
             .println(
-               "[EventManager] Exception in handler "
-                  + data.getTarget().getName()
-                  + " on "
-                  + data.getSource().getClass().getSimpleName()
-                  + ": "
-                  + (cause != null ? cause.getMessage() : var4.getMessage())
-            );
+                "[EventManager] Exception in handler "
+                   + data.getTarget().getName()
+                   + " on "
+                   + data.getSource().getClass().getSimpleName()
+                   + ": "
+                   + (cause != null ? cause.getMessage() : var4.getMessage())
+             );
          if (cause != null) {
             cause.printStackTrace();
          }

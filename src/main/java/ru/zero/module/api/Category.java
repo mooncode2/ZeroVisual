@@ -12,7 +12,8 @@ public enum Category {
    Player("Player", "g"),
    Utils("Utils", "j"),
    Prime("Prime", "k"),
-   Misc("Misc", "h");
+   Misc("Misc", "h"),
+   Cosmetics("Cosmetics", "i");
 
    private final String name;
    private final String icon;

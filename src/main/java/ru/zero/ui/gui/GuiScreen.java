@@ -117,9 +117,17 @@ public class GuiScreen {
       boolean showPrime = Zero.get != null
          && Zero.get.visualLinkingClient != null
          && Zero.get.visualLinkingClient.isPrimeOnTargetServer();
-      return showPrime
-         ? new Category[] { Category.Visuals, Category.Utils, Category.Prime }
-         : new Category[] { Category.Visuals, Category.Utils };
+      boolean showCosmetics = ru.zero.cosmetic.CosmeticState.isEnabled();
+      if (showPrime && showCosmetics) {
+         return new Category[] { Category.Visuals, Category.Utils, Category.Prime, Category.Cosmetics };
+      }
+      if (showPrime) {
+         return new Category[] { Category.Visuals, Category.Utils, Category.Prime };
+      }
+      if (showCosmetics) {
+         return new Category[] { Category.Visuals, Category.Utils, Category.Cosmetics };
+      }
+      return new Category[] { Category.Visuals, Category.Utils };
    }
 
    public static void refreshCategoriesAndModules() {

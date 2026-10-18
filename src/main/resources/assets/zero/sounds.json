@@ -1,5 +1,5 @@
 {
-  "clickgui_open": {
+"clickgui_open": {
     "sounds": ["zero:clickgui_open"]
   },
   "toggle": {
@@ -13,5 +13,992 @@
   },
   "crit3": {
     "sounds": ["zero:crit3"]
+  },
+"ui.click": {
+    "sounds": [
+      "zero:cosmetic/click"
+    ]
+  },
+  "ui.toggle_on": {
+    "sounds": [
+      "zero:cosmetic/toggle_on"
+    ]
+  },
+  "ui.toggle_off": {
+    "sounds": [
+      "zero:cosmetic/toggle_off"
+    ]
+  },
+  "ui.slider": {
+    "sounds": [
+      "zero:cosmetic/slider"
+    ]
+  },
+  "ui.tab": {
+    "sounds": [
+      "zero:cosmetic/tab"
+    ]
+  },
+  "ui.open": {
+    "sounds": [
+      "zero:cosmetic/open"
+    ]
+  },
+  "ui.close": {
+    "sounds": [
+      "zero:cosmetic/close"
+    ]
+  },
+  "ui.drag": {
+    "sounds": [
+      "zero:cosmetic/drag"
+    ]
+  },
+  "ui.resize": {
+    "sounds": [
+      "zero:cosmetic/resize"
+    ]
+  },
+  "ui.dropdown": {
+    "sounds": [
+      "zero:cosmetic/dropdown"
+    ]
+  },
+  "ui.applepay": {
+    "sounds": [
+      "zero:cosmetic/applepay"
+    ]
+  },
+  "ui.clickgui_open": {
+    "sounds": [
+      "zero:cosmetic/clickgui_open"
+    ]
+  },
+  "ui.critical": {
+    "sounds": [
+      "zero:cosmetic/critical"
+    ]
+  },
+  "ui.toggle": {
+    "sounds": [
+      "zero:cosmetic/toggle"
+    ]
+  },
+  "ui.typing": {
+    "sounds": [
+      "zero:cosmetic/typing"
+    ]
+  },
+  "ui.welcome": {
+    "sounds": [
+      "zero:cosmetic/welcome"
+    ]
+  },
+  "sfx.whistle": {
+    "sounds": [
+      "zero:cosmetic/whistle"
+    ]
+  },
+  "sfx.wolf_whistle": {
+    "sounds": [
+      "zero:cosmetic/wolf_whistle"
+    ]
+  },
+  "sfx.flashbang": {
+    "sounds": [
+      "zero:cosmetic/flashbang"
+    ]
+  },
+  "sfx.bass_drop": {
+    "sounds": [
+      "zero:cosmetic/bass_drop"
+    ]
+  },
+  "sfx.ka_ching": {
+    "sounds": [
+      "zero:cosmetic/ka_ching"
+    ]
+  },
+  "sfx.air_horn": {
+    "sounds": [
+      "zero:cosmetic/air_horn"
+    ]
+  },
+  "sfx.glass_shatter": {
+    "sounds": [
+      "zero:cosmetic/glass_shatter"
+    ]
+  },
+  "sfx.church_bell": {
+    "sounds": [
+      "zero:cosmetic/church_bell"
+    ]
+  },
+  "sfx.anvil_clang": {
+    "sounds": [
+      "zero:cosmetic/anvil_clang"
+    ]
+  },
+  "sfx.riser": {
+    "sounds": [
+      "zero:cosmetic/riser"
+    ]
+  },
+  "melee.annihil.annihil_inspect_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_inspect_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_inspect_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_inspect_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_rotate_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_rotate_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_rotate_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_rotate_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_melee_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_melee_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_rotate_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_rotate_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.annihil.annihil_draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/annihil/annihil_draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_inspect_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_inspect_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cobra_vanguard.cobra_vanguard_melee_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cobra_vanguard/cobra_vanguard_melee_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_inspect_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_inspect_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_swing_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_swing_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_rotate_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_rotate_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_swing_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_swing_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_rotate_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_rotate_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_swing_c": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_swing_c",
+        "stream": false
+      }
+    ]
+  },
+  "melee.executor.executor_rotate_c": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/executor/executor_rotate_c",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.mercy.melee_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/mercy/melee_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.polaris_rotate_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/polaris_rotate_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.polaris_rotate_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/polaris_rotate_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.polaris_rotate_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/polaris_rotate_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.polaris.inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/polaris/inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_inpsect_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_inpsect_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_rotate_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_rotate_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_raise_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_raise_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_swing_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_swing_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_swing_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_swing_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_rotate_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_rotate_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_swing_c": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_swing_c",
+        "stream": false
+      }
+    ]
+  },
+  "melee.quenching.quenching_rotate_c": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/quenching/quenching_rotate_c",
+        "stream": false
+      }
+    ]
+  },
+  "melee.shadowkiller.shadowkiller_inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/shadowkiller/shadowkiller_inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.shadowkiller.shadowkiller_deploy_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/shadowkiller/shadowkiller_deploy_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.shadowkiller.shadowkiller_deploy": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/shadowkiller/shadowkiller_deploy",
+        "stream": false
+      }
+    ]
+  },
+  "melee.shadowkiller.shadowkiller_miss1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/shadowkiller/shadowkiller_miss1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.shadowkiller.shadowkiller_miss2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/shadowkiller/shadowkiller_miss2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.silencefd.inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/silencefd/inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.silencefd.draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/silencefd/draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.silencefd.melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/silencefd/melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.silencefd.melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/silencefd/melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.melee_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/melee_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.thieve_sea.inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/thieve_sea/inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_draw_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_draw_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_r_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_r_1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_r_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_r_2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_melee_r_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_melee_r_3",
+        "stream": false
+      }
+    ]
+  },
+  "melee.treasure_kn.treasure_kn_inspect": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/treasure_kn/treasure_kn_inspect",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_draw01": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_draw01",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_draw02": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_draw02",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look01_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look01_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look01_ab": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look01_ab",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look01_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look01_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look02_a": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look02_a",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look02_ab": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look02_ab",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look02_b": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look02_b",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.bknife_look03_ab": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/bknife_look03_ab",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_deploy1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_deploy1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_push_attack1_heavy_01": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_push_attack1_heavy_01",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_push_draw": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_push_draw",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_push_lookat_end": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_push_lookat_end",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_push_lookat_start": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_push_lookat_start",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_slash1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_slash1",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.knife_slash2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/knife_slash2",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.stilletto_draw_01": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/stilletto_draw_01",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.stilletto_flip_01": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/stilletto_flip_01",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.stilletto_flip_02": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/stilletto_flip_02",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.stilletto_flip_03": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/stilletto_flip_03",
+        "stream": false
+      }
+    ]
+  },
+  "melee.cs2.stilletto_flip_04": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/melee/cs2/stilletto_flip_04",
+        "stream": false
+      }
+    ]
+  },
+  "watch.activate": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/activate",
+        "stream": false
+      }
+    ]
+  },
+  "watch.deactivate": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/deactivate",
+        "stream": false
+      }
+    ]
+  },
+  "watch.transform": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/transform",
+        "stream": false
+      }
+    ]
+  },
+  "watch.detransform": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/detransform",
+        "stream": false
+      }
+    ]
+  },
+  "watch.cycle_1": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/cycle_1",
+        "stream": false
+      }
+    ]
+  },
+  "watch.cycle_2": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/cycle_2",
+        "stream": false
+      }
+    ]
+  },
+  "watch.cycle_3": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/cycle_3",
+        "stream": false
+      }
+    ]
+  },
+  "watch.cycle_4": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/cycle_4",
+        "stream": false
+      }
+    ]
+  },
+  "watch.arm_open": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/arm_open",
+        "stream": false
+      }
+    ]
+  },
+  "watch.arm_close": {
+    "sounds": [
+      {
+        "name": "zero:cosmetic/watch/arm_close",
+        "stream": false
+      }
+    ]
+  },
+  "graffiti.spray": {
+    "sounds": [
+      "zero:cosmetic/graffiti_spray"
+    ]
+  },
+  "ui.clip_saved": {
+    "sounds": [
+      "zero:cosmetic/clip_saved"
+    ]
+  },
+  "pat.pat": {
+    "sounds": [
+      "zero:cosmetic/pat_pat"
+    ]
+  },
+  "camera.shutter": {
+    "sounds": [
+      "zero:cosmetic/camera_shutter"
+    ]
+  },
+  "camera.beep": {
+    "sounds": [
+      "zero:cosmetic/camera_beep"
+    ]
   }
 }

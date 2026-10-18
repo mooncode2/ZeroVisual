@@ -9,10 +9,16 @@ import ru.zero.module.api.setting.Setting;
 public class ButtonSetting extends Setting {
    public int mode;
    public String description;
+   public Runnable action;
 
    public ButtonSetting(String name, int mode) {
       this.name = name;
       this.mode = mode;
+   }
+
+   public ButtonSetting onClick(Runnable action) {
+      this.action = action;
+      return this;
    }
 
    public int get() {

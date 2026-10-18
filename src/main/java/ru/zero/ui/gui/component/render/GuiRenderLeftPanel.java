@@ -174,6 +174,8 @@ public class GuiRenderLeftPanel extends GuiScreen {
                 return MinecraftTheme.IconType.PEN;
             case Prime:
                 return MinecraftTheme.IconType.SEARCH;
+            case Cosmetics:
+                return MinecraftTheme.IconType.CROWN;
             case Misc:
             default:
                 return MinecraftTheme.IconType.MAP;

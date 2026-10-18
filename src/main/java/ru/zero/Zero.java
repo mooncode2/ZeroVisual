@@ -172,6 +172,14 @@ public class Zero implements ClientModInitializer {
       RenderHandler.register();
       EventManager.register(this);
       EventManager.register(this.visualLinkingClient);
+      EventManager.register(ru.zero.cosmetic.render.CosmeticWorldRenderer.getInstance()); 
+      ru.zero.cosmetic.CosmeticState.load();
+      ru.zero.module.impl.visuals.Cosmetics cosmeticsModule = this.manager != null
+            ? this.manager.get(ru.zero.module.impl.visuals.Cosmetics.class)
+            : null;
+      if (cosmeticsModule != null) {
+         cosmeticsModule.syncFromState();
+      }
       ClientLifecycleEvents.CLIENT_STOPPING.register(client -> shutdownClientResources());
       modInitialized = true;
       System.out.println("[Zero] onInitializeClient() COMPLETE - modInitialized=" + modInitialized);

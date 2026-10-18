@@ -170,7 +170,9 @@ public class GuiClient extends Screen {
          }
          GuiScreen.selectedCategories = primeAvailable ? Category.Prime : Category.Visuals;
       } else {
-         GuiScreen.selectedCategories = savedCategory == Category.Utils ? Category.Utils : Category.Visuals;
+         GuiScreen.selectedCategories = (savedCategory == Category.Utils || savedCategory == Category.Cosmetics)
+            ? savedCategory
+            : Category.Visuals;
       }
       Zero.get.guiManager.setGuiCategory(GuiScreen.selectedCategories);
       if (Zero.get.manager == null) {

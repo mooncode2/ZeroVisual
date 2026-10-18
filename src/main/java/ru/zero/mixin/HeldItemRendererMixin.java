@@ -51,13 +51,26 @@ public abstract class HeldItemRendererMixin {
 
    @Inject(
       method = {"renderFirstPersonItem"},
-      at = {@At("HEAD")}
+      at = {@At("HEAD")},
+      cancellable = true
    )
    private void onRenderFirstPersonItem(
       AbstractClientPlayerEntity player, float tickProgress, float pitch, Hand hand, float swingProgress, ItemStack stack, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue queue, int light, CallbackInfo ci
    ) {
       RenderItemEvent renderItemEvent = new RenderItemEvent(matrices, hand, stack);
       EventManager.call(renderItemEvent);
+
+      if (ru.zero.cosmetic.render.MeleeHandRenderer.shouldReplaceFirstPerson(player, stack)) {
+         Arm arm = hand == Hand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+         ru.zero.cosmetic.Cosmetic melee = ru.zero.cosmetic.render.MeleeHandRenderer.equipped();
+         matrices.push();
+         boolean rendered = ru.zero.cosmetic.render.MeleeHandRenderer.renderFirstPerson(player, hand, melee, matrices,
+               queue, equipProgress, arm == Arm.LEFT);
+         matrices.pop();
+         if (rendered) {
+            ci.cancel();
+         }
+      }
    }
 
    @WrapOperation(

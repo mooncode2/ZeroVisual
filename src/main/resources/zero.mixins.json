@@ -30,6 +30,7 @@
     "CameraMixin",
     "ClientPlayerEntityMixin",
     "HeldItemRendererMixin",
+    "HeldItemFeatureRendererMixin",
     "MaceHelperMixin",
     "EntityMixin",
     "EntityWeatherMixin",

@@ -6,6 +6,7 @@ import ru.zero.Zero;
 import ru.zero.module.api.setting.Setting;
 import ru.zero.module.api.setting.impl.BindSettings;
 import ru.zero.module.api.setting.impl.BooleanSetting;
+import ru.zero.module.api.setting.impl.ButtonSetting;
 import ru.zero.module.api.setting.impl.HueSetting;
 import ru.zero.module.api.setting.impl.ModeSetting;
 import ru.zero.module.api.setting.impl.MultiBooleanSetting;
@@ -49,6 +50,17 @@ public class GuiMouseClickedSetting extends GuiScreen {
                Zero.get.configManager.autoSave();
             }
 
+            return true;
+         }
+      }
+
+      if (setting instanceof ButtonSetting buttonSetting) {
+         float buttonHeight = 10.075F;
+         float buttonWidth = width - 2.0F;
+         if (button == 0 && GuiRenderMain.isHovered(mouseX, mouseY, x, y, buttonWidth, buttonHeight)) {
+            if (buttonSetting.action != null) {
+               buttonSetting.action.run();
+            }
             return true;
          }
       }

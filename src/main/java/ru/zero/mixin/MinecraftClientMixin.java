@@ -5,10 +5,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.util.hit.EntityHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.zero.Zero;
 import ru.zero.compat.LunarCompat;
 import ru.zero.event.EventManager;
@@ -42,10 +44,24 @@ public abstract class MinecraftClientMixin {
        }
     }
 
-    @Inject(method = { "joinWorld" }, at = { @At("TAIL") })
-    public void loadWorld(CallbackInfo ci) {
-       if (EventManager.hasListeners(EventChangeWorld.class)) {
-          EventManager.call(new EventChangeWorld());
-       }
-    }
+   @Inject(method = { "joinWorld" }, at = { @At("TAIL") })
+   public void loadWorld(CallbackInfo ci) {
+      if (EventManager.hasListeners(EventChangeWorld.class)) {
+         EventManager.call(new EventChangeWorld());
+      }
+   }
+
+   @Inject(method = { "doAttack" }, at = { @At("HEAD") })
+   private void zero$onPrimaryAttack(CallbackInfoReturnable<Boolean> cir) {
+      MinecraftClient client = (MinecraftClient) (Object) this;
+      boolean hitEntity = client.crosshairTarget instanceof EntityHitResult;
+      ru.zero.cosmetic.render.MeleeAnimator.mainHand().onAttack(true, hitEntity);
+   }
+
+   @Inject(method = { "doItemUse" }, at = { @At("RETURN") })
+   private void zero$onSecondaryAttack(CallbackInfo ci) {
+      MinecraftClient client = (MinecraftClient) (Object) this;
+      boolean hitEntity = client.crosshairTarget instanceof EntityHitResult;
+      ru.zero.cosmetic.render.MeleeAnimator.mainHand().onAttack(false, hitEntity);
+   }
 }

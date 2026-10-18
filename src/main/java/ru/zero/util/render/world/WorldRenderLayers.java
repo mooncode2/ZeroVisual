@@ -140,6 +140,10 @@ public final class WorldRenderLayers {
       private static final RenderLayer TEXTURED_QUADS_NO_DEPTH_LAYER = RenderLayer.of("zero/world/textured_quads_no_depth", RenderSetup.builder(TEXTURED_QUADS_NO_DEPTH_PIPELINE).expectedBufferSize(1024).translucent().build());
       private static final Map<Double, RenderLayer> LINES_CACHE = new ConcurrentHashMap<>();
       private static final Map<Double, RenderLayer> LINES_NO_DEPTH_CACHE = new ConcurrentHashMap<>();
+      private static final Map<Identifier, RenderLayer> TEXTURED_QUADS_CACHE = new ConcurrentHashMap<>();
+      private static final Map<Identifier, RenderLayer> TEXTURED_QUADS_NO_DEPTH_CACHE = new ConcurrentHashMap<>();
+      private static final Map<Identifier, RenderLayer> TEXTURED_QUADS_ADDITIVE_CACHE = new ConcurrentHashMap<>();
+      private static final Map<Identifier, RenderLayer> TEXTURED_QUADS_NO_DEPTH_ADDITIVE_CACHE = new ConcurrentHashMap<>();
 
       private WorldRenderLayers() {
       }
@@ -177,19 +181,23 @@ public final class WorldRenderLayers {
       }
 
       public static RenderLayer TEXTURED_QUADS_NO_DEPTH(Identifier texture) {
-            return RenderLayer.of(texture.toString(), RenderSetup.builder(TEXTURED_QUADS_NO_DEPTH_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", texture).build());
+            return TEXTURED_QUADS_NO_DEPTH_CACHE.computeIfAbsent(texture,
+                        key -> RenderLayer.of(key.toString(), RenderSetup.builder(TEXTURED_QUADS_NO_DEPTH_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", key).build()));
       }
 
       public static RenderLayer TEXTURED_QUADS(Identifier texture) {
-            return RenderLayer.of(texture.toString(), RenderSetup.builder(TEXTURED_QUADS_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", texture).build());
+            return TEXTURED_QUADS_CACHE.computeIfAbsent(texture,
+                        key -> RenderLayer.of(key.toString(), RenderSetup.builder(TEXTURED_QUADS_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", key).build()));
       }
 
       public static RenderLayer TEXTURED_QUADS_ADDITIVE(Identifier texture) {
-            return RenderLayer.of(texture.toString(), RenderSetup.builder(TEXTURED_QUADS_ADDITIVE_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", texture).build());
+            return TEXTURED_QUADS_ADDITIVE_CACHE.computeIfAbsent(texture,
+                        key -> RenderLayer.of(key.toString(), RenderSetup.builder(TEXTURED_QUADS_ADDITIVE_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", key).build()));
       }
 
       public static RenderLayer TEXTURED_QUADS_NO_DEPTH_ADDITIVE(Identifier texture) {
-            return RenderLayer.of(texture.toString(), RenderSetup.builder(TEXTURED_QUADS_NO_DEPTH_ADDITIVE_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", texture).build());
+            return TEXTURED_QUADS_NO_DEPTH_ADDITIVE_CACHE.computeIfAbsent(texture,
+                        key -> RenderLayer.of(key.toString(), RenderSetup.builder(TEXTURED_QUADS_NO_DEPTH_ADDITIVE_PIPELINE).expectedBufferSize(1024).translucent().texture("Sampler0", key).build()));
       }
 
       public static RenderLayer LINES(double width) {

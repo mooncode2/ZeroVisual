@@ -2,7 +2,9 @@ package ru.zero.ui.gui.component.main;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import ru.zero.module.api.Category;
 import ru.zero.ui.gui.GuiScreen;
+import ru.zero.ui.gui.component.render.CosmeticsGui;
 import ru.zero.ui.gui.component.render.GuiRenderMain;
 import ru.zero.util.render.math.ScaleHelper;
 
@@ -22,10 +24,13 @@ public class GuiMouseScrolled extends GuiScreen {
          double delta = Math.abs(pScrollY) > Math.abs(pScrollX) ? pScrollY : pScrollX;
          if (Math.abs(delta) < 1.0E-4) {
             return false;
-         } else {
-            GuiScreen.getScrollUtil().handleScroll(delta);
-            return true;
-         }
+          } else if (GuiScreen.selectedCategories == Category.Cosmetics) {
+             CosmeticsGui.scrolled(delta);
+             return true;
+          } else {
+             GuiScreen.getScrollUtil().handleScroll(delta);
+             return true;
+          }
       } else {
          return false;
       }

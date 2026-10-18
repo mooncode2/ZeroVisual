@@ -2,8 +2,10 @@ package ru.zero.ui.gui.component.mouse;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import ru.zero.module.api.Category;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.ui.gui.component.mouse.category.GuiMouseClickedCategory;
+import ru.zero.ui.gui.component.render.CosmeticsGui;
 import ru.zero.ui.gui.component.mouse.colorpicker.GuiMouseClickedColorPicker;
 import ru.zero.ui.gui.component.mouse.module.GuiMouseClickedModule;
 import ru.zero.ui.gui.component.mouse.setting.GuiMouseClickedSetting;
@@ -44,6 +46,10 @@ public class GuiMouseClicked extends GuiScreen {
          }
 
          GuiMouseClickedCategory.mouseClickedCategory(mouseX, mouseY);
+
+         if (GuiScreen.selectedCategories == Category.Cosmetics && CosmeticsGui.click(mouseX, mouseY, pButton)) {
+            return true;
+         }
 
          if (GuiMouseClickedColorPicker.mouseClickedColorPicker(mouseX, mouseY, pButton)) {
             return true;

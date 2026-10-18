@@ -44,5 +44,6 @@ public final class MenuKeyHandler {
             client.mouse.unlockCursor();
          }
       }
+
    }
 }
