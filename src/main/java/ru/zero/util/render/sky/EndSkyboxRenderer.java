@@ -21,6 +21,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.CompiledShaderPipeline;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.GpuSampler;
 import net.minecraft.client.gl.UniformType;
@@ -37,42 +38,43 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL32;
 import ru.zero.mixin.GameRendererAccessor;
+import ru.zero.mixin.GlGpuBufferAccessor;
 import ru.zero.module.impl.visuals.SkyBox;
 import ru.zero.util.render.backends.gl.ResourceUtils;
 
-/**
- * SkyBox: небо Эндера из Solas по Septonious (туманность, звёзды,
- * анимированная чёрная дыра, вспышки) вместо ванильного скайбокса.
- * Полностью заменяет ванильный sky-пасс во всех измерениях.
- */
 @Environment(EnvType.CLIENT)
 public final class EndSkyboxRenderer {
    private static final Logger LOGGER = LogManager.getLogger("Zero SkyBox");
    private static final EndSkyboxRenderer INSTANCE = new EndSkyboxRenderer();
-   private static final String NOISE_TEXTURE_PATH = "assets/zero/shaders/skybox/tex/noise.png";
+   private static final String NOISE_TEXTURE_PATH = "assets/zero/shaders/core/sky_noise.png";
    private static final int UNIFORM_FLOATS = 40;
    private static final int VERTEX_FLOATS = 5;
    private static final float SUN_PATH_ROTATION = -70.0F;
-   private static final Vector3f SUN_DIR = new Vector3f(
+   private static final Vector3f SUN_DIRECTION = new Vector3f(
          1.0F,
          MathHelper.cos((float) Math.toRadians(SUN_PATH_ROTATION)) * 2000.0F,
          -MathHelper.sin((float) Math.toRadians(SUN_PATH_ROTATION)) * 2000.0F
    ).normalize();
 
-   private final Matrix4f camRotInv = new Matrix4f();
-   private final Quaternionf conjugate = new Quaternionf();
-   private final Vector3f flashDirWorld = new Vector3f(0.0F, 0.0F, -1.0F);
+   private final Matrix4f viewToWorld = new Matrix4f();
+   private final Quaternionf cameraConjugate = new Quaternionf();
+   private final Vector3f flashDirectionView = new Vector3f(0.0F, 0.0F, -1.0F);
+   private final Vector3f flashDirectionWorld = new Vector3f(0.0F, 0.0F, -1.0F);
+   private final Vector3f cameraPosition = new Vector3f();
 
    private float tanHalfFovX = 1.0F;
    private float tanHalfFovY = 1.0F;
    private float timeCounter;
-   private float camX;
-   private float camZ;
-   private float flashIntensity;
-   private volatile boolean captured;
-   private boolean initialized;
-   private boolean broken;
+    private float flashIntensity;
+    private volatile boolean captured;
+    private boolean initialized;
+    private boolean broken;
+    private boolean debugLogged;
+    private boolean gpuDebugLogged;
 
    private RenderPipeline pipeline;
    private GpuBuffer vertexBuffer;
@@ -84,30 +86,21 @@ public final class EndSkyboxRenderer {
    private EndSkyboxRenderer() {
    }
 
-   /**
-    * Захват состояния камеры за кадр. Вызывается из миксина
-    * SkyRendering.updateRenderState до выполнения проходов кадра.
-    */
    public static void captureState(ClientWorld world, float tickProgress, Camera camera, SkyRenderState skyState) {
       INSTANCE.capture(world, tickProgress, camera, skyState);
    }
 
-   /**
-    * true - модуль активен и должен заменить ванильный sky-пасс своим.
-    */
    public static boolean shouldReplaceSky() {
       return INSTANCE.captured && !INSTANCE.broken;
    }
 
-   /**
-    * Отрисовка неба внутри frame graph-пасса (выполняется вместо ванильного рендера неба).
-    */
    public static void drawSkyPass() {
       INSTANCE.draw();
    }
 
    public static void destroy() {
       INSTANCE.destroyResources();
+      INSTANCE.captured = false;
       INSTANCE.broken = false;
       INSTANCE.initialized = false;
    }
@@ -160,10 +153,8 @@ public final class EndSkyboxRenderer {
          return;
       }
 
-      //Матрица поворота view -> world (как в GameRenderer.renderWorld)
-      this.camRotInv.rotation(camera.getRotation().conjugate(this.conjugate));
+      this.viewToWorld.rotation(camera.getRotation().conjugate(this.cameraConjugate));
 
-      //FOV и проекция для восстановления направления луча по пикселю экрана
       float fov = ((GameRendererAccessor) client.gameRenderer).invokeGetFov(camera, tickProgress, true);
       Matrix4f projection = client.gameRenderer.getBasicProjectionMatrix(fov);
       if (projection.m00() == 0.0F || projection.m11() == 0.0F) {
@@ -173,19 +164,42 @@ public final class EndSkyboxRenderer {
       this.tanHalfFovX = 1.0F / projection.m00();
       this.tanHalfFovY = 1.0F / projection.m11();
 
-      //Аналог frameTimeCounter из Iris (секунды, с плавным довеском частичного тика)
+      if (!Float.isFinite(this.tanHalfFovX) || !Float.isFinite(this.tanHalfFovY)
+            || this.tanHalfFovX <= 0.0F || this.tanHalfFovY <= 0.0F) {
+         float fallbackFov = ((GameRendererAccessor) client.gameRenderer).invokeGetFov(camera, tickProgress, true);
+         if (fallbackFov <= 0.0F) {
+            fallbackFov = (float) client.options.getFov().getValue();
+         }
+
+         float tanHalfFov = (float) Math.tan(Math.toRadians(fallbackFov) * 0.5);
+         float aspect = (float) client.getWindow().getFramebufferWidth()
+               / Math.max(1.0F, (float) client.getWindow().getFramebufferHeight());
+         this.tanHalfFovY = tanHalfFov;
+         this.tanHalfFovX = tanHalfFov * aspect;
+      }
       this.timeCounter = (world.getTime() % 24000000L) * 0.05F + tickProgress * 0.05F;
+      this.cameraPosition.set(
+         (float) camera.getCameraPos().x,
+         (float) camera.getCameraPos().y,
+         (float) camera.getCameraPos().z
+      );
 
-      this.camX = (float) camera.getCameraPos().x;
-      this.camZ = (float) camera.getCameraPos().z;
+      this.flashIntensity = 0.0F;
+      this.flashDirectionView.set(0.0F, 0.0F, -1.0F);
+      if (skyState != null) {
+         this.flashIntensity = Math.max(skyState.endFlashIntensity, 0.0F);
 
-      //Вспышки Энда: направление берётся как в ванильном drawEndLightFlash
-      float flashPitch = skyState != null ? skyState.endFlashPitch : 0.0F;
-      this.flashIntensity = skyState != null ? Math.max(skyState.endFlashIntensity, 0.0F) : 0.0F;
-      float pitchRad = (float) Math.toRadians(flashPitch);
-      this.flashDirWorld.set(0.0F, -MathHelper.sin(pitchRad), -MathHelper.cos(pitchRad));
-      this.camRotInv.transformDirection(this.flashDirWorld);
+         float yaw = (float) Math.toRadians(skyState.endFlashYaw);
+         float pitch = (float) Math.toRadians(skyState.endFlashPitch);
+         float cosPitch = MathHelper.cos(pitch);
+         this.flashDirectionView.set(
+            -MathHelper.sin(yaw) * cosPitch,
+            -MathHelper.sin(pitch),
+            MathHelper.cos(yaw) * cosPitch
+         );
+      }
 
+      this.viewToWorld.transformDirection(this.flashDirectionWorld.set(this.flashDirectionView));
       this.captured = true;
    }
 
@@ -207,20 +221,42 @@ public final class EndSkyboxRenderer {
 
          ByteBuffer uniformData = BufferUtils.createByteBuffer(UNIFORM_FLOATS * 4);
          FloatBuffer uniformFloats = uniformData.asFloatBuffer();
-         this.camRotInv.get(uniformFloats);
-         uniformFloats.put(this.tanHalfFovX).put(this.tanHalfFovY).put(this.timeCounter).put(0.0F);
-         uniformFloats.put(this.flashDirWorld.x).put(this.flashDirWorld.y).put(this.flashDirWorld.z).put(this.flashIntensity);
-         uniformFloats.put(this.camX).put(this.camZ).put(0.0F).put(0.0F);
-         uniformFloats.put(SUN_DIR.x).put(SUN_DIR.y).put(SUN_DIR.z).put(SUN_PATH_ROTATION);
+         this.viewToWorld.get(uniformFloats);
+         uniformFloats.put(this.tanHalfFovX).put(this.tanHalfFovY).put(this.timeCounter).put(SUN_PATH_ROTATION);
+         uniformFloats.put(this.flashDirectionWorld.x).put(this.flashDirectionWorld.y).put(this.flashDirectionWorld.z).put(this.flashIntensity);
+         uniformFloats.put(this.cameraPosition.x).put(this.cameraPosition.y).put(this.cameraPosition.z).put(SkyBox.disk.get() ? 1.0F : 0.0F);
+         uniformFloats.put(SUN_DIRECTION.x).put(SUN_DIRECTION.y).put(SUN_DIRECTION.z).put(0.0F);
          uniformFloats.put(SkyBox.nebula.get() ? 1.0F : 0.0F)
                .put(SkyBox.stars.get() ? 1.0F : 0.0F)
                .put(SkyBox.blackHole.get() ? 1.0F : 0.0F)
                .put(SkyBox.flashes.get() ? 1.0F : 0.0F);
-         uniformFloats.put(SkyBox.starBrightness.get())
-               .put(SkyBox.nebulaBrightness.get())
-               .put(SkyBox.blackHoleSize.get())
-               .put(SkyBox.flashBrightness.get());
-         encoder.writeToBuffer(this.uniformBuffer.slice(), uniformData);
+          uniformFloats.put(SkyBox.starBrightness.get())
+                .put(SkyBox.nebulaBrightness.get())
+                .put(SkyBox.blackHoleSize.get())
+                .put(SkyBox.flashBrightness.get());
+
+          if (!this.debugLogged) {
+             this.debugLogged = true;
+             LOGGER.info(
+                   "SkyBox debug: cam={} rot={} ray=({}, {}) toggles=({}, {}, {}, {}) strengths=({}, {}, {}, {}) disk={} uniformBytes={}",
+                   this.cameraPosition,
+                   this.viewToWorld,
+                   this.tanHalfFovX,
+                   this.tanHalfFovY,
+                   SkyBox.nebula.get(),
+                   SkyBox.stars.get(),
+                   SkyBox.blackHole.get(),
+                   SkyBox.flashes.get(),
+                   SkyBox.starBrightness.get(),
+                   SkyBox.nebulaBrightness.get(),
+                   SkyBox.blackHoleSize.get(),
+                   SkyBox.flashBrightness.get(),
+                   SkyBox.disk.get(),
+                   uniformData.remaining());
+          }
+
+          encoder.writeToBuffer(this.uniformBuffer.slice(), uniformData);
+          this.debugGpuBuffer();
 
          RenderPass renderPass = encoder.createRenderPass(
                () -> "Zero SkyBox",
@@ -245,6 +281,37 @@ public final class EndSkyboxRenderer {
       }
    }
 
+   private void debugGpuBuffer() {
+      if (this.gpuDebugLogged || this.uniformBuffer == null) {
+         return;
+      }
+
+      this.gpuDebugLogged = true;
+      int id = ((GlGpuBufferAccessor) (Object) this.uniformBuffer).zero$getId();
+      FloatBuffer data = BufferUtils.createFloatBuffer(UNIFORM_FLOATS);
+      GL15.glBindBuffer(GL32.GL_UNIFORM_BUFFER, id);
+      int bindError = GL11.glGetError();
+      GL15.glGetBufferSubData(GL32.GL_UNIFORM_BUFFER, 0L, data);
+      int readError = GL11.glGetError();
+      GL15.glBindBuffer(GL32.GL_UNIFORM_BUFFER, 0);
+      LOGGER.info(
+            "SkyConfig direct GPU readback: id={} bindError={} readError={} ray=({}, {}) disk={} toggles=({}, {}, {}, {}) strengths=({}, {}, {}, {})",
+            id,
+            bindError,
+            readError,
+            data.get(16),
+            data.get(17),
+            data.get(27),
+            data.get(32),
+            data.get(33),
+            data.get(34),
+            data.get(35),
+            data.get(36),
+            data.get(37),
+            data.get(38),
+            data.get(39));
+   }
+
    private synchronized void ensureResources() {
       if (this.initialized || this.broken) {
          return;
@@ -253,7 +320,7 @@ public final class EndSkyboxRenderer {
       GpuDevice device = RenderSystem.getDevice();
 
       this.uniformBuffer = device.createBuffer(
-            () -> "Zero SkyBox uniforms", GpuBuffer.USAGE_UNIFORM, UNIFORM_FLOATS * 4);
+            () -> "Zero SkyBox uniforms", GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_COPY_DST, UNIFORM_FLOATS * 4);
 
       ByteBuffer vertices = BufferUtils.createByteBuffer(VERTEX_FLOATS * 4 * 3);
       vertices.putFloat(-1.0F).putFloat(-1.0F).putFloat(0.0F).putFloat(0.0F).putFloat(0.0F);
@@ -270,6 +337,7 @@ public final class EndSkyboxRenderer {
       } catch (java.io.IOException ioError) {
          throw new IllegalStateException("Failed to decode SkyBox noise texture", ioError);
       }
+
       this.noiseTexture = device.createTexture(
             () -> "Zero SkyBox noise",
             GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST,
@@ -283,12 +351,12 @@ public final class EndSkyboxRenderer {
       image.close();
       this.noiseView = device.createTextureView(this.noiseTexture);
       this.noiseSampler = device.createSampler(
-            AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.LINEAR, 0, OptionalDouble.empty());
+            AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.LINEAR, FilterMode.LINEAR, 1, OptionalDouble.empty());
 
       this.pipeline = RenderPipeline.builder()
             .withLocation(Identifier.of("zero", "end_sky"))
-            .withVertexShader("zero:end_sky")
-            .withFragmentShader("zero:end_sky")
+            .withVertexShader(Identifier.of("zero", "core/end_sky"))
+            .withFragmentShader(Identifier.of("zero", "core/end_sky"))
             .withSampler("NoiseTex")
             .withUniform("SkyConfig", UniformType.UNIFORM_BUFFER)
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
@@ -301,6 +369,10 @@ public final class EndSkyboxRenderer {
       CompiledRenderPipeline compiled = device.precompilePipeline(this.pipeline);
       if (compiled != null && !compiled.isValid()) {
          throw new IllegalStateException("SkyBox pipeline compilation failed (check shaders core/end_sky)");
+      }
+
+      if (compiled instanceof CompiledShaderPipeline shaderPipeline) {
+         LOGGER.info("SkyBox program uniforms: {}", shaderPipeline.program().getUniforms());
       }
 
       this.initialized = true;

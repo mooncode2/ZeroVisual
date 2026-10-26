@@ -1,5 +1,4 @@
 #version 330
-// Zero SkyBox - End sky vertex stage (fullscreen triangle in clip space)
 
 in vec3 Position;
 in vec2 UV0;

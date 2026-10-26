@@ -20,6 +20,7 @@ import ru.zero.module.impl.visuals.HUD.HudEditor;
 import ru.zero.module.impl.visuals.HUD.InformationHUD;
 import ru.zero.module.impl.visuals.HUD.KeyBindHUD;
 import ru.zero.module.impl.visuals.HUD.BossBarHUD;
+import ru.zero.module.impl.visuals.HUD.MusicHUD;
 import ru.zero.module.impl.visuals.HUD.PotionsHUD;
 import ru.zero.module.impl.visuals.HUD.ScoreboardHUD;
 import ru.zero.module.impl.visuals.HUD.TargetHUD;
@@ -51,11 +52,11 @@ public class Hud extends Module {
        new BooleanSetting("Уведомления", true),
        new BooleanSetting("Список биндов", true),
        new BooleanSetting("Список зелий", true),
-       new BooleanSetting("Предметы на бинде", true),
        new BooleanSetting("Хот бар", true),
-       new BooleanSetting("Скорборд", true),
-       new BooleanSetting("Босс бар", true)
-    );
+        new BooleanSetting("Скорборд", true),
+        new BooleanSetting("Босс бар", true),
+        new BooleanSetting("Музыка", true)
+     );
    public static MultiBooleanSetting notify = new MultiBooleanSetting(
       "Настройка уведомлений",
       new BooleanSetting("Модули", true),
@@ -63,6 +64,10 @@ public class Hud extends Module {
       new BooleanSetting("Низкая прочность брони", true)
    );
    public static BooleanSetting blur = new BooleanSetting("Блюр (Размытие)", true);
+      public static MultiBooleanSetting islandOptions = new MultiBooleanSetting(
+         "Настройки музыки",
+        new BooleanSetting("Текст песни", true)
+     );
     private final List<Hud.Notification> notifications = new ArrayList<>();
 
     public static enum NotificationType {
@@ -84,7 +89,7 @@ public class Hud extends Module {
    }
 
    public Hud() {
-      this.addSettings(new Setting[]{element, notify, blur});
+       this.addSettings(new Setting[]{element, islandOptions, notify, blur});
       DraggableManager.getInstance().setYPinned("notifications");
    }
 
@@ -97,6 +102,11 @@ public class Hud extends Module {
             if (element.get("Уведомления")) {
                HudEditor.renderElement("notifications", r2, () -> this.renderNotifications(r2));
             }
+
+             if (element.get("Музыка")) {
+                MusicHUD.setLyricsEnabled(islandOptions.get("Текст песни"));
+                HudEditor.renderElement("island", r2, () -> MusicHUD.render(r2));
+             }
 
             if (element.get("Ватер марк")) {
                HudEditor.renderElement("watermark", r2, () -> WaterMark.waterMark(r2));
@@ -138,7 +148,12 @@ public class Hud extends Module {
 
    @EventInit
    public void onMouseButton(MouseButtonEvent event) {
+       MusicHUD.onMouseButton(event);
       HudEditor.onMouseButton(event);
+   }
+
+   public List<Hud.Notification> recentNotifications() {
+      return this.notifications;
    }
 
    public void showNotification(String icon, String text, long duration) {

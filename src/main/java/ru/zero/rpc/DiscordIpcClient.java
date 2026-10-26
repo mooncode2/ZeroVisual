@@ -2,6 +2,7 @@ package ru.zero.rpc;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -34,6 +35,8 @@ public final class DiscordIpcClient implements AutoCloseable {
    private SocketChannel unixChannel;
    private RandomAccessFile windowsPipe;
    private boolean connected;
+   private volatile String userId;
+   private volatile String avatarHash;
 
    public boolean isConnected() {
       return this.connected;
@@ -76,6 +79,7 @@ public final class DiscordIpcClient implements AutoCloseable {
                continue;
             }
 
+            this.readReadyUser(response);
             this.connected = true;
             return true;
          } catch (Throwable ignored) {
@@ -84,6 +88,48 @@ public final class DiscordIpcClient implements AutoCloseable {
       }
 
       return false;
+   }
+
+   private void readReadyUser(String response) {
+      try {
+         JsonObject root = JsonParser.parseString(response).getAsJsonObject();
+         if (!"DISPATCH".equals(optionalString(root, "cmd")) || !"READY".equals(optionalString(root, "evt"))) {
+            return;
+         }
+
+         JsonObject data = root.getAsJsonObject("data");
+         JsonObject user = data == null ? null : data.getAsJsonObject("user");
+         if (user == null) {
+            return;
+         }
+
+         this.userId = optionalString(user, "id");
+         this.avatarHash = optionalString(user, "avatar");
+      } catch (Throwable ignored) {
+      }
+   }
+
+   public String getAvatarUrl() {
+      String id = this.userId;
+      if (id == null || id.isBlank()) {
+         return null;
+      }
+
+      String hash = this.avatarHash;
+      if (hash != null && !hash.isBlank()) {
+         return "https://cdn.discordapp.com/avatars/" + id + "/" + hash + ".png?size=128";
+      }
+
+      try {
+         int index = (int)((Long.parseUnsignedLong(id) >> 22) % 6L);
+         return "https://cdn.discordapp.com/embed/avatars/" + index + ".png";
+      } catch (NumberFormatException ignored) {
+         return null;
+      }
+   }
+
+   private static String optionalString(JsonObject object, String key) {
+      return object.has(key) && !object.get(key).isJsonNull() ? object.get(key).getAsString() : null;
    }
 
    private static Path resolveUnixSocket(int index) {

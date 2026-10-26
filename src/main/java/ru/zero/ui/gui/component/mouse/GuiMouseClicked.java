@@ -12,7 +12,9 @@ import ru.zero.ui.gui.component.mouse.setting.GuiMouseClickedSetting;
 import ru.zero.ui.gui.component.setting.GuiRenderSetting;
 import ru.zero.ui.gui.map.GuiServerMapPanel;
 import ru.zero.ui.gui.component.render.GuiRenderMain;
+import ru.zero.ui.gui.component.render.GuiRenderUpPanel;
 import ru.zero.ui.gui.theme.ThemeScreen;
+import ru.zero.util.client.UrlOpener;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.math.MathHelper;
 import ru.zero.util.render.math.ScaleHelper;
@@ -36,9 +38,18 @@ public class GuiMouseClicked extends GuiScreen {
             return true;
          }
 
-         if (GuiServerMapPanel.handleMapButtonClick(mouseX, mouseY, pButton)) {
-            return true;
-         }
+          if (GuiServerMapPanel.handleMapButtonClick(mouseX, mouseY, pButton)) {
+             return true;
+          }
+
+          float modrinthButtonX = GuiScreen.x + GuiRenderUpPanel.MODRINTH_BUTTON_X_OFFSET;
+          float modrinthButtonY = GuiScreen.y + GuiRenderUpPanel.MODRINTH_BUTTON_Y_OFFSET;
+          if (pButton == 0 && GuiRenderMain.isHovered(mouseX, mouseY, modrinthButtonX, modrinthButtonY, GuiRenderUpPanel.MODRINTH_BUTTON_SIZE, GuiRenderUpPanel.MODRINTH_BUTTON_SIZE)) {
+             GuiScreen.showClientSettingsPopup = false;
+             UrlOpener.open(GuiRenderUpPanel.MODRINTH_URL);
+             return true;
+          }
+
 
          if (GuiScreen.serverMapOpen) {
             GuiServerMapPanel.handlePanelClick(mouseX, mouseY, pButton);

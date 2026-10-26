@@ -33,6 +33,7 @@ import ru.zero.module.impl.visuals.NoRender;
 import ru.zero.module.impl.visuals.Particles;
 import ru.zero.module.impl.visuals.Projectile;
 import ru.zero.module.impl.visuals.RTXSounds;
+import ru.zero.module.impl.visuals.Screen;
 import ru.zero.module.impl.visuals.Svetych;
 import ru.zero.module.impl.visuals.SwingAnimation;
 import ru.zero.module.impl.visuals.TargetESP;
@@ -66,6 +67,7 @@ public class Manager {
       this.module.add(new Hud());
       this.module.add(new Keystrokes());
       this.module.add(new Arrows());
+this.module.add(new Screen());
       this.module.add(new ItemESP());
       this.module.add(new ItemPhysics());
       this.module.add(new Svetych());
@@ -78,7 +80,7 @@ public class Manager {
        this.module.add(new Hat());
       this.module.add(new TargetESP());
       this.module.add(new CustomWorld());
-      this.module.add(new SkyBox());
+       // this.module.add(new SkyBox()); // hidden, code retained
       this.module.add(new NightVision());
       this.module.add(new AspectRation());
       this.module.add(new RTXSounds());

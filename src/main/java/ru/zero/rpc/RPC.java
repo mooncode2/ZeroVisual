@@ -170,6 +170,11 @@ public class RPC implements IMinecraft {
       return active != null && active.isConnected();
    }
 
+   public String getDiscordAvatarUrl() {
+      DiscordIpcClient active = this.client;
+      return active != null && active.isConnected() ? active.getAvatarUrl() : null;
+   }
+
    public boolean isRunning() {
       return this.running;
    }

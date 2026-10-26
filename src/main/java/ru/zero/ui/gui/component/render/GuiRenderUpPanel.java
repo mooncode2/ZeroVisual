@@ -13,9 +13,15 @@ import ru.zero.util.color.ColorUtil;
 import ru.zero.util.render.backends.gl.StencilHelper;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.util.render.texture.SvgIconLoader;
 
 @Environment(EnvType.CLIENT)
 public class GuiRenderUpPanel extends GuiScreen {
+   public static final float MODRINTH_BUTTON_X_OFFSET = 312.23F;
+   public static final float MODRINTH_BUTTON_Y_OFFSET = 6.185F;
+   public static final float MODRINTH_BUTTON_SIZE = 21.325F;
+   public static final String MODRINTH_URL = "https://modrinth.com/mod/zerovisuals";
+   private static int modrinthIconId = -1;
    public static void renderUpPanel(Renderer2D renderer2D, MatrixStack pose, float mainAlpha) {
       if (mainAlpha <= 0.001F) {
          return;
@@ -105,17 +111,24 @@ public class GuiRenderUpPanel extends GuiScreen {
       }
 
        GuiServerMapPanel.renderMapButton(renderer2D, mainAlpha);
-       if (ru.zero.util.render.glass.LiquidGlassRenderer.isEnabled()) {
-           ru.zero.util.render.glass.LiquidGlassRenderer.drawGlassPanel(renderer2D, GuiScreen.x + 312.23F, GuiScreen.y + 6.185F, 21.325F, 21.325F, radiusBox, outlineColor, backGroundThreeColor, mainAlpha);
-       } else {
-           renderer2D.rectOutline(GuiScreen.x + 312.23F, GuiScreen.y + 6.185F, 21.325F, 21.325F, radiusBox, outlineColor, vanillaStyle ? 1.0F : 0.1F);
-           renderer2D.rect(GuiScreen.x + 312.23F, GuiScreen.y + 6.185F, 21.325F, 21.325F, radiusBox, backGroundThreeColor);
-       }
-        if (vanillaStyle) {
-           MinecraftTheme.drawIcon(renderer2D, MinecraftTheme.IconType.MAP, GuiScreen.x + 316.55F, GuiScreen.y + 10.0F, 16.0F, mainColor);
+       float modrinthX = GuiScreen.x + MODRINTH_BUTTON_X_OFFSET;
+       float modrinthY = GuiScreen.y + MODRINTH_BUTTON_Y_OFFSET;
+        if (ru.zero.util.render.glass.LiquidGlassRenderer.isEnabled()) {
+            ru.zero.util.render.glass.LiquidGlassRenderer.drawGlassPanel(renderer2D, modrinthX, modrinthY, MODRINTH_BUTTON_SIZE, MODRINTH_BUTTON_SIZE, radiusBox, outlineColor, backGroundThreeColor, mainAlpha);
         } else {
-           renderer2D.text(FontRegistry.ICONS, GuiScreen.x + 318.55F, GuiScreen.y + 12.85F - 1.5F + 9.8F, 18.0F, "W", mainColor);
+            renderer2D.rectOutline(modrinthX, modrinthY, MODRINTH_BUTTON_SIZE, MODRINTH_BUTTON_SIZE, radiusBox, outlineColor, vanillaStyle ? 1.0F : 0.1F);
+            renderer2D.rect(modrinthX, modrinthY, MODRINTH_BUTTON_SIZE, MODRINTH_BUTTON_SIZE, radiusBox, backGroundThreeColor);
         }
+        if (modrinthIconId < 0) {
+           modrinthIconId = SvgIconLoader.load("assets/zero/modrinth.svg", 96);
+        }
+        if (modrinthIconId > 0) {
+           renderer2D.drawRgbaTexture(modrinthIconId, modrinthX + 2.6625F, modrinthY + 2.6625F, 16.0F, 16.0F, mainColor);
+        } else {
+           float textWidth = renderer2D.measureText(FontRegistry.INTER_MEDIUM, "M", 14.0F).width;
+           renderer2D.text(FontRegistry.INTER_MEDIUM, modrinthX + MODRINTH_BUTTON_SIZE * 0.5F - textWidth * 0.5F, modrinthY + 6.5F + 7.0F, 14.0F, "M", mainColor);
+        }
+
        if (ru.zero.util.render.glass.LiquidGlassRenderer.isEnabled()) {
            ru.zero.util.render.glass.LiquidGlassRenderer.drawGlassPanel(renderer2D, GuiScreen.x + 338.555F, GuiScreen.y + 6.185F, 21.325F, 21.325F, radiusBox, outlineColor, backGroundThreeColor, mainAlpha);
        } else {

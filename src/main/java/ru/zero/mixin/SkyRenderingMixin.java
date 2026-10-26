@@ -15,7 +15,7 @@ import ru.zero.util.render.sky.EndSkyboxRenderer;
 @Environment(EnvType.CLIENT)
 @Mixin({ SkyRendering.class })
 public class SkyRenderingMixin {
-   @Inject(method = { "updateRenderState" }, at = { @At("TAIL") })
+   @Inject(method = { "updateRenderState" }, at = { @At("RETURN") })
    private void zero$captureEndSkyState(ClientWorld world, float tickProgress, Camera camera, SkyRenderState state, CallbackInfo ci) {
       EndSkyboxRenderer.captureState(world, tickProgress, camera, state);
    }

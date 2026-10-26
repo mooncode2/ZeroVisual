@@ -100,10 +100,7 @@ public class Zero implements ClientModInitializer {
 
    public void onInitializeClient() {
       System.out.println("[Zero] onInitializeClient() START");
-      if (FabricLoader.getInstance().isModLoaded("night")) {
-         throw new IllegalStateException(
-               "Mod \"night\" is loaded together with \"zero\". Remove night*.jar from mods/ — only one client build is allowed.");
-      }
+
 
       get = this;
       migrateLegacyRoot();

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import ru.zero.util.render.backends.RenderBackend;
@@ -105,6 +106,17 @@ public final class TextureLoader {
 
    public static void clearCache() {
       textureCache.clear();
+   }
+
+   public static int loadFromRgba(int width, int height, byte[] rgba) {
+      if (backend == null || rgba == null || width <= 0 || height <= 0 || rgba.length < width * height * 4) {
+         return 0;
+      }
+
+      ByteBuffer buffer = BufferUtils.createByteBuffer(rgba.length);
+      buffer.put(rgba);
+      buffer.flip();
+      return backend.createMsdfTexture(width, height, buffer);
    }
 
    public static int loadFromPngBytes(byte[] pngData) {

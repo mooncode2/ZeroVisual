@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Vector4f;
-import ru.zero.Zero;
 import ru.zero.module.api.Category;
 import ru.zero.ui.gui.GuiScreen;
 import ru.zero.ui.gui.theme.MinecraftTheme;
@@ -14,6 +13,7 @@ import ru.zero.util.render.animation.util.Easings;
 import ru.zero.util.render.backends.gl.StencilHelper;
 import ru.zero.util.render.core.Renderer2D;
 import ru.zero.util.render.text.FontRegistry;
+import ru.zero.util.render.texture.DiscordAvatarTexture;
 
 @Environment(EnvType.CLIENT)
 public class GuiRenderLeftPanel extends GuiScreen {
@@ -125,39 +125,61 @@ public class GuiRenderLeftPanel extends GuiScreen {
          float avatarX = GuiScreen.x + 9.145F;
          float avatarY = GuiScreen.y + 210.72F + 1.0F;
          float avatarSize = 19.27F;
+         int discordAvatar = DiscordAvatarTexture.getTextureId();
          if (vanillaStyle) {
             renderer2D.rect(avatarX, avatarY, avatarSize, avatarSize, 0.0F, Renderer2D.ColorUtil.replAlpha(MinecraftTheme.OUTLINE, 255));
-            MinecraftTheme.drawAvatar(renderer2D, avatarX + 1.0F, avatarY + 1.0F, avatarSize - 2.0F);
+            if (discordAvatar > 0) {
+               renderer2D.drawRgbaTextureWithUVRounded(discordAvatar, avatarX + 1.0F, avatarY + 1.0F, avatarSize - 2.0F, avatarSize - 2.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.0F);
+            } else {
+               MinecraftTheme.drawAvatar(renderer2D, avatarX + 1.0F, avatarY + 1.0F, avatarSize - 2.0F);
+            }
          } else {
-            renderer2D.rect(
-               avatarX,
-               avatarY,
-               avatarSize,
-               avatarSize,
-               radiusUser,
-               Renderer2D.ColorUtil.rgba(255, 255, 255, (int)(255.0F * GuiScreen.alphaPC.get()))
+            float avatarCenterX = avatarX + avatarSize * 0.5F;
+            float avatarCenterY = avatarY + avatarSize * 0.5F;
+            int avatarBackground = Renderer2D.ColorUtil.replAlpha(
+               Renderer2D.ColorUtil.getBackGroundColor(1, 1),
+               (int)(220.0F * GuiScreen.alphaPC.get())
             );
+            renderer2D.circle(avatarCenterX, avatarCenterY, avatarSize * 0.5F, 0.0F, 1.0F, avatarBackground);
+            if (discordAvatar > 0) {
+               renderer2D.drawRgbaTextureWithUVRounded(discordAvatar, avatarX, avatarY, avatarSize, avatarSize, 0.0F, 0.0F, 1.0F, 1.0F, radiusUser);
+            } else {
+               MinecraftTheme.drawAvatar(renderer2D, avatarX + 1.0F, avatarY + 1.0F, avatarSize - 2.0F, radiusUser);
+            }
          }
-        String userRank = "ZeroUser";
-       if (Zero.get != null && Zero.get.visualLinkingClient != null) {
-          userRank = Zero.get.visualLinkingClient.getDisplayRank();
-       }
-        renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 34.925F, GuiScreen.y + 213.355F + 7.0F, 14.0F, userRank, textColor);
-        renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 34.925F, GuiScreen.y + 220.89F + 7.0F, 13.0F, "Free", textTwoColor40);
-         float checkNameX = renderer2D.measureText(FontRegistry.INTER_MEDIUM, userRank, 14.0F).width;
-         if (vanillaStyle) {
-            MinecraftTheme.drawIcon(renderer2D, MinecraftTheme.IconType.CROWN, GuiScreen.x + checkNameX + 39.0F, GuiScreen.y + 214.99F + 1.0F, 12.0F, MinecraftTheme.GOLD);
-         } else {
-            renderer2D.shadow(GuiScreen.x + checkNameX + 39.0F + 3.0F, GuiScreen.y + 214.99F + 1.5F + 1.0F, 0.1F, 0.1F, 6.0F, 4.1666665F, 0.1F, koronaColors.getRGB());
-            renderer2D.text(
-               FontRegistry.ICONS,
-               GuiScreen.x + checkNameX + 39.0F,
-               GuiScreen.y + 214.99F - 0.5F + 5.0F + 1.0F,
-               12.0F,
-               "i",
-               Renderer2D.ColorUtil.rgba(255, 205, 0, (int)(255.0F * GuiScreen.alphaPC.get()))
-            );
+         String userName = resolveUserName();
+         renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 34.925F, GuiScreen.y + 213.355F + 7.0F, 14.0F, userName, textColor);
+         renderer2D.text(FontRegistry.INTER_MEDIUM, GuiScreen.x + 34.925F, GuiScreen.y + 220.89F + 7.0F, 13.0F, "Free", textTwoColor40);
+         if (userName != null && userName.equalsIgnoreCase("mooncode2")) {
+            float checkNameX = renderer2D.measureText(FontRegistry.INTER_MEDIUM, userName, 14.0F).width;
+            if (vanillaStyle) {
+               MinecraftTheme.drawIcon(renderer2D, MinecraftTheme.IconType.CROWN, GuiScreen.x + checkNameX + 39.0F, GuiScreen.y + 214.99F + 1.0F, 12.0F, MinecraftTheme.GOLD);
+            } else {
+               renderer2D.shadow(GuiScreen.x + checkNameX + 39.0F + 3.0F, GuiScreen.y + 214.99F + 1.5F + 1.0F, 0.1F, 0.1F, 6.0F, 4.1666665F, 0.1F, koronaColors.getRGB());
+               renderer2D.text(
+                  FontRegistry.ICONS,
+                  GuiScreen.x + checkNameX + 39.0F,
+                  GuiScreen.y + 214.99F - 0.5F + 5.0F + 1.0F,
+                  12.0F,
+                  "i",
+                  Renderer2D.ColorUtil.rgba(255, 205, 0, (int)(255.0F * GuiScreen.alphaPC.get()))
+               );
+            }
          }
+     }
+
+     private static String resolveUserName() {
+         try {
+            if (mc != null && mc.getSession() != null) {
+               String name = mc.getSession().getUsername();
+               if (name != null && !name.isBlank()) {
+                  return name;
+               }
+            }
+         } catch (Throwable ignored) {
+         }
+
+         return "Player";
      }
 
     private static MinecraftTheme.IconType categoryIcon(Category category) {

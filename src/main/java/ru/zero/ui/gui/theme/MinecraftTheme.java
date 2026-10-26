@@ -49,6 +49,10 @@ public final class MinecraftTheme {
     }
 
     public static void drawAvatar(Renderer2D r2, float x, float y, float size) {
+        drawAvatar(r2, x, y, size, 0.0F);
+    }
+
+    public static void drawAvatar(Renderer2D r2, float x, float y, float size, float rounding) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.getNetworkHandler() == null) {
             return;
@@ -69,7 +73,7 @@ public final class MinecraftTheme {
         float v0 = 8.0F / 64.0F;
         float u1 = 16.0F / 64.0F;
         float v1 = 16.0F / 64.0F;
-        r2.drawRgbaTextureWithUV(id, x, y, size, size, u0, v0, u1, v1);
+        r2.drawRgbaTextureWithUVRounded(id, x, y, size, size, u0, v0, u1, v1, rounding);
     }
 
     public static void drawPanel(Renderer2D r2, float x, float y, float w, float h, float radius, int fill, int outline) {
